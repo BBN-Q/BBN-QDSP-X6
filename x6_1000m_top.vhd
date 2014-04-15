@@ -700,11 +700,15 @@ architecture arch of x6_1000m_top is
   signal adc0_dvld             : std_logic;
   signal adc0_dout_d           : std_logic_vector(16 downto 0);
   signal adc0_dvld_d           : std_logic;
+  signal adc0_dout_d2          : std_logic_vector(16 downto 0);
+  signal adc0_dvld_d2          : std_logic;
   signal adc0_rden             : std_logic;
   signal adc1_dout             : std_logic_vector(16 downto 0);
   signal adc1_dvld             : std_logic;
   signal adc1_dout_d           : std_logic_vector(16 downto 0);
   signal adc1_dvld_d           : std_logic;
+  signal adc1_dout_d2          : std_logic_vector(16 downto 0);
+  signal adc1_dvld_d2          : std_logic;
   signal adc1_rden             : std_logic;
   signal m_adc0_dout           : std_logic_vector(15 downto 0);
   signal m_adc0_dvld           : std_logic;
@@ -762,16 +766,16 @@ architecture arch of x6_1000m_top is
   signal adc1_vfdout           : std_logic_vector(127 downto 0);
   signal adc1_vfdata_vld_d     : std_logic;
   signal adc1_vfdout_d         : std_logic_vector(127 downto 0);
-  signal dac0_vfdata_empty     : std_logic;
-  signal dac0_vfdata_aempty    : std_logic;
-  signal dac0_vfdata_rden      : std_logic;
-  signal dac0_vfdata_vld       : std_logic;
-  signal dac0_vfdout           : std_logic_vector(127 downto 0);
-  signal dac1_vfdata_empty     : std_logic;
-  signal dac1_vfdata_aempty    : std_logic;
-  signal dac1_vfdata_rden      : std_logic;
-  signal dac1_vfdata_vld       : std_logic;
-  signal dac1_vfdout           : std_logic_vector(127 downto 0);
+  -- signal dac0_vfdata_empty     : std_logic;
+  -- signal dac0_vfdata_aempty    : std_logic;
+  -- signal dac0_vfdata_rden      : std_logic;
+  -- signal dac0_vfdata_vld       : std_logic;
+  signal dac0_vfdout           : std_logic_vector(127 downto 0) := (others => '0');
+  -- signal dac1_vfdata_empty     : std_logic;
+  -- signal dac1_vfdata_aempty    : std_logic;
+  -- signal dac1_vfdata_rden      : std_logic;
+  -- signal dac1_vfdata_vld       : std_logic;
+  signal dac1_vfdout           : std_logic_vector(127 downto 0) := (others => '0');
   signal lpbk_vfdata_empty     : std_logic;
   signal lpbk_vfdata_aempty    : std_logic;
   signal lpbk_vfdata_rden      : std_logic;
@@ -1853,17 +1857,17 @@ begin
     adc1_raw_dout        => adc1_dout,
 
     -- DAC0 data source fifo interface
-    dac0_src_aempty      => dac0_vfdata_aempty,
-    dac0_src_empty       => dac0_vfdata_empty,
-    dac0_src_rden        => dac0_vfdata_rden,
-    dac0_src_vld         => dac0_vfdata_vld,
+    dac0_src_aempty      => '0',
+    dac0_src_empty       => '0',
+    dac0_src_rden        => open,
+    dac0_src_vld         => '1',
     dac0_src_din         => dac0_vfdout,
 
     -- DAC1 data source fifo interface
-    dac1_src_aempty      => dac1_vfdata_aempty,
-    dac1_src_empty       => dac1_vfdata_empty,
-    dac1_src_rden        => dac1_vfdata_rden,
-    dac1_src_vld         => dac1_vfdata_vld,
+    dac1_src_aempty      => '0',
+    dac1_src_empty       => '0',
+    dac1_src_rden        => open,
+    dac1_src_vld         => '1',
     dac1_src_din         => dac1_vfdout,
 
     -- PLL interface
@@ -1962,52 +1966,6 @@ begin
   );
 
 ------------------------------------------------------------------------------
--- Vita Deframer Components
-------------------------------------------------------------------------------
-  inst_dac0_deframer : wrapper_vita_deframer
-  port map (
-    --Reset and clocks
-    srst                 => backend_rst,
-    sys_clk              => sys_clk,
-
-    -- input interface
-    src_aempty           => vfifo0_o_aempty,
-    src_empty            => vfifo0_o_empty,
-    src_rden             => vfifo0_o_rden,
-    src_vld              => vfifo0_o_vld,
-    src_din              => vfifo0_o_data,
-
-    --control
-    stream_id            => dac0_vita_stream_id,
-
-    -- output interface
-    dest_rden            => dac0_raw_rden,
-    dest_dout            => dac0_raw_dout,
-    dest_dvld            => dac0_raw_dvld
-  );
-
-  inst_dac1_deframer : wrapper_vita_deframer
-    port map (
-      --Reset and clocks
-      srst                 => backend_rst,
-      sys_clk              => sys_clk,
-
-      -- input interface
-      src_aempty           => vfifo1_o_aempty,
-      src_empty            => vfifo1_o_empty,
-      src_rden             => vfifo1_o_rden,
-      src_vld              => vfifo1_o_vld,
-      src_din              => vfifo1_o_data,
-
-      --control
-      stream_id            => dac1_vita_stream_id,
-
-      -- output interface
-      dest_rden            => dac1_raw_rden,
-      dest_dout            => dac1_raw_dout,
-      dest_dvld            => dac1_raw_dvld
-    );
-------------------------------------------------------------------------------
 -- Matlab/Simulink Components
 ------------------------------------------------------------------------------
 
@@ -2059,15 +2017,24 @@ begin
   pass_thru : process( sys_clk )
   begin
     if rising_edge(sys_clk) then
-      m_adc0_dout <= adc0_dout_d(16 downto 1);
-      m_adc0_data_frame <= adc0_dout_d(0);
-      m_adc0_dvld <= adc0_dvld_d;
+      -- register twice for timing closure (and mimic input/output registering)
+      -- adc0
+      adc0_dout_d2 <= adc0_dout_d;
+      adc0_dvld_d2 <= adc0_dvld_d;
       adc0_rden <= not adc0_dstfifo_afull;
 
-      m_adc1_dout <= adc1_dout_d(16 downto 1);
-      m_adc1_data_frame <= adc1_dout_d(0);
-      m_adc1_dvld <= adc1_dvld_d;
+      m_adc0_dout <= adc0_dout_d2(16 downto 1);
+      m_adc0_data_frame <= adc0_dout_d2(0);
+      m_adc0_dvld <= adc0_dvld_d2;
+
+      -- adc1
+      adc1_dout_d2 <= adc1_dout_d;
+      adc1_dvld_d2 <= adc1_dvld_d;
       adc1_rden <= not adc1_dstfifo_afull;
+
+      m_adc1_dout <= adc1_dout_d2(16 downto 1);
+      m_adc1_data_frame <= adc1_dout_d2(0);
+      m_adc1_dvld <= adc1_dvld_d2;
 
     end if;
   end process ; -- pass_thru
@@ -2075,6 +2042,8 @@ begin
   m_dac0_dvld <= '1';
   m_dac1_dout <= (others => '0');
   m_dac1_dvld <= '1';
+  m_lpbk_dout <= (others => '0');
+  m_lpbk_dvld <= '0';
 
   wb_dat_i_t <= wb_dat_i_m when wb_adr_o(15 downto 8) = X"07" else wb_dat_i;
 ------------------------------------------------------------------------------
@@ -2180,74 +2149,6 @@ begin
     dst_fifo_rden        => lpbk_vfdata_rden,
     dst_fifo_vld         => lpbk_vfdata_vld,
     dst_fifo_dout        => lpbk_vfdout
-  );
-
-  inst_dac0_framer: wrapper_vita_framer
-  port map (
-    srst                 => backend_rst,
-    sys_clk              => sys_clk,
-    fs_clk               => sys_clk,
-
-    -- Controls
-    frame_size           => X"1000",
-    stream_id            => dac0_vita_stream_id,
-    packet_type          => "0001",
-
-    -- VITA-49 Timestamp interface
-    ts_initial           => X"00000000",
-    ts_load              => '0',
-    ts_arm               => '0',
-    pps_pls              => '0',
-    pps_mode             => '0',
-    ts_tsi               => "00",
-    ts_tsf               => "00",
-
-    -- Data source interface
-    trigger_frame        => '1',
-    din_vld              => m_dac0_dvld,
-    din                  => m_dac0_dout,
-    ififo_afull          => dac0_dstfifo_afull,
-
-    -- VITA-49 FIFO interface
-    dst_fifo_empty       => dac0_vfdata_empty,
-    dst_fifo_aempty      => dac0_vfdata_aempty,
-    dst_fifo_rden        => dac0_vfdata_rden,
-    dst_fifo_vld         => dac0_vfdata_vld,
-    dst_fifo_dout        => dac0_vfdout
-  );
-
-  inst_dac1_framer: wrapper_vita_framer
-  port map (
-    srst                 => backend_rst,
-    sys_clk              => sys_clk,
-    fs_clk               => sys_clk,
-
-    -- Controls
-    frame_size           => X"1000",
-    stream_id            => dac1_vita_stream_id,
-    packet_type          => "0001",
-
-    -- VITA-49 Timestamp interface
-    ts_initial           => X"00000000",
-    ts_load              => '0',
-    ts_arm               => '0',
-    pps_pls              => '0',
-    pps_mode             => '0',
-    ts_tsi               => "00",
-    ts_tsf               => "00",
-
-    -- Data source interface
-    trigger_frame        => '1',
-    din_vld              => m_dac1_dvld,
-    din                  => m_dac1_dout,
-    ififo_afull          => dac1_dstfifo_afull,
-
-    -- VITA-49 FIFO interface
-    dst_fifo_empty       => dac1_vfdata_empty,
-    dst_fifo_aempty      => dac1_vfdata_aempty,
-    dst_fifo_rden        => dac1_vfdata_rden,
-    dst_fifo_vld         => dac1_vfdata_vld,
-    dst_fifo_dout        => dac1_vfdout
   );
 
   process (sys_clk)
