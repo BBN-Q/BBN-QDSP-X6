@@ -1,0 +1,4 @@
+
+# ce_4_cfba4dd8_group and inner group constraint
+#NET "*/ce_4_sg_x0*" TNM_NET = "ce_4_cfba4dd8_group";
+#TIMESPEC "TS_ce_4_cfba4dd8_group_to_ce_4_cfba4dd8_group" = FROM "ce_4_cfba4dd8_group" TO "ce_4_cfba4dd8_group" 15.2 ns;
