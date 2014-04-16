@@ -718,14 +718,6 @@ architecture arch of x6_1000m_top is
   signal m_adc1_dvld           : std_logic;
   signal m_adc1_data_frame     : std_logic;
   signal adc1_dstfifo_afull    : std_logic;
-  signal lpbk_din              : std_logic_vector(15 downto 0);
-  signal lpbk_dvld             : std_logic;
-  signal lpbk_rden             : std_logic;
-  signal lpbk_din_d            : std_logic_vector(15 downto 0);
-  signal lpbk_dvld_d           : std_logic;
-  signal m_lpbk_dout           : std_logic_vector(15 downto 0);
-  signal m_lpbk_dvld           : std_logic;
-  signal lpbk_dstfifo_afull    : std_logic;
   signal dac0_raw_dout         : std_logic_vector(15 downto 0);
   signal dac0_raw_dvld         : std_logic;
   signal dac0_raw_rden         : std_logic;
@@ -766,23 +758,8 @@ architecture arch of x6_1000m_top is
   signal adc1_vfdout           : std_logic_vector(127 downto 0);
   signal adc1_vfdata_vld_d     : std_logic;
   signal adc1_vfdout_d         : std_logic_vector(127 downto 0);
-  -- signal dac0_vfdata_empty     : std_logic;
-  -- signal dac0_vfdata_aempty    : std_logic;
-  -- signal dac0_vfdata_rden      : std_logic;
-  -- signal dac0_vfdata_vld       : std_logic;
   signal dac0_vfdout           : std_logic_vector(127 downto 0) := (others => '0');
-  -- signal dac1_vfdata_empty     : std_logic;
-  -- signal dac1_vfdata_aempty    : std_logic;
-  -- signal dac1_vfdata_rden      : std_logic;
-  -- signal dac1_vfdata_vld       : std_logic;
   signal dac1_vfdout           : std_logic_vector(127 downto 0) := (others => '0');
-  signal lpbk_vfdata_empty     : std_logic;
-  signal lpbk_vfdata_aempty    : std_logic;
-  signal lpbk_vfdata_rden      : std_logic;
-  signal lpbk_vfdata_vld       : std_logic;
-  signal lpbk_vfdout           : std_logic_vector(127 downto 0);
-  signal lpbk_vfdata_vld_d     : std_logic;
-  signal lpbk_vfdout_d         : std_logic_vector(127 downto 0);
 
 begin
 
@@ -1319,27 +1296,6 @@ begin
     prog_empty           => lpbk_fifo_aempty
   );
 
-  inst_lpbk_deframer: wrapper_vita_deframer
-  port map (
-    --Reset and clocks
-    srst                 => backend_rst,
-    sys_clk              => sys_clk,
-
-    -- input interface
-    src_aempty           => lpbk_fifo_aempty,
-    src_empty            => lpbk_fifo_empty,
-    src_rden             => lpbk_fifo_rden,
-    src_vld              => lpbk_fifo_vld,
-    src_din              => lpbk_fifo_dout,
-
-    --control
-    stream_id            => lpbk_stream_id,
-
-    -- output interface
-    dest_rden            => lpbk_rden,
-    dest_dout            => lpbk_din,
-    dest_dvld            => lpbk_dvld
-  );
 -----------------------------------------------------------------------------
 -- DAC router
 -----------------------------------------------------------------------------
@@ -1981,9 +1937,6 @@ begin
       dac0_raw_dvld_d <= dac0_raw_dvld;
       dac1_raw_dout_d <= dac1_raw_dout;
       dac1_raw_dvld_d <= dac1_raw_dvld;
-
-      lpbk_din_d  <= lpbk_din; 
-      lpbk_dvld_d <= lpbk_dvld;
     end if;
   end process;
 
@@ -2042,8 +1995,6 @@ begin
   m_dac0_dvld <= '1';
   m_dac1_dout <= (others => '0');
   m_dac1_dvld <= '1';
-  m_lpbk_dout <= (others => '0');
-  m_lpbk_dvld <= '0';
 
   wb_dat_i_t <= wb_dat_i_m when wb_adr_o(15 downto 8) = X"07" else wb_dat_i;
 ------------------------------------------------------------------------------
@@ -2117,60 +2068,24 @@ begin
     dst_fifo_dout        => adc1_vfdout
   );
 
-  inst_lpbk_framer: wrapper_vita_framer
-  port map (
-    srst                 => backend_rst,
-    sys_clk              => sys_clk,
-    fs_clk               => sys_clk,
-
-    -- Controls
-    frame_size           => X"1000",
-    stream_id            => lpbk_stream_id,
-    packet_type          => "0001",
-
-    -- VITA-49 Timestamp interface
-    ts_initial           => X"00000000",
-    ts_load              => '0',
-    ts_arm               => '0',
-    pps_pls              => '0',
-    pps_mode             => '0',
-    ts_tsi               => "00",
-    ts_tsf               => "00",
-
-    -- Data source interface
-    trigger_frame        => '1',
-    din_vld              => m_lpbk_dvld,
-    din                  => m_lpbk_dout,
-    ififo_afull          => lpbk_dstfifo_afull,
-
-    -- VITA-49 FIFO interface
-    dst_fifo_empty       => lpbk_vfdata_empty,
-    dst_fifo_aempty      => lpbk_vfdata_aempty,
-    dst_fifo_rden        => lpbk_vfdata_rden,
-    dst_fifo_vld         => lpbk_vfdata_vld,
-    dst_fifo_dout        => lpbk_vfdout
-  );
-
   process (sys_clk)
     begin
       if (rising_edge(sys_clk)) then
         adc0_vfdout_d <= adc0_vfdout;
         adc1_vfdout_d <= adc1_vfdout;
-        lpbk_vfdout_d  <= lpbk_vfdout; 
 
         adc0_vfdata_vld_d <= adc0_vfdata_vld;
         adc1_vfdata_vld_d <= adc1_vfdata_vld;
-        lpbk_vfdata_vld_d <= lpbk_vfdata_vld;
       end if;
     end process;
 
 ------------------------------------------------------------------------------
 -- VITA router
 ------------------------------------------------------------------------------
-  rtr_src_aempty <= adc1_vfdata_aempty & adc0_vfdata_aempty & lpbk_vfdata_aempty;
-  rtr_src_empty  <= adc1_vfdata_empty & adc0_vfdata_empty & lpbk_vfdata_empty;
-  rtr_src_vld    <= adc1_vfdata_vld_d & adc0_vfdata_vld_d & lpbk_vfdata_vld_d;
-  rtr_src_data   <= adc1_vfdout_d & adc0_vfdout_d & lpbk_vfdout_d;
+  rtr_src_aempty <= adc1_vfdata_aempty & adc0_vfdata_aempty & lpbk_fifo_aempty;
+  rtr_src_empty  <= adc1_vfdata_empty & adc0_vfdata_empty & lpbk_fifo_empty;
+  rtr_src_vld    <= adc1_vfdata_vld_d & adc0_vfdata_vld_d & lpbk_fifo_vld;
+  rtr_src_data   <= adc1_vfdout_d & adc0_vfdout_d & lpbk_fifo_dout;
 
   inst_router : ii_vita_router
   generic map (
@@ -2195,7 +2110,7 @@ begin
     dst_data             => rtr_dst_data
   );
 
-  lpbk_vfdata_rden <= rtr_src_rden(0);
+  lpbk_fifo_rden <= rtr_src_rden(0);
   adc0_vfdata_rden <= rtr_src_rden(1);
   adc1_vfdata_rden <= rtr_src_rden(2);
 
