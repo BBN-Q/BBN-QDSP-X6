@@ -572,6 +572,7 @@ architecture arch of x6_1000m_top is
   signal adc1_fifo_aempty     : std_logic;
   signal adc1_fifo_valid      : std_logic;
   signal adc1_fifo_dout       : std_logic_vector(127 downto 0);
+  signal adc_frame_size       : std_logic_vector(15 downto 0);
 ------------------------------------------------------------------------------
 -- DAC interface
 ------------------------------------------------------------------------------
@@ -1783,6 +1784,9 @@ begin
     adc0_stream_id       => adc0_stream_id,
     adc1_stream_id       => adc1_stream_id,
 
+    -- ADC frame size
+    adc_frame_size       => adc_frame_size,
+
     -- DAC stream ID
     dac0_stream_id       => dac0_stream_id,
     dac1_stream_id       => dac1_stream_id,
@@ -2006,7 +2010,7 @@ begin
     fs_clk               => sys_clk,
 
     -- Controls
-    frame_size           => X"0400", -- was x"1000"
+    frame_size           => adc_frame_size,
     stream_id            => adc0_stream_id,
     packet_type          => "0001",
 
@@ -2040,7 +2044,7 @@ begin
     fs_clk               => sys_clk,
 
     -- Controls
-    frame_size           => X"0400", -- was x"1000"
+    frame_size           => adc_frame_size,
     stream_id            => adc1_stream_id,
     packet_type          => "0001",
 
