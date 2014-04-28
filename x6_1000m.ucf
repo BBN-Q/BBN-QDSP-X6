@@ -569,10 +569,12 @@ INST "inst_pcie/ep/pcie_2_0_i/pcie_block_i" LOC = PCIE_X0Y1;
 ###############################################################################
 
 NET "inst_pcie/pex_ref_clk_p" TNM_NET = "PEX_REFCLK" ;
-NET "inst_pcie/ep/pcie_clocking_i/clk_125" TNM_NET = "CLK_USER_CLK" ;
+NET "inst_pcie/ep/pcie_clocking_i/clk_125" TNM_NET = "CLK_125" ;
+NET "inst_pcie/ep/pcie_clocking_i/clk_250" TNM_NET = "CLK_USER_CLK" ;
 
 TIMESPEC "TS_PEX_REFCLK" = PERIOD "PEX_REFCLK" 250 MHz HIGH 50 % ;
-TIMESPEC "TS_PEX_USRCLK" = PERIOD "CLK_USER_CLK" TS_PEX_REFCLK/2 HIGH 50 % PRIORITY 1;
+TIMESPEC "TS_PEX_CLK125" = PERIOD "CLK_125" TS_PEX_REFCLK/2 HIGH 50 % PRIORITY 100 ;
+TIMESPEC "TS_PEX_USRCLK" = PERIOD "CLK_USER_CLK" TS_PEX_REFCLK*1 HIGH 50 % PRIORITY 1;
 
 
 PIN "inst_pcie/trn_reset_n_i.CLR" TIG ;
@@ -589,19 +591,22 @@ TIMESPEC TS_PEX_mc_bm_rst = FROM "bm_rst_grp" TO FFS TS_PEX_USRCLK / 2;
 # Area groups
 ###############################################################################
 
-INST "inst_pcie/ep" AREA_GROUP = "AG_pex_core" ;
-AREA_GROUP "AG_pex_core" RANGE=SLICE_X144Y81:SLICE_X161Y159;
-AREA_GROUP "AG_pex_core" RANGE=RAMB18_X7Y40:RAMB18_X8Y63;
-AREA_GROUP "AG_pex_core" RANGE=RAMB36_X7Y20:RAMB36_X8Y31;
+INST "inst_pcie/ep" AREA_GROUP = "AG_pex_core";
+AREA_GROUP "AG_pex_core" RANGE=SLICE_X196Y90:SLICE_X209Y159;
+AREA_GROUP "AG_pex_core" RANGE=RAMB18_X13Y36:RAMB18_X14Y63;
+AREA_GROUP "AG_pex_core" RANGE=RAMB36_X13Y18:RAMB36_X14Y31;
 
 INST "inst_pcie/dma" AREA_GROUP = "AG_pex_dma";
-AREA_GROUP "AG_pex_dma" RANGE=SLICE_X116Y80:SLICE_X143Y159;
-AREA_GROUP "AG_pex_dma" RANGE=RAMB18_X5Y32:RAMB18_X7Y63;
-AREA_GROUP "AG_pex_dma" RANGE=RAMB36_X5Y16:RAMB36_X7Y31;
+AREA_GROUP "AG_pex_dma" RANGE=SLICE_X168Y90:SLICE_X199Y159;
+AREA_GROUP "AG_pex_dma" RANGE=RAMB18_X11Y36:RAMB18_X13Y63;
+AREA_GROUP "AG_pex_dma" RANGE=RAMB36_X11Y18:RAMB36_X13Y31;
 
 INST "inst_pcie/dma/xfer_machine/posted_pkt_gen/posted_fifo" AREA_GROUP = "AG_pex_posted";
-AREA_GROUP "AG_pex_posted" RANGE=RAMB36_X6Y26:RAMB36_X6Y27;
-AREA_GROUP "AG_pex_posted" RANGE=RAMB18_X6Y52:RAMB18_X6Y55;
+AREA_GROUP "AG_pex_posted" RANGE=RAMB36_X12Y24:RAMB36_X12Y25;
+AREA_GROUP "AG_pex_posted" RANGE=RAMB18_X12Y48:RAMB18_X12Y51;
+
+INST "inst_pcie/dma/pcie_rx_fifo" AREA_GROUP = "AG_pex_rxfifo";
+AREA_GROUP "AG_pex_rxfifo" RANGE = RAMB36_X12Y26:RAMB36_X12Y31;
 
 
 ################################################################################
