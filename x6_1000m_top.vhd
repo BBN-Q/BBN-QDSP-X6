@@ -201,11 +201,10 @@ entity x6_1000m_top is
   generic (
     SYS_CLK_FREQ         : integer := 200;  -- system clk freq in MHz
     MEM_CLK_FREQ         : integer := 400;  -- memory clk freq in MHz
-    PCIE_LANES           : integer := 4;    -- number of PCIE lanes
+    PCIE_LANES           : integer := 8;    -- number of PCIE lanes
     ADD_AURORA           : boolean := FALSE;-- instantiate Aurora cores
     USE_XMC_RST          : boolean := TRUE; -- PCIE reset (XMC vs PMC)
-    DEVICE               : string  := "sx315t";
-    implementation_logic : integer := 1
+    DEVICE               : string  := "sx315t"
   );
   port (
     -- clocks & resets
@@ -432,7 +431,7 @@ architecture arch of x6_1000m_top is
 -----------------------------------------------------------------------------
   constant rev_maj            : std_logic_vector(7 downto 0) := X"01";
   constant rev_min            : std_logic_vector(7 downto 0) := X"01";
-  constant sub_rev_int        : integer := 0;
+  constant sub_rev_int        : integer := 1;
   signal sub_rev              : std_logic_vector(7 downto 0) := std_logic_vector(to_unsigned(sub_rev_int,8));
   signal revision             : std_logic_vector(15 downto 0) := rev_maj & rev_min;
   constant hw_type            : std_logic_vector(3 downto 0) := X"5"; -- X6-1000M
@@ -2007,7 +2006,7 @@ begin
     fs_clk               => sys_clk,
 
     -- Controls
-    frame_size           => X"1000",
+    frame_size           => X"0400", -- was x"1000"
     stream_id            => adc0_stream_id,
     packet_type          => "0001",
 
@@ -2041,7 +2040,7 @@ begin
     fs_clk               => sys_clk,
 
     -- Controls
-    frame_size           => X"1000",
+    frame_size           => X"0400", -- was x"1000"
     stream_id            => adc1_stream_id,
     packet_type          => "0001",
 

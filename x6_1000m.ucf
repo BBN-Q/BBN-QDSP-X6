@@ -551,6 +551,14 @@ INST "inst_pcie/ep/pcie_2_0_i/pcie_gt_i/gtx_v6_i/GTXD[1].GTX" LOC = GTXE1_X0Y9;
 INST "inst_pcie/ep/pcie_2_0_i/pcie_gt_i/gtx_v6_i/GTXD[2].GTX" LOC = GTXE1_X0Y10;
 # PCIe Lane 3
 INST "inst_pcie/ep/pcie_2_0_i/pcie_gt_i/gtx_v6_i/GTXD[3].GTX" LOC = GTXE1_X0Y11;
+# PCIe Lane 4
+INST "inst_pcie/ep/pcie_2_0_i/pcie_gt_i/gtx_v6_i/GTXD[4].GTX" LOC = GTXE1_X0Y12;
+# PCIe Lane 5
+INST "inst_pcie/ep/pcie_2_0_i/pcie_gt_i/gtx_v6_i/GTXD[5].GTX" LOC = GTXE1_X0Y13;
+# PCIe Lane 6
+INST "inst_pcie/ep/pcie_2_0_i/pcie_gt_i/gtx_v6_i/GTXD[6].GTX" LOC = GTXE1_X0Y14;
+# PCIe Lane 7
+INST "inst_pcie/ep/pcie_2_0_i/pcie_gt_i/gtx_v6_i/GTXD[7].GTX" LOC = GTXE1_X0Y15;
 
 
 # PCI Express Block placement.
