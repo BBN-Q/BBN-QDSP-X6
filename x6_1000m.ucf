@@ -164,7 +164,7 @@ NET "lpddr2_c?/mem_clk_div2" TNM = "TNM_lpddr2_mmcm_clk";
 NET "lpddr2_c?/tb_clk" TNM = "TNM_lpddr2_tb_clk";
 
 NET "sys_clk" TNM = "TNM_sys_clk";
-TIMESPEC "TS_sys_clk" = PERIOD "TNM_sys_clk" 3.8 ns;
+TIMESPEC "TS_sys_clk" = PERIOD "TNM_sys_clk" 5 ns;
 
 # multi-cycle paths
 INST "*/inst_core/app_data_read*" TNM = "ctl_reg_grp_i";
@@ -958,7 +958,7 @@ AREA_GROUP "AG_lpddr2_c1" RANGE = RAMB36_X5Y24:RAMB36_X6Y39;
 # Constrain BUFR clocks used to synchronize data from IOB to fabric logic
 # Note that ISE cannot infer this from other PERIOD constraints because
 # of the use of OSERDES blocks in the BUFR clock generation path
-NET "lpddr2_c2/lpddr2_intf_top_inst/u_lpddr2_intf/u_phy_top/clk_rsync[?]" TNM_NET =" TNM_C2_clk_rsync";
+NET "lpddr2_c2/lpddr2_intf_top_inst/u_lpddr2_intf/u_phy_top/clk_rsync[?]" TNM_NET = "TNM_C2_clk_rsync";
 TIMESPEC "TS_C2_clk_rsync" = PERIOD "TNM_C2_clk_rsync" 5 ns;
 ############################################################################
 
