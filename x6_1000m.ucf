@@ -164,7 +164,7 @@ NET "lpddr2_c?/mem_clk_div2" TNM = "TNM_lpddr2_mmcm_clk";
 NET "lpddr2_c?/tb_clk" TNM = "TNM_lpddr2_tb_clk";
 
 NET "sys_clk" TNM = "TNM_sys_clk";
-TIMESPEC "TS_sys_clk" = PERIOD "TNM_sys_clk" 5 ns;
+TIMESPEC "TS_sys_clk" = PERIOD "TNM_sys_clk" 3.8 ns;
 
 # multi-cycle paths
 INST "*/inst_core/app_data_read*" TNM = "ctl_reg_grp_i";
@@ -173,7 +173,7 @@ TIMESPEC "TS_ctl_reg_i_mcycle" = FROM "FFS" TO "ctl_reg_grp_i" "TS_sys_clk" * 4;
 INST "*/inst_core/app_wr_en*" TNM = "ctl_reg_wr_en";
 TIMESPEC "TS_ctl_reg_en_o_mcycle" = FROM "ctl_reg_wr_en" TO "FFS" "TS_sys_clk" * 2;
 
-INST "wb_master/wb_dat_i_d*" TNM = "TNM_wb_dat_i_d";
+INST "wb_dat_i_d*" TNM = "TNM_wb_dat_i_d";
 TIMESPEC "TS_wb_dat_i_mcycle" = FROM "FFS" TO "TNM_wb_dat_i_d" "TS_sys_clk" * 2;
 
 INST "inst_crm/u_ff_wb_rst_o" TNM = "TNM_crm_rst";
@@ -197,6 +197,8 @@ TIMESPEC "TS_SYS2DAC_TIG" = FROM "TNM_sys_clk" TO "TNM_DAC_CLK" TIG;
 TIMESPEC "TS_DAC2SYS_TIG" = FROM "TNM_DAC_CLK" TO "TNM_sys_clk" TIG;
 TIMESPEC "TS_SYS2ADC_TIG" = FROM "TNM_sys_clk" TO "TNM_ADC_CLK" TIG;
 TIMESPEC "TS_ADC2SYS_TIG" = FROM "TNM_ADC_CLK" TO "TNM_sys_clk" TIG;
+TIMESPEC "TS_SYS2REF_DAC_TIG" = FROM "TNM_sys_clk" TO "TNM_REF_DAC_CLK" TIG;
+TIMESPEC "TS_REF_DAC2SYS_TIG" = FROM "TNM_REF_DAC_CLK" TO "TNM_sys_clk" TIG;
 TIMESPEC "TS_SYS2REF_ADC_TIG" = FROM "TNM_sys_clk" TO "TNM_REF_ADC_CLK" TIG;
 TIMESPEC "TS_REF_ADC2SYS_TIG" = FROM "TNM_REF_ADC_CLK" TO "TNM_sys_clk" TIG;
 
@@ -498,6 +500,26 @@ INST "inst_packetizer_top/inst_packetizer" AREA_GROUP = "AG_packetizer";
 INST "lpbk_fifo" AREA_GROUP = "AG_lpbk_fifo";
 AREA_GROUP "AG_lpbk_fifo" RANGE = RAMB36_X6Y16:RAMB36_X6Y19;
 
+# Do not change these constraints
+INST "inst_afe_top/inst_adc0/inst_sync_s1p4_intf/sw_trig_s1p4_fabric/ISERDESE1_inst" LOC = ILOGIC_X0Y62;
+INST "inst_afe_top/inst_adc0/inst_sync_s1p4_intf/sw_trig_s1p4_fabric/IODELAY_inst" LOC = IODELAY_X0Y62;
+INST "inst_afe_top/inst_adc1/inst_sync_s1p4_intf/sw_trig_s1p4_fabric/ISERDESE1_inst" LOC = ILOGIC_X0Y60;
+INST "inst_afe_top/inst_adc1/inst_sync_s1p4_intf/sw_trig_s1p4_fabric/IODELAY_inst" LOC = IODELAY_X0Y60;
+INST "inst_afe_top/adc0_sw_trig" LOC = SLICE_X7Y61;
+INST "inst_afe_top/adc0_sw_trig" BEL = B5FF;
+INST "inst_afe_top/adc1_sw_trig" LOC = SLICE_X7Y61;
+INST "inst_afe_top/adc1_sw_trig" BEL = BFF;
+INST "inst_afe_top/inst_dac0_intf/inst_sync_s1p4_intf/sw_trig_s1p4_fabric/IODELAY_inst" LOC = IODELAY_X0Y120;
+INST "inst_afe_top/inst_dac0_intf/inst_sync_s1p4_intf/sw_trig_s1p4_fabric/ISERDESE1_inst" LOC = ILOGIC_X0Y120;
+INST "inst_afe_top/inst_dac1_intf/inst_sync_s1p4_intf/sw_trig_s1p4_fabric/IODELAY_inst" LOC = IODELAY_X0Y118;
+INST "inst_afe_top/inst_dac1_intf/inst_sync_s1p4_intf/sw_trig_s1p4_fabric/ISERDESE1_inst" LOC = ILOGIC_X0Y118;
+INST "inst_afe_top/dac0_sw_trig" LOC = SLICE_X0Y120;
+INST "inst_afe_top/dac0_sw_trig" BEL = D5FF;
+INST "inst_afe_top/dac1_sw_trig" LOC = SLICE_X0Y118;
+INST "inst_afe_top/dac1_sw_trig" BEL = D5FF;
+INST "inst_afe_top/dac_sw_trig_dmt" LOC = SLICE_X1Y120;
+INST "inst_afe_top/dac_sw_trig_dmt" BEL = AFF;
+
 ################################################################################
 # PCIe constraints                                                             #
 ################################################################################
@@ -532,8 +554,8 @@ NET "inst_pcie/pex_rst_n" PULLUP | NODELAY ;
 # (UG) for guidelines regarding clock resource selection.
 #
 
-NET "inst_pcie/pex_ref_clk_n" LOC = V5;
-NET "inst_pcie/pex_ref_clk_p" LOC = V6;
+#NET "inst_pcie/pex_ref_clk_n" LOC = V5;
+#NET "inst_pcie/pex_ref_clk_p" LOC = V6;
 INST "inst_pcie/refclk_ibuf" LOC = IBUFDS_GTXE1_X0Y4;
 
 #
@@ -577,11 +599,7 @@ TIMESPEC "TS_PEX_CLK125" = PERIOD "CLK_125" TS_PEX_REFCLK/2 HIGH 50 % PRIORITY 1
 TIMESPEC "TS_PEX_USRCLK" = PERIOD "CLK_USER_CLK" TS_PEX_REFCLK*1 HIGH 50 % PRIORITY 1;
 
 
-PIN "inst_pcie/trn_reset_n_i.CLR" TIG ;
 PIN "inst_pcie/ep/pcie_clocking_i/mmcm_adv_i.RST" TIG ;
-
-INST "inst_pcie/ep/trn_reset_n_i" TNM = "TNM_pex_trn_rst";
-TIMESPEC "TS_PEX_RESETN" = FROM FFS(*) TO "TNM_pex_trn_rst" 8 ns;
 
 # busmaster reset is multi-cycle
 INST "inst_pcie/dma/pcie_regs/bm_rst_int" TNM = "bm_rst_grp";
@@ -592,14 +610,15 @@ TIMESPEC TS_PEX_mc_bm_rst = FROM "bm_rst_grp" TO FFS TS_PEX_USRCLK / 2;
 ###############################################################################
 
 INST "inst_pcie/ep" AREA_GROUP = "AG_pex_core";
-AREA_GROUP "AG_pex_core" RANGE=SLICE_X196Y90:SLICE_X209Y159;
-AREA_GROUP "AG_pex_core" RANGE=RAMB18_X13Y36:RAMB18_X14Y63;
-AREA_GROUP "AG_pex_core" RANGE=RAMB36_X13Y18:RAMB36_X14Y31;
+AREA_GROUP "AG_pex_core" RANGE=SLICE_X192Y80:SLICE_X209Y159;
+AREA_GROUP "AG_pex_core" RANGE=RAMB18_X13Y32:RAMB18_X14Y63;
+AREA_GROUP "AG_pex_core" RANGE=RAMB36_X13Y16:RAMB36_X14Y31;
 
 INST "inst_pcie/dma" AREA_GROUP = "AG_pex_dma";
-AREA_GROUP "AG_pex_dma" RANGE=SLICE_X168Y90:SLICE_X199Y159;
-AREA_GROUP "AG_pex_dma" RANGE=RAMB18_X11Y36:RAMB18_X13Y63;
-AREA_GROUP "AG_pex_dma" RANGE=RAMB36_X11Y18:RAMB36_X13Y31;
+AREA_GROUP "AG_pex_dma" RANGE=SLICE_X164Y80:SLICE_X191Y159;
+AREA_GROUP "AG_pex_dma" RANGE=DSP48_X11Y32:DSP48_X13Y63;
+AREA_GROUP "AG_pex_dma" RANGE=RAMB18_X11Y32:RAMB18_X13Y63;
+AREA_GROUP "AG_pex_dma" RANGE=RAMB36_X11Y16:RAMB36_X13Y31;
 
 INST "inst_pcie/dma/xfer_machine/posted_pkt_gen/posted_fifo" AREA_GROUP = "AG_pex_posted";
 AREA_GROUP "AG_pex_posted" RANGE=RAMB36_X12Y24:RAMB36_X12Y25;
@@ -607,7 +626,6 @@ AREA_GROUP "AG_pex_posted" RANGE=RAMB18_X12Y48:RAMB18_X12Y51;
 
 INST "inst_pcie/dma/pcie_rx_fifo" AREA_GROUP = "AG_pex_rxfifo";
 AREA_GROUP "AG_pex_rxfifo" RANGE = RAMB36_X12Y26:RAMB36_X12Y31;
-
 
 ################################################################################
 # LPDDR2 interface controller 0 constraints

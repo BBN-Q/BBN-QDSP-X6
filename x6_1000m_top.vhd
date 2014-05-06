@@ -199,12 +199,12 @@ use work.x6_pkg.all;
 
 entity x6_1000m_top is
   generic (
-    SYS_CLK_FREQ         : integer := 200;  -- system clk freq in MHz
+    SYS_CLK_FREQ         : integer := 260;  -- system clk freq in MHz
     MEM_CLK_FREQ         : integer := 400;  -- memory clk freq in MHz
     PCIE_LANES           : integer := 8;    -- number of PCIE lanes
     ADD_AURORA           : boolean := FALSE;-- instantiate Aurora cores
     USE_XMC_RST          : boolean := TRUE; -- PCIE reset (XMC vs PMC)
-    DEVICE               : string  := "sx315t"
+    DEVICE               : string  := "lx240t"
   );
   port (
     -- clocks & resets
@@ -430,7 +430,7 @@ architecture arch of x6_1000m_top is
 -- Logic version/revision
 -----------------------------------------------------------------------------
   constant rev_maj            : std_logic_vector(7 downto 0) := X"01";
-  constant rev_min            : std_logic_vector(7 downto 0) := X"01";
+  constant rev_min            : std_logic_vector(7 downto 0) := X"06";
   constant sub_rev_int        : integer := 1;
   signal sub_rev              : std_logic_vector(7 downto 0) := std_logic_vector(to_unsigned(sub_rev_int,8));
   signal revision             : std_logic_vector(15 downto 0) := rev_maj & rev_min;
@@ -484,10 +484,11 @@ architecture arch of x6_1000m_top is
   signal wb_stb_o             : std_logic;
   signal wb_cyc_o             : std_logic;
   signal wb_ack_i             : std_logic_vector(11 downto 0):=(others=>'0');
+  signal wb_ack_i_d           : std_logic_vector(11 downto 0):=(others=>'0');
   signal wb_ack_int           : std_logic := '0';
   signal wb_dat_i             : std_logic_vector(31 downto 0);
-  signal wb_dat_i_m           : std_logic_vector(31 downto 0);
-  signal wb_dat_i_t           : std_logic_vector(31 downto 0);
+  signal wb_dat_i_d           : std_logic_vector(31 downto 0);
+  signal wb_dat_i_dd          : std_logic_vector(31 downto 0);
 -----------------------------------------------------------------------------
 -- Temperature controller
 -----------------------------------------------------------------------------
@@ -500,6 +501,7 @@ architecture arch of x6_1000m_top is
   signal mem_alert_dout       : std_logic_vector(15 downto 0);
   signal alert_sw_stb         : std_logic;
   signal alert_sw_data        : std_logic_vector(31 downto 0);
+  signal alert_clr            : std_logic_vector(31 downto 0);
   signal alert_data           : width_32_alrt_array;
   signal alert, alert_enable  : std_logic_vector(31 downto 0);
   signal alert_timestamp_run  : std_logic;
@@ -542,6 +544,15 @@ architecture arch of x6_1000m_top is
   signal lpbk_fifo_vld        : std_logic;
   signal lpbk_fifo_afull      : std_logic;
   signal lpbk_fifo_aempty     : std_logic;
+------------------------------------------------------------------------------
+-- RIO
+------------------------------------------------------------------------------
+  signal rio0_src_rdy         : std_logic;
+  signal rio0_src_valid       : std_logic;
+  signal rio0_src_din         : std_logic_vector(127 downto 0);
+  signal rio1_src_rdy         : std_logic;
+  signal rio1_src_valid       : std_logic;
+  signal rio1_src_din         : std_logic_vector(127 downto 0);
 -----------------------------------------------------------------------------
 -- Misc.
 -----------------------------------------------------------------------------
@@ -572,7 +583,6 @@ architecture arch of x6_1000m_top is
   signal adc1_fifo_aempty     : std_logic;
   signal adc1_fifo_valid      : std_logic;
   signal adc1_fifo_dout       : std_logic_vector(127 downto 0);
-  signal adc_frame_size       : std_logic_vector(15 downto 0);
 ------------------------------------------------------------------------------
 -- DAC interface
 ------------------------------------------------------------------------------
@@ -670,96 +680,39 @@ architecture arch of x6_1000m_top is
 ------------------------------------------------------------------------------
 -- VITA mover (2x1)
 ------------------------------------------------------------------------------
-  signal vmvr_src_aempty       : std_logic_vector(1 downto 0);
-  signal vmvr_src_empty        : std_logic_vector(1 downto 0);
-  signal vmvr_src_rden         : std_logic_vector(1 downto 0);
-  signal vmvr_src_vld          : std_logic_vector(1 downto 0);
-  signal vmvr_src_data         : std_logic_vector(128*2-1 downto 0);
-  signal vmvr_dst_wrd_cnt      : std_logic_vector(8 downto 0);
-  signal vmvr_dst_aempty       : std_logic;
-  signal vmvr_dst_empty        : std_logic;
-  signal vmvr_dst_rden         : std_logic;
-  signal vmvr_dst_vld          : std_logic;
-  signal vmvr_dst_dout         : std_logic_vector(127 downto 0);
-  signal pkt_din_wrd_cnt       : std_logic_vector(29 downto 0);
-  signal pkt_din_wrd_cnt_sat   : std_logic_vector(21 downto 0);
+  signal vmvr_src_aempty      : std_logic_vector(1 downto 0);
+  signal vmvr_src_empty       : std_logic_vector(1 downto 0);
+  signal vmvr_src_rden        : std_logic_vector(1 downto 0);
+  signal vmvr_src_vld         : std_logic_vector(1 downto 0);
+  signal vmvr_src_data        : std_logic_vector(128*2-1 downto 0);
+  signal vmvr_dst_wrd_cnt     : std_logic_vector(8 downto 0);
+  signal vmvr_dst_aempty      : std_logic;
+  signal vmvr_dst_empty       : std_logic;
+  signal vmvr_dst_rden        : std_logic;
+  signal vmvr_dst_vld         : std_logic;
+  signal vmvr_dst_dout        : std_logic_vector(127 downto 0);
+  signal pkt_din_wrd_cnt      : std_logic_vector(29 downto 0);
+  signal pkt_din_wrd_cnt_sat  : std_logic_vector(21 downto 0);
 ------------------------------------------------------------------------------
 -- VITA-Velocia padder
 ------------------------------------------------------------------------------
-  signal pad_dst_wrd_cnt       : std_logic_vector(21 downto 0);
-  signal pad_dst_aempty        : std_logic;
-  signal pad_dst_empty         : std_logic;
-  signal pad_dst_rden          : std_logic;
-  signal pad_dst_vld           : std_logic;
-  signal pad_dst_dout          : std_logic_vector(127 downto 0);
-  signal pad_bypass            : std_logic;
+  signal pad_dst_wrd_cnt      : std_logic_vector(21 downto 0);
+  signal pad_dst_aempty       : std_logic;
+  signal pad_dst_empty        : std_logic;
+  signal pad_dst_rden         : std_logic;
+  signal pad_dst_vld          : std_logic;
+  signal pad_dst_dout         : std_logic_vector(127 downto 0);
+  signal pad_bypass           : std_logic;
 ------------------------------------------------------------------------------
--- MATLAB/SIMULINK component
+-- VITA-Checker
 ------------------------------------------------------------------------------
-  signal adc0_dout             : std_logic_vector(16 downto 0);
-  signal adc0_dvld             : std_logic;
-  signal adc0_dout_d           : std_logic_vector(16 downto 0);
-  signal adc0_dvld_d           : std_logic;
-  signal adc0_dout_d2          : std_logic_vector(16 downto 0);
-  signal adc0_dvld_d2          : std_logic;
-  signal adc0_rden             : std_logic;
-  signal adc1_dout             : std_logic_vector(16 downto 0);
-  signal adc1_dvld             : std_logic;
-  signal adc1_dout_d           : std_logic_vector(16 downto 0);
-  signal adc1_dvld_d           : std_logic;
-  signal adc1_dout_d2          : std_logic_vector(16 downto 0);
-  signal adc1_dvld_d2          : std_logic;
-  signal adc1_rden             : std_logic;
-  signal m_adc0_dout           : std_logic_vector(15 downto 0);
-  signal m_adc0_dvld           : std_logic;
-  signal m_adc0_data_frame     : std_logic;
-  signal adc0_dstfifo_afull    : std_logic;
-  signal m_adc1_dout           : std_logic_vector(15 downto 0);
-  signal m_adc1_dvld           : std_logic;
-  signal m_adc1_data_frame     : std_logic;
-  signal adc1_dstfifo_afull    : std_logic;
-  signal dac0_raw_dout         : std_logic_vector(15 downto 0);
-  signal dac0_raw_dvld         : std_logic;
-  signal dac0_raw_rden         : std_logic;
-  signal dac0_raw_dout_d       : std_logic_vector(15 downto 0);
-  signal dac0_raw_dvld_d       : std_logic;
-  signal dac1_raw_dout         : std_logic_vector(15 downto 0);
-  signal dac1_raw_dvld         : std_logic;
-  signal dac1_raw_rden         : std_logic;
-  signal dac1_raw_dout_d       : std_logic_vector(15 downto 0);
-  signal dac1_raw_dvld_d       : std_logic;
-  signal m_dac0_dout           : std_logic_vector(15 downto 0);
-  signal m_dac0_dvld           : std_logic;
-  signal dac0_dstfifo_afull    : std_logic;
-  signal m_dac1_dout           : std_logic_vector(15 downto 0);
-  signal m_dac1_dvld           : std_logic;
-  signal dac1_dstfifo_afull    : std_logic;
-  signal dio_en                : std_logic;
-  signal jtag_dio_tx_d         : std_logic_vector(63 downto 0);
-  signal jtag_dio_rx_d         : std_logic_vector(63 downto 0);
-  signal jtag_dio_ctrl         : std_logic_vector(63 downto 0);
-  signal jtag_dio_wr           : std_logic;
-  signal lpbk_stream_id        : std_logic_vector(31 downto 0);
-  signal dac0_vita_stream_id   : std_logic_vector(31 downto 0);
-  signal dac1_vita_stream_id   : std_logic_vector(31 downto 0);
-  signal adc0_stream_id        : std_logic_vector(31 downto 0);
-  signal adc1_stream_id        : std_logic_vector(31 downto 0);
-  signal adc0_vfdata_empty     : std_logic;
-  signal adc0_vfdata_aempty    : std_logic;
-  signal adc0_vfdata_rden      : std_logic;
-  signal adc0_vfdata_vld       : std_logic;
-  signal adc0_vfdout           : std_logic_vector(127 downto 0);
-  signal adc0_vfdata_vld_d     : std_logic;
-  signal adc0_vfdout_d         : std_logic_vector(127 downto 0);
-  signal adc1_vfdata_empty     : std_logic;
-  signal adc1_vfdata_aempty    : std_logic;
-  signal adc1_vfdata_rden      : std_logic;
-  signal adc1_vfdata_vld       : std_logic;
-  signal adc1_vfdout           : std_logic_vector(127 downto 0);
-  signal adc1_vfdata_vld_d     : std_logic;
-  signal adc1_vfdout_d         : std_logic_vector(127 downto 0);
-  signal dac0_vfdout           : std_logic_vector(127 downto 0) := (others => '0');
-  signal dac1_vfdout           : std_logic_vector(127 downto 0) := (others => '0');
+  signal hdr_error            : std_logic;
+  signal trlr_error           : std_logic;
+------------------------------------------------------------------------------
+-- Custom DSP stuff
+------------------------------------------------------------------------------
+  signal dsp0_dout            : std_logic_vector(127 downto 0);
+  signal dsp1_dout            : std_logic_vector(127 downto 0);
 
 begin
 
@@ -777,7 +730,13 @@ begin
 
   por_arst <= not prst_n;
 
-  crm_run  <= adc_run_o or dac_run_o;
+  -- Register to ease timing closure
+  process (sys_clk)
+  begin
+    if (rising_edge(sys_clk)) then
+      crm_run <= adc_run_o or dac_run_o;
+    end if;
+  end process;
 
   -- clocks & reset management module
   inst_crm : ii_crm
@@ -870,18 +829,24 @@ begin
     wb_stb_o             => wb_stb_o,
     wb_cyc_o             => wb_cyc_o,
     wb_ack_i             => wb_ack_int,
-    wb_dat_i             => wb_dat_i_t
+    wb_dat_i             => wb_dat_i_dd
   );
 
   -- OR reduction of wb_ack from slaves
-  process (wb_ack_i)
-    variable ack_tmp : std_logic;
+  -- Also double register wb_dat_i to match the wb_ack latency
+  process (sys_clk)
+    variable ack_or : std_logic;
   begin
-    ack_tmp := '0';
-    for i in wb_ack_i'range loop
-      ack_tmp := wb_ack_i(i) or ack_tmp;
-    end loop;
-    wb_ack_int <= ack_tmp;
+    if (rising_edge(sys_clk)) then
+      wb_ack_i_d  <= wb_ack_i;
+      wb_dat_i_d  <= wb_dat_i;
+      wb_dat_i_dd <= wb_dat_i_d;
+      ack_or := '0';
+      for i in wb_ack_i_d'range loop
+        ack_or := wb_ack_i_d(i) or ack_or;
+      end loop;
+      wb_ack_int <= ack_or;
+    end if;
   end process;
 
 -----------------------------------------------------------------------------
@@ -914,6 +879,9 @@ begin
     ds_data_o            => ds_data_o,
     ds_data_i            => ds_data_o,
     sub_rev              => sub_rev,
+    bypass_vita_pad      => pad_bypass,
+    vita_hdr_err         => hdr_error,
+    vita_trlr_err        => trlr_error,
     h_pps                => h_pps,
     sio_xo_sdo           => sio_xo_sdo,
     sio_xo_scl           => sio_xo_scl,
@@ -925,8 +893,7 @@ begin
     mem_test_en          => mem_test_en,
     mem_test_error       => mem_test_error,
     def_pid_addr0        => def_pid_addr0,
-    def_pid_addr1        => def_pid_addr1,
-    bypass_vita_pad      => pad_bypass
+    def_pid_addr1        => def_pid_addr1
   );
 
   sio_xo_sda <= '0' when (sio_xo_sdo = '0') else 'Z';
@@ -961,7 +928,7 @@ begin
 ------------------------------------------------------------------------------
 -- Digital I/O
 ------------------------------------------------------------------------------
-  inst_dio_top : dio_wrapper
+  inst_dio_top : ii_dio_top
   generic map (
     width                => 32,
     diff_en              => FALSE,
@@ -981,13 +948,7 @@ begin
     -- user registers
     clk                  => sys_clk,
     dio_p                => dio_p,
-    dio_n                => dio_n,
-    -- DIO signals from matlab
-    dio_en               => dio_en,
-    jtag_dio_wr          => jtag_dio_wr,
-    jtag_dio_ctrl        => jtag_dio_ctrl,
-    jtag_dio_tx_d        => jtag_dio_tx_d,
-    jtag_dio_rx_d        => jtag_dio_rx_d
+    dio_n                => dio_n
   );
 
 -----------------------------------------------------------------------------
@@ -1117,6 +1078,7 @@ begin
     trigger              => afe_trigger,
     alert_sw_data        => alert_sw_data,
     alert_sw_stb         => alert_sw_stb,
+    alert_clr            => alert_clr,
     timestamp_rollover   => timestamp_rollover,
     alert_fifo_wrd_cnt   => alert_fifo_wrd_cnt,
     alert_fifo_aempty    => alert_fifo_aempty,
@@ -1279,7 +1241,7 @@ begin
   );
 
 -----------------------------------------------------------------------------
--- Loopback vita deframer
+-- Deframer output fifo
 -----------------------------------------------------------------------------
   lpbk_fifo : sfifo_512x128_bltin
   port map (
@@ -1550,7 +1512,7 @@ begin
   vmvr_src_aempty <= vfifo3_o_aempty & vfifo2_o_aempty;
 
   vmvr_src_empty  <= vfifo3_o_empty & vfifo2_o_empty;
-
+  
   vmvr_src_vld    <= vfifo3_o_vld & vfifo2_o_vld;
 
   vmvr_src_data   <= vfifo3_o_data & vfifo2_o_data;
@@ -1613,27 +1575,45 @@ begin
   inst_velo_pad : ii_vita_velo_pad
   port map (
     -- Reset and clock
-    srst               => backend_rst,
-    sys_clk            => sys_clk,
-    ch_pkt_size        => ch_pkt_size(1),
-    force_pkt_size     => force_pkt_size(1),
-    bypass             => pad_bypass,
+    srst                 => backend_rst,
+    sys_clk              => sys_clk,
+    ch_pkt_size          => ch_pkt_size(1),
+    force_pkt_size       => force_pkt_size(1),
+    bypass               => pad_bypass,
 
     -- Source channel interface
-    src_wrd_cnt        => pkt_din_wrd_cnt_sat,
-    src_aempty         => vmvr_dst_aempty,
-    src_empty          => vmvr_dst_empty,
-    src_rden           => vmvr_dst_rden,
-    src_vld            => vmvr_dst_vld,
-    src_data           => vmvr_dst_dout,
+    src_wrd_cnt          => pkt_din_wrd_cnt_sat,
+    src_aempty           => vmvr_dst_aempty,
+    src_empty            => vmvr_dst_empty,
+    src_rden             => vmvr_dst_rden,
+    src_vld              => vmvr_dst_vld,
+    src_data             => vmvr_dst_dout,
 
     -- Destination channel interface
-    dst_wrd_cnt        => pad_dst_wrd_cnt,
-    dst_aempty         => pad_dst_aempty,
-    dst_empty          => pad_dst_empty,
-    dst_rden           => pad_dst_rden,
-    dst_vld            => pad_dst_vld,
-    dst_dout           => pad_dst_dout
+    dst_wrd_cnt          => pad_dst_wrd_cnt,
+    dst_aempty           => pad_dst_aempty,
+    dst_empty            => pad_dst_empty,
+    dst_rden             => pad_dst_rden,
+    dst_vld              => pad_dst_vld,
+    dst_dout             => pad_dst_dout
+  );
+
+-----------------------------------------------------------------------------
+-- VITA-Checker
+-----------------------------------------------------------------------------
+  inst_vita_chkr : ii_vita_checker
+  port map (
+    -- Reset and clock
+    srst                 => backend_rst,
+    sys_clk              => sys_clk,
+
+    -- Source data input
+    src_vld              => pad_dst_vld,
+    src_data             => pad_dst_dout,
+
+    -- Status outputs
+    hdr_error            => hdr_error,
+    trlr_error           => trlr_error
   );
 
 -----------------------------------------------------------------------------
@@ -1661,9 +1641,9 @@ begin
       run_o                => open,
 
       -- Data source i/f
-      src_rdy              => rtr_dst_rdy(2),
-      src_valid            => rtr_dst_wren(2),
-      src_din              => rtr_dst_data(128*3-1 downto 128*2),
+      src_rdy              => rio0_src_rdy,
+      src_valid            => rio0_src_valid,
+      src_din              => rio0_src_din,
 
       -- Destination FIFO i/f
       dest_rdy             => '1',
@@ -1703,9 +1683,9 @@ begin
       run_o                => open,
 
       -- Data source i/f
-      src_rdy              => rtr_dst_rdy(3),
-      src_valid            => rtr_dst_wren(3),
-      src_din              => rtr_dst_data(128*4-1 downto 128*3),
+      src_rdy              => rio1_src_rdy,
+      src_valid            => rio1_src_valid,
+      src_din              => rio1_src_din,
 
       -- Destination FIFO i/f
       dest_rdy             => '1',
@@ -1733,8 +1713,8 @@ begin
   end generate;
 
   gen_no_aurora : if (not ADD_AURORA) generate
-    rtr_dst_rdy(2) <= '1';
-    rtr_dst_rdy(3) <= '1';
+    rio0_src_rdy <= '1';
+    rio1_src_rdy <= '1';
   end generate;
 
 ------------------------------------------------------------------------------
@@ -1773,6 +1753,10 @@ begin
     adc1_overflow        => adc1_overflow,
     dac0_underflow       => dac0_underflow,
     dac1_underflow       => dac1_underflow,
+    ovr_alrt_clr         => alert_clr(20),
+    ovf_alrt_clr         => alert_clr(21),
+    trig_alrt_clr        => alert_clr(24),
+    udf_alrt_clr         => alert_clr(26),
 
     -- System interface
     ref_adc_clk          => ref_adc_clk,
@@ -1780,54 +1764,37 @@ begin
     adc_run_o            => adc_run_o,
     dac_run_o            => dac_run_o,
 
-    -- ADC stream ID
-    adc0_stream_id       => adc0_stream_id,
-    adc1_stream_id       => adc1_stream_id,
-
-    -- ADC frame size
-    adc_frame_size       => adc_frame_size,
-
     -- DAC stream ID
     dac0_stream_id       => dac0_stream_id,
     dac1_stream_id       => dac1_stream_id,
 
     -- ADC0 fifo interface
-    adc0_fifo_empty      => open,
-    adc0_fifo_aempty     => open,
-    adc0_fifo_rd         => '1',
-    adc0_fifo_vld        => open,
-    adc0_fifo_dout       => open,
+    adc0_fifo_empty      => adc0_fifo_empty,
+    adc0_fifo_aempty     => adc0_fifo_aempty,
+    adc0_fifo_rd         => adc0_fifo_rd,
+    adc0_fifo_vld        => adc0_fifo_valid,
+    adc0_fifo_dout       => adc0_fifo_dout,
 
     -- ADC1 fifo interface
-    adc1_fifo_empty      => open,
-    adc1_fifo_aempty     => open,
-    adc1_fifo_rd         => '1',
-    adc1_fifo_vld        => open,
-    adc1_fifo_dout       => open,
-
-    -- ADC0 raw data interface
-    adc0_raw_data_rden   => adc0_rden,
-    adc0_raw_dvld        => adc0_dvld,
-    adc0_raw_dout        => adc0_dout,
-
-    -- ADC1 raw data interface
-    adc1_raw_data_rden   => adc1_rden,
-    adc1_raw_dvld        => adc1_dvld,
-    adc1_raw_dout        => adc1_dout,
+    adc1_fifo_empty      => adc1_fifo_empty,
+    adc1_fifo_aempty     => adc1_fifo_aempty,
+    adc1_fifo_rd         => adc1_fifo_rd,
+    adc1_fifo_vld        => adc1_fifo_valid,
+    adc1_fifo_dout       => adc1_fifo_dout,
 
     -- DAC0 data source fifo interface
-    dac0_src_aempty      => '0',
-    dac0_src_empty       => '0',
-    dac0_src_rden        => open,
-    dac0_src_vld         => '1',
-    dac0_src_din         => dac0_vfdout,
+    dac0_src_aempty      => vfifo0_o_aempty,
+    dac0_src_empty       => vfifo0_o_empty,
+    dac0_src_rden        => vfifo0_o_rden,
+    dac0_src_vld         => vfifo0_o_vld,
+    dac0_src_din         => vfifo0_o_data,
 
     -- DAC1 data source fifo interface
-    dac1_src_aempty      => '0',
-    dac1_src_empty       => '0',
-    dac1_src_rden        => open,
-    dac1_src_vld         => '1',
-    dac1_src_din         => dac1_vfdout,
+    dac1_src_aempty      => vfifo1_o_aempty,
+    dac1_src_empty       => vfifo1_o_empty,
+    dac1_src_rden        => vfifo1_o_rden,
+    dac1_src_vld         => vfifo1_o_vld,
+    dac1_src_din         => vfifo1_o_data,
 
     -- PLL interface
     pll_vcxo_en          => pll_vcxo_en,
@@ -1924,171 +1891,54 @@ begin
     ts_pps_pls           => h_pps_demet_re
   );
 
-------------------------------------------------------------------------------
--- Matlab/Simulink Components
-------------------------------------------------------------------------------
+inst_dsp : entity work.ii_dsp_top
+generic map (
+    dsp_frmr_offset => MR_BSP,
+    dsp_app_offset => x"0000"
+)
+port map (
+    srst => backend_rst,
+    sys_clk => sys_clk,
 
-  process (sys_clk)
-  begin
-    if (rising_edge(sys_clk)) then
-      adc0_dout_d <= adc0_dout;
-      adc0_dvld_d <= adc0_dvld;
-      adc1_dout_d <= adc1_dout;
-      adc1_dvld_d <= adc1_dvld;
+    -- Slave Wishbone Interface
+    wb_rst_i => wb_rst,
+    wb_clk_i => sys_clk,
+    wb_adr_i => wb_adr_o,
+    wb_dat_i => wb_dat_o,
+    wb_we_i  => wb_we_o,
+    wb_stb_i => wb_stb_o,
+    wb_ack_o => wb_ack_i(7),
+    wb_dat_o => wb_dat_i,
 
-      dac0_raw_dout_d <= dac0_raw_dout;
-      dac0_raw_dvld_d <= dac0_raw_dvld;
-      dac1_raw_dout_d <= dac1_raw_dout;
-      dac1_raw_dvld_d <= dac1_raw_dvld;
-    end if;
-  end process;
+    -- Input FIFO Interface
+    ififo_rdy(0)  => adc0_fifo_rd,
+    ififo_rdy(1)  => adc1_fifo_rd,
+    ififo_wren(0) => adc0_fifo_valid,
+    ififo_wren(1) => adc1_fifo_valid,
+    ififo_din(0)  => adc0_fifo_dout,
+    ififo_din(1)  => adc1_fifo_dout,
 
-  -- sysgen_project : entity work.readout_filter_cw
-  -- port map (
-  --   clk                  => sys_clk,
-  --   ce                   => '1',
-  --   rst                  => backend_rst,
+    -- VITA-49 Output FIFO Interface
+    ofifo_empty  => rtr_src_aempty(2 downto 1),
+    ofifo_aempty => rtr_src_empty(2 downto 1),
+    ofifo_rden   => rtr_src_rden(2 downto 1),
+    ofifo_vld    => rtr_src_vld(2 downto 1),
+    ofifo_dout(0) => dsp0_dout,
+    ofifo_dout(1) => dsp1_dout
+);
 
-  --   -- ADC Interface data input to matlab
-  --   adc0_raw_din         => adc0_dout_d(16 downto 1),
-  --   adc0_data_frame      => adc0_dout_d(0),
-  --   adc0_raw_dvld        => adc0_dvld_d,
-  --   adc0_raw_rden        => adc0_rden,
-
-  --   adc1_data_frame      => adc0_dout_d(0), -- copy adc0 for now
-
-  --   -- ADC Interface data output from matlab
-  --   m_adc0_dout          => m_adc0_dout,
-  --   m_adc0_dvld          => m_adc0_dvld,
-  --   m_adc0_data_frame    => m_adc0_data_frame,
-  --   adc0_dstfifo_afull   => adc0_dstfifo_afull,
-
-  --   m_adc1_dout          => m_adc1_dout,
-  --   m_adc1_dvld          => m_adc1_dvld,
-  --   m_adc1_data_frame    => m_adc1_data_frame,
-  --   adc1_dstfifo_afull   => adc1_dstfifo_afull
-  -- );
-
-  -- just a pass thru
-  pass_thru : process( sys_clk )
-  begin
-    if rising_edge(sys_clk) then
-      -- register twice for timing closure (and mimic input/output registering)
-      -- adc0
-      adc0_dout_d2 <= adc0_dout_d;
-      adc0_dvld_d2 <= adc0_dvld_d;
-      adc0_rden <= not adc0_dstfifo_afull;
-
-      m_adc0_dout <= adc0_dout_d2(16 downto 1);
-      m_adc0_data_frame <= adc0_dout_d2(0);
-      m_adc0_dvld <= adc0_dvld_d2;
-
-      -- adc1
-      adc1_dout_d2 <= adc1_dout_d;
-      adc1_dvld_d2 <= adc1_dvld_d;
-      adc1_rden <= not adc1_dstfifo_afull;
-
-      m_adc1_dout <= adc1_dout_d2(16 downto 1);
-      m_adc1_data_frame <= adc1_dout_d2(0);
-      m_adc1_dvld <= adc1_dvld_d2;
-
-    end if;
-  end process ; -- pass_thru
-  m_dac0_dout <= (others => '0');
-  m_dac0_dvld <= '1';
-  m_dac1_dout <= (others => '0');
-  m_dac1_dvld <= '1';
-
-  wb_dat_i_t <= wb_dat_i_m when wb_adr_o(15 downto 8) = X"07" else wb_dat_i;
-------------------------------------------------------------------------------
--- Vita Framer Components
-------------------------------------------------------------------------------
-  inst_adc0_framer: wrapper_vita_framer
-  port map (
-    srst                 => backend_rst,
-    sys_clk              => sys_clk,
-    fs_clk               => sys_clk,
-
-    -- Controls
-    frame_size           => adc_frame_size,
-    stream_id            => adc0_stream_id,
-    packet_type          => "0001",
-
-    -- VITA-49 Timestamp interface
-    ts_initial           => x"00000000",
-    ts_load              => '0',
-    ts_arm               => '0',
-    pps_pls              => '0',
-    pps_mode             => '0',
-    ts_tsi               => "00",
-    ts_tsf               => "00",
-
-    -- Data source interface
-    trigger_frame        => m_adc0_data_frame,
-    din_vld              => m_adc0_dvld,
-    din                  => m_adc0_dout,
-    ififo_afull          => adc0_dstfifo_afull,
-
-    -- VITA-49 FIFO interface
-    dst_fifo_empty       => adc0_vfdata_empty,
-    dst_fifo_aempty      => adc0_vfdata_aempty,
-    dst_fifo_rden        => adc0_vfdata_rden,
-    dst_fifo_vld         => adc0_vfdata_vld,
-    dst_fifo_dout        => adc0_vfdout
-  );
-
-  inst_adc1_framer: wrapper_vita_framer
-  port map (
-    srst                 => backend_rst,
-    sys_clk              => sys_clk,
-    fs_clk               => sys_clk,
-
-    -- Controls
-    frame_size           => adc_frame_size,
-    stream_id            => adc1_stream_id,
-    packet_type          => "0001",
-
-    -- VITA-49 Timestamp interface
-    ts_initial           => x"00000000",
-    ts_load              => '0',
-    ts_arm               => '0',
-    pps_pls              => '0',
-    pps_mode             => '0',
-    ts_tsi               => "00",
-    ts_tsf               => "00",
-
-    -- Data source interface
-    trigger_frame        => m_adc1_data_frame,
-    din_vld              => m_adc1_dvld,
-    din                  => m_adc1_dout,
-    ififo_afull          => adc1_dstfifo_afull,
-
-    -- VITA-49 FIFO interface
-    dst_fifo_empty       => adc1_vfdata_empty,
-    dst_fifo_aempty      => adc1_vfdata_aempty,
-    dst_fifo_rden        => adc1_vfdata_rden,
-    dst_fifo_vld         => adc1_vfdata_vld,
-    dst_fifo_dout        => adc1_vfdout
-  );
-
-  process (sys_clk)
-    begin
-      if (rising_edge(sys_clk)) then
-        adc0_vfdout_d <= adc0_vfdout;
-        adc1_vfdout_d <= adc1_vfdout;
-
-        adc0_vfdata_vld_d <= adc0_vfdata_vld;
-        adc1_vfdata_vld_d <= adc1_vfdata_vld;
-      end if;
-    end process;
 
 ------------------------------------------------------------------------------
 -- VITA router
 ------------------------------------------------------------------------------
-  rtr_src_aempty <= adc1_vfdata_aempty & adc0_vfdata_aempty & lpbk_fifo_aempty;
-  rtr_src_empty  <= adc1_vfdata_empty & adc0_vfdata_empty & lpbk_fifo_empty;
-  rtr_src_vld    <= adc1_vfdata_vld_d & adc0_vfdata_vld_d & lpbk_fifo_vld;
-  rtr_src_data   <= adc1_vfdout_d & adc0_vfdout_d & lpbk_fifo_dout;
+  -- rtr_src_aempty <= adc1_fifo_aempty & adc0_fifo_aempty & lpbk_fifo_aempty;
+  -- rtr_src_empty  <= adc1_fifo_empty & adc0_fifo_empty & lpbk_fifo_empty;
+  -- rtr_src_vld    <= adc1_fifo_valid & adc0_fifo_valid & lpbk_fifo_vld;
+  -- rtr_src_data   <= adc1_fifo_dout & adc0_fifo_dout & lpbk_fifo_dout;
+  rtr_src_aempty(0) <= lpbk_fifo_aempty;
+  rtr_src_empty(0)  <= lpbk_fifo_empty;
+  rtr_src_vld(0) <= lpbk_fifo_vld;
+  rtr_src_data <= dsp1_dout & dsp0_dout & lpbk_fifo_dout;
 
   inst_router : ii_vita_router
   generic map (
@@ -2114,8 +1964,8 @@ begin
   );
 
   lpbk_fifo_rden <= rtr_src_rden(0);
-  adc0_vfdata_rden <= rtr_src_rden(1);
-  adc1_vfdata_rden <= rtr_src_rden(2);
+  -- adc0_fifo_rd   <= rtr_src_rden(1);
+  -- adc1_fifo_rd   <= rtr_src_rden(2);
 
   rtr_dst_rdy(0) <= vfifo2_i_rdy;
   rtr_dst_rdy(1) <= vfifo3_i_rdy;
@@ -2125,6 +1975,19 @@ begin
 
   vfifo2_i_data <= rtr_dst_data(127 downto 0);
   vfifo3_i_data <= rtr_dst_data(128*2-1 downto 128*1);
+
+  -- Register to ease timing closure
+  process (sys_clk)
+  begin
+    if (rising_edge(sys_clk)) then
+      rtr_dst_rdy(2) <= rio0_src_rdy;
+      rtr_dst_rdy(3) <= rio1_src_rdy;
+      rio0_src_valid <= rtr_dst_wren(2);
+      rio1_src_valid <= rtr_dst_wren(3);
+      rio0_src_din   <= rtr_dst_data(128*3-1 downto 128*2);
+      rio1_src_din   <= rtr_dst_data(128*4-1 downto 128*3);
+    end if;
+  end process;
 
 ------------------------------------------------------------------------------
 -- Misc.
