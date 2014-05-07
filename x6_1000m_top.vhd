@@ -583,6 +583,12 @@ architecture arch of x6_1000m_top is
   signal adc1_fifo_aempty     : std_logic;
   signal adc1_fifo_valid      : std_logic;
   signal adc1_fifo_dout       : std_logic_vector(127 downto 0);
+  signal adc0_raw_rden        : std_logic;
+  signal adc0_raw_vld         : std_logic;
+  signal adc0_raw_dout        : std_logic_vector(11 downto 0);
+  signal adc1_raw_rden        : std_logic;
+  signal adc1_raw_vld         : std_logic;
+  signal adc1_raw_dout        : std_logic_vector(11 downto 0);
 ------------------------------------------------------------------------------
 -- DAC interface
 ------------------------------------------------------------------------------
@@ -1782,6 +1788,16 @@ begin
     adc1_fifo_vld        => adc1_fifo_valid,
     adc1_fifo_dout       => adc1_fifo_dout,
 
+    -- ADC0 raw interface
+    adc0_raw_rden        => adc0_raw_rden,
+    adc0_raw_vld         => adc0_raw_vld,
+    adc0_raw_dout        => adc0_raw_dout,
+
+    -- ADC1 raw interface
+    adc1_raw_rden        => adc1_raw_rden,
+    adc1_raw_vld         => adc1_raw_vld,
+    adc1_raw_dout        => adc1_raw_dout,
+
     -- DAC0 data source fifo interface
     dac0_src_aempty      => vfifo0_o_aempty,
     dac0_src_empty       => vfifo0_o_empty,
@@ -1910,13 +1926,13 @@ port map (
     wb_ack_o => wb_ack_i(7),
     wb_dat_o => wb_dat_i,
 
-    -- Input FIFO Interface
-    ififo_rdy(0)  => adc0_fifo_rd,
-    ififo_rdy(1)  => adc1_fifo_rd,
-    ififo_wren(0) => adc0_fifo_valid,
-    ififo_wren(1) => adc1_fifo_valid,
-    ififo_din(0)  => adc0_fifo_dout,
-    ififo_din(1)  => adc1_fifo_dout,
+    -- Input serialized raw data interface
+    rden(0)     => adc0_raw_rden,
+    rden(1)     => adc1_raw_rden,
+    din_vld(0) => adc0_raw_vld,
+    din_vld(1) => adc1_raw_vld,
+    din(0)     => adc0_raw_dout,
+    din(1)     => adc1_raw_dout,
 
     -- VITA-49 Output FIFO Interface
     ofifo_empty  => rtr_src_aempty(2 downto 1),
@@ -1964,6 +1980,8 @@ port map (
   );
 
   lpbk_fifo_rden <= rtr_src_rden(0);
+  adc0_fifo_rd <= '1';
+  adc1_fifo_rd <= '1';
   -- adc0_fifo_rd   <= rtr_src_rden(1);
   -- adc1_fifo_rd   <= rtr_src_rden(2);
 
