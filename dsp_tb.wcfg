@@ -1,0 +1,357 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<wave_config>
+   <wave_state>
+   </wave_state>
+   <db_ref_list>
+      <db_ref path="C:/Users/qlab/Documents/II-v1.6/dsp_testbench_isim_beh.wdb" id="1" type="auto">
+         <top_modules>
+            <top_module name="dsp_testbench" />
+            <top_module name="ii_dsp_pkg" />
+            <top_module name="numeric_std" />
+            <top_module name="std_logic_1164" />
+            <top_module name="std_logic_arith" />
+            <top_module name="std_logic_unsigned" />
+            <top_module name="textio" />
+            <top_module name="vcomponents" />
+            <top_module name="vital_primitives" />
+            <top_module name="vital_timing" />
+            <top_module name="vpkg" />
+         </top_modules>
+      </db_ref>
+   </db_ref_list>
+   <WVObjectSize size="11" />
+   <wvobject fp_name="/dsp_testbench/testbench_state" type="other" db_ref_id="1">
+      <obj_property name="ElementShortName">testbench_state</obj_property>
+      <obj_property name="ObjectShortName">testbench_state</obj_property>
+   </wvobject>
+   <wvobject fp_name="/dsp_testbench/clk" type="logic" db_ref_id="1">
+      <obj_property name="ElementShortName">clk</obj_property>
+      <obj_property name="ObjectShortName">clk</obj_property>
+   </wvobject>
+   <wvobject fp_name="/dsp_testbench/fs_clk" type="logic" db_ref_id="1">
+      <obj_property name="ElementShortName">fs_clk</obj_property>
+      <obj_property name="ObjectShortName">fs_clk</obj_property>
+   </wvobject>
+   <wvobject fp_name="/dsp_testbench/rst" type="logic" db_ref_id="1">
+      <obj_property name="ElementShortName">rst</obj_property>
+      <obj_property name="ObjectShortName">rst</obj_property>
+   </wvobject>
+   <wvobject fp_name="group33" type="group">
+      <obj_property name="label">dsp_top</obj_property>
+      <obj_property name="DisplayName">label</obj_property>
+      <wvobject fp_name="/dsp_testbench/adc0_raw_rden" type="logic" db_ref_id="1">
+         <obj_property name="ElementShortName">adc0_raw_rden</obj_property>
+         <obj_property name="ObjectShortName">adc0_raw_rden</obj_property>
+      </wvobject>
+      <wvobject fp_name="/dsp_testbench/adc0_raw_dvld" type="logic" db_ref_id="1">
+         <obj_property name="ElementShortName">adc0_raw_dvld</obj_property>
+         <obj_property name="ObjectShortName">adc0_raw_dvld</obj_property>
+      </wvobject>
+      <wvobject fp_name="/dsp_testbench/adc0_raw_vld" type="logic" db_ref_id="1">
+         <obj_property name="ElementShortName">adc0_raw_vld</obj_property>
+         <obj_property name="ObjectShortName">adc0_raw_vld</obj_property>
+      </wvobject>
+      <wvobject fp_name="/dsp_testbench/adc0_raw_data" type="array" db_ref_id="1">
+         <obj_property name="ElementShortName">adc0_raw_data[47:0]</obj_property>
+         <obj_property name="ObjectShortName">adc0_raw_data[47:0]</obj_property>
+         <obj_property name="Radix">HEXRADIX</obj_property>
+      </wvobject>
+      <wvobject fp_name="/dsp_testbench/adc0_raw_dout" type="array" db_ref_id="1">
+         <obj_property name="ElementShortName">adc0_raw_dout[11:0]</obj_property>
+         <obj_property name="ObjectShortName">adc0_raw_dout[11:0]</obj_property>
+         <obj_property name="Radix">SIGNEDDECRADIX</obj_property>
+      </wvobject>
+      <wvobject fp_name="/dsp_testbench/adc1_raw_rden" type="logic" db_ref_id="1">
+         <obj_property name="ElementShortName">adc1_raw_rden</obj_property>
+         <obj_property name="ObjectShortName">adc1_raw_rden</obj_property>
+      </wvobject>
+      <wvobject fp_name="/dsp_testbench/adc1_raw_dvld" type="logic" db_ref_id="1">
+         <obj_property name="ElementShortName">adc1_raw_dvld</obj_property>
+         <obj_property name="ObjectShortName">adc1_raw_dvld</obj_property>
+      </wvobject>
+      <wvobject fp_name="/dsp_testbench/adc1_raw_vld" type="logic" db_ref_id="1">
+         <obj_property name="ElementShortName">adc1_raw_vld</obj_property>
+         <obj_property name="ObjectShortName">adc1_raw_vld</obj_property>
+      </wvobject>
+      <wvobject fp_name="/dsp_testbench/adc1_raw_data" type="array" db_ref_id="1">
+         <obj_property name="ElementShortName">adc1_raw_data[47:0]</obj_property>
+         <obj_property name="ObjectShortName">adc1_raw_data[47:0]</obj_property>
+         <obj_property name="Radix">HEXRADIX</obj_property>
+      </wvobject>
+      <wvobject fp_name="/dsp_testbench/adc1_raw_dout" type="array" db_ref_id="1">
+         <obj_property name="ElementShortName">adc1_raw_dout[11:0]</obj_property>
+         <obj_property name="ObjectShortName">adc1_raw_dout[11:0]</obj_property>
+         <obj_property name="Radix">SIGNEDDECRADIX</obj_property>
+      </wvobject>
+      <wvobject fp_name="/dsp_testbench/ofifo_empty" type="array" db_ref_id="1">
+         <obj_property name="ElementShortName">ofifo_empty[1:0]</obj_property>
+         <obj_property name="ObjectShortName">ofifo_empty[1:0]</obj_property>
+      </wvobject>
+      <wvobject fp_name="/dsp_testbench/ofifo_aempty" type="array" db_ref_id="1">
+         <obj_property name="ElementShortName">ofifo_aempty[1:0]</obj_property>
+         <obj_property name="ObjectShortName">ofifo_aempty[1:0]</obj_property>
+      </wvobject>
+      <wvobject fp_name="/dsp_testbench/ofifo_rden" type="array" db_ref_id="1">
+         <obj_property name="ElementShortName">ofifo_rden[1:0]</obj_property>
+         <obj_property name="ObjectShortName">ofifo_rden[1:0]</obj_property>
+      </wvobject>
+      <wvobject fp_name="/dsp_testbench/ofifo_vld" type="array" db_ref_id="1">
+         <obj_property name="ElementShortName">ofifo_vld[1:0]</obj_property>
+         <obj_property name="ObjectShortName">ofifo_vld[1:0]</obj_property>
+      </wvobject>
+      <wvobject fp_name="/dsp_testbench/dsp0_dout" type="array" db_ref_id="1">
+         <obj_property name="ElementShortName">dsp0_dout[127:0]</obj_property>
+         <obj_property name="ObjectShortName">dsp0_dout[127:0]</obj_property>
+         <obj_property name="Radix">HEXRADIX</obj_property>
+      </wvobject>
+      <wvobject fp_name="/dsp_testbench/dsp1_dout" type="array" db_ref_id="1">
+         <obj_property name="ElementShortName">dsp1_dout[127:0]</obj_property>
+         <obj_property name="ObjectShortName">dsp1_dout[127:0]</obj_property>
+         <obj_property name="Radix">HEXRADIX</obj_property>
+      </wvobject>
+   </wvobject>
+   <wvobject fp_name="group32" type="group">
+      <obj_property name="label">dsp_app</obj_property>
+      <obj_property name="DisplayName">label</obj_property>
+      <wvobject fp_name="/dsp_testbench/inst_dsp/inst_dsp_app/dst_dout" type="array" db_ref_id="1">
+         <obj_property name="ElementShortName">dst_dout[1:0]</obj_property>
+         <obj_property name="ObjectShortName">dst_dout[1:0]</obj_property>
+         <wvobject fp_name="/dsp_testbench/inst_dsp/inst_dsp_app/dst_dout[1]" type="array" db_ref_id="1">
+            <obj_property name="ElementShortName">[1]</obj_property>
+            <obj_property name="ObjectShortName">dst_dout[1]</obj_property>
+            <obj_property name="Radix">SIGNEDDECRADIX</obj_property>
+         </wvobject>
+         <wvobject fp_name="/dsp_testbench/inst_dsp/inst_dsp_app/dst_dout[0]" type="array" db_ref_id="1">
+            <obj_property name="ElementShortName">[0]</obj_property>
+            <obj_property name="ObjectShortName">dst_dout[0]</obj_property>
+            <obj_property name="Radix">SIGNEDDECRADIX</obj_property>
+         </wvobject>
+      </wvobject>
+      <wvobject fp_name="/dsp_testbench/inst_dsp/inst_dsp_app/dst_vld" type="array" db_ref_id="1">
+         <obj_property name="ElementShortName">dst_vld[1:0]</obj_property>
+         <obj_property name="ObjectShortName">dst_vld[1:0]</obj_property>
+      </wvobject>
+      <wvobject fp_name="/dsp_testbench/inst_dsp/inst_dsp_app/dst_frame" type="array" db_ref_id="1">
+         <obj_property name="ElementShortName">dst_frame[1:0]</obj_property>
+         <obj_property name="ObjectShortName">dst_frame[1:0]</obj_property>
+      </wvobject>
+   </wvobject>
+   <wvobject fp_name="group103" type="group">
+      <obj_property name="label">adc0_stacker</obj_property>
+      <obj_property name="DisplayName">label</obj_property>
+      <wvobject fp_name="/dsp_testbench/inst_dsp/\gen_dsp_frmr(0)\/inst_dsp_frmr/inst_vita_framer/stacker/frame" type="logic" db_ref_id="1">
+         <obj_property name="ElementShortName">frame</obj_property>
+         <obj_property name="ObjectShortName">frame</obj_property>
+      </wvobject>
+      <wvobject fp_name="/dsp_testbench/inst_dsp/\gen_dsp_frmr(0)\/inst_dsp_frmr/inst_vita_framer/stacker/din_vld" type="logic" db_ref_id="1">
+         <obj_property name="ElementShortName">din_vld</obj_property>
+         <obj_property name="ObjectShortName">din_vld</obj_property>
+      </wvobject>
+      <wvobject fp_name="/dsp_testbench/inst_dsp/\gen_dsp_frmr(0)\/inst_dsp_frmr/inst_vita_framer/stacker/din" type="array" db_ref_id="1">
+         <obj_property name="ElementShortName">din[15:0]</obj_property>
+         <obj_property name="ObjectShortName">din[15:0]</obj_property>
+      </wvobject>
+      <wvobject fp_name="/dsp_testbench/inst_dsp/\gen_dsp_frmr(0)\/inst_dsp_frmr/inst_vita_framer/stacker/dout_vld" type="logic" db_ref_id="1">
+         <obj_property name="ElementShortName">dout_vld</obj_property>
+         <obj_property name="ObjectShortName">dout_vld</obj_property>
+      </wvobject>
+      <wvobject fp_name="/dsp_testbench/inst_dsp/\gen_dsp_frmr(0)\/inst_dsp_frmr/inst_vita_framer/stacker/dout" type="array" db_ref_id="1">
+         <obj_property name="ElementShortName">dout[127:0]</obj_property>
+         <obj_property name="ObjectShortName">dout[127:0]</obj_property>
+         <obj_property name="Radix">HEXRADIX</obj_property>
+      </wvobject>
+      <wvobject fp_name="/dsp_testbench/inst_dsp/\gen_dsp_frmr(0)\/inst_dsp_frmr/inst_vita_framer/stacker/pad_bytes" type="array" db_ref_id="1">
+         <obj_property name="ElementShortName">pad_bytes[3:0]</obj_property>
+         <obj_property name="ObjectShortName">pad_bytes[3:0]</obj_property>
+      </wvobject>
+      <wvobject fp_name="/dsp_testbench/inst_dsp/\gen_dsp_frmr(0)\/inst_dsp_frmr/inst_vita_framer/stacker/sreg" type="array" db_ref_id="1">
+         <obj_property name="ElementShortName">sreg[7:0]</obj_property>
+         <obj_property name="ObjectShortName">sreg[7:0]</obj_property>
+      </wvobject>
+      <wvobject fp_name="/dsp_testbench/inst_dsp/\gen_dsp_frmr(0)\/inst_dsp_frmr/inst_vita_framer/stacker/pad_cnt" type="other" db_ref_id="1">
+         <obj_property name="ElementShortName">pad_cnt</obj_property>
+         <obj_property name="ObjectShortName">pad_cnt</obj_property>
+      </wvobject>
+      <wvobject fp_name="/dsp_testbench/inst_dsp/\gen_dsp_frmr(0)\/inst_dsp_frmr/inst_vita_framer/stacker/frame_d" type="logic" db_ref_id="1">
+         <obj_property name="ElementShortName">frame_d</obj_property>
+         <obj_property name="ObjectShortName">frame_d</obj_property>
+      </wvobject>
+      <wvobject fp_name="/dsp_testbench/inst_dsp/\gen_dsp_frmr(0)\/inst_dsp_frmr/inst_vita_framer/stacker/frame_fe" type="logic" db_ref_id="1">
+         <obj_property name="ElementShortName">frame_fe</obj_property>
+         <obj_property name="ObjectShortName">frame_fe</obj_property>
+      </wvobject>
+      <wvobject fp_name="/dsp_testbench/inst_dsp/\gen_dsp_frmr(0)\/inst_dsp_frmr/inst_vita_framer/stacker/stkr_ip" type="logic" db_ref_id="1">
+         <obj_property name="ElementShortName">stkr_ip</obj_property>
+         <obj_property name="ObjectShortName">stkr_ip</obj_property>
+      </wvobject>
+      <wvobject fp_name="/dsp_testbench/inst_dsp/\gen_dsp_frmr(0)\/inst_dsp_frmr/inst_vita_framer/stacker/full_dout_vld" type="logic" db_ref_id="1">
+         <obj_property name="ElementShortName">full_dout_vld</obj_property>
+         <obj_property name="ObjectShortName">full_dout_vld</obj_property>
+      </wvobject>
+      <wvobject fp_name="/dsp_testbench/inst_dsp/\gen_dsp_frmr(0)\/inst_dsp_frmr/inst_vita_framer/stacker/partial_dout_vld" type="logic" db_ref_id="1">
+         <obj_property name="ElementShortName">partial_dout_vld</obj_property>
+         <obj_property name="ObjectShortName">partial_dout_vld</obj_property>
+      </wvobject>
+      <wvobject fp_name="/dsp_testbench/inst_dsp/\gen_dsp_frmr(0)\/inst_dsp_frmr/inst_vita_framer/stacker/dout_vld_l" type="logic" db_ref_id="1">
+         <obj_property name="ElementShortName">dout_vld_l</obj_property>
+         <obj_property name="ObjectShortName">dout_vld_l</obj_property>
+      </wvobject>
+      <wvobject fp_name="/dsp_testbench/inst_dsp/\gen_dsp_frmr(0)\/inst_dsp_frmr/inst_vita_framer/stacker/ibw" type="other" db_ref_id="1">
+         <obj_property name="ElementShortName">ibw</obj_property>
+         <obj_property name="ObjectShortName">ibw</obj_property>
+      </wvobject>
+      <wvobject fp_name="/dsp_testbench/inst_dsp/\gen_dsp_frmr(0)\/inst_dsp_frmr/inst_vita_framer/stacker/obw" type="other" db_ref_id="1">
+         <obj_property name="ElementShortName">obw</obj_property>
+         <obj_property name="ObjectShortName">obw</obj_property>
+      </wvobject>
+      <wvobject fp_name="/dsp_testbench/inst_dsp/\gen_dsp_frmr(0)\/inst_dsp_frmr/inst_vita_framer/stacker/ratio" type="other" db_ref_id="1">
+         <obj_property name="ElementShortName">ratio</obj_property>
+         <obj_property name="ObjectShortName">ratio</obj_property>
+      </wvobject>
+   </wvobject>
+   <wvobject fp_name="group68" type="group">
+      <obj_property name="label">adc0_framer</obj_property>
+      <obj_property name="DisplayName">label</obj_property>
+      <wvobject fp_name="/dsp_testbench/inst_dsp/\gen_dsp_frmr(0)\/inst_dsp_frmr/frame_size" type="array" db_ref_id="1">
+         <obj_property name="ElementShortName">frame_size[15:0]</obj_property>
+         <obj_property name="ObjectShortName">frame_size[15:0]</obj_property>
+         <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
+      </wvobject>
+      <wvobject fp_name="/dsp_testbench/inst_dsp/\gen_dsp_frmr(0)\/inst_dsp_frmr/stream_id" type="array" db_ref_id="1">
+         <obj_property name="ElementShortName">stream_id[31:0]</obj_property>
+         <obj_property name="ObjectShortName">stream_id[31:0]</obj_property>
+         <obj_property name="Radix">HEXRADIX</obj_property>
+      </wvobject>
+      <wvobject fp_name="/dsp_testbench/inst_dsp/\gen_dsp_frmr(0)\/inst_dsp_frmr/din_rdy" type="logic" db_ref_id="1">
+         <obj_property name="ElementShortName">din_rdy</obj_property>
+         <obj_property name="ObjectShortName">din_rdy</obj_property>
+      </wvobject>
+      <wvobject fp_name="/dsp_testbench/inst_dsp/\gen_dsp_frmr(0)\/inst_dsp_frmr/din_frame" type="logic" db_ref_id="1">
+         <obj_property name="ElementShortName">din_frame</obj_property>
+         <obj_property name="ObjectShortName">din_frame</obj_property>
+      </wvobject>
+      <wvobject fp_name="/dsp_testbench/inst_dsp/\gen_dsp_frmr(0)\/inst_dsp_frmr/din_vld" type="logic" db_ref_id="1">
+         <obj_property name="ElementShortName">din_vld</obj_property>
+         <obj_property name="ObjectShortName">din_vld</obj_property>
+      </wvobject>
+      <wvobject fp_name="/dsp_testbench/inst_dsp/\gen_dsp_frmr(0)\/inst_dsp_frmr/din" type="array" db_ref_id="1">
+         <obj_property name="ElementShortName">din[15:0]</obj_property>
+         <obj_property name="ObjectShortName">din[15:0]</obj_property>
+         <obj_property name="Radix">SIGNEDDECRADIX</obj_property>
+      </wvobject>
+      <wvobject fp_name="/dsp_testbench/inst_dsp/\gen_dsp_frmr(0)\/inst_dsp_frmr/dst_fifo_empty" type="logic" db_ref_id="1">
+         <obj_property name="ElementShortName">dst_fifo_empty</obj_property>
+         <obj_property name="ObjectShortName">dst_fifo_empty</obj_property>
+      </wvobject>
+      <wvobject fp_name="/dsp_testbench/inst_dsp/\gen_dsp_frmr(0)\/inst_dsp_frmr/dst_fifo_aempty" type="logic" db_ref_id="1">
+         <obj_property name="ElementShortName">dst_fifo_aempty</obj_property>
+         <obj_property name="ObjectShortName">dst_fifo_aempty</obj_property>
+      </wvobject>
+      <wvobject fp_name="/dsp_testbench/inst_dsp/\gen_dsp_frmr(0)\/inst_dsp_frmr/inst_vita_framer/dst_fifo_wren" type="logic" db_ref_id="1">
+         <obj_property name="ElementShortName">dst_fifo_wren</obj_property>
+         <obj_property name="ObjectShortName">dst_fifo_wren</obj_property>
+      </wvobject>
+      <wvobject fp_name="/dsp_testbench/inst_dsp/\gen_dsp_frmr(0)\/inst_dsp_frmr/dst_fifo_rden" type="logic" db_ref_id="1">
+         <obj_property name="ElementShortName">dst_fifo_rden</obj_property>
+         <obj_property name="ObjectShortName">dst_fifo_rden</obj_property>
+      </wvobject>
+      <wvobject fp_name="/dsp_testbench/inst_dsp/\gen_dsp_frmr(0)\/inst_dsp_frmr/dst_fifo_vld" type="logic" db_ref_id="1">
+         <obj_property name="ElementShortName">dst_fifo_vld</obj_property>
+         <obj_property name="ObjectShortName">dst_fifo_vld</obj_property>
+      </wvobject>
+      <wvobject fp_name="/dsp_testbench/inst_dsp/\gen_dsp_frmr(0)\/inst_dsp_frmr/dst_fifo_dout" type="array" db_ref_id="1">
+         <obj_property name="ElementShortName">dst_fifo_dout[127:0]</obj_property>
+         <obj_property name="ObjectShortName">dst_fifo_dout[127:0]</obj_property>
+         <obj_property name="Radix">HEXRADIX</obj_property>
+      </wvobject>
+      <wvobject fp_name="/dsp_testbench/inst_dsp/\gen_dsp_frmr(0)\/inst_dsp_frmr/srst_d" type="logic" db_ref_id="1">
+         <obj_property name="ElementShortName">srst_d</obj_property>
+         <obj_property name="ObjectShortName">srst_d</obj_property>
+      </wvobject>
+      <wvobject fp_name="/dsp_testbench/inst_dsp/\gen_dsp_frmr(0)\/inst_dsp_frmr/data_fifo_wren" type="logic" db_ref_id="1">
+         <obj_property name="ElementShortName">data_fifo_wren</obj_property>
+         <obj_property name="ObjectShortName">data_fifo_wren</obj_property>
+      </wvobject>
+      <wvobject fp_name="/dsp_testbench/inst_dsp/\gen_dsp_frmr(0)\/inst_dsp_frmr/data_fifo_din" type="array" db_ref_id="1">
+         <obj_property name="ElementShortName">data_fifo_din[127:0]</obj_property>
+         <obj_property name="ObjectShortName">data_fifo_din[127:0]</obj_property>
+      </wvobject>
+      <wvobject fp_name="/dsp_testbench/inst_dsp/\gen_dsp_frmr(0)\/inst_dsp_frmr/data_fifo_empty" type="logic" db_ref_id="1">
+         <obj_property name="ElementShortName">data_fifo_empty</obj_property>
+         <obj_property name="ObjectShortName">data_fifo_empty</obj_property>
+      </wvobject>
+      <wvobject fp_name="/dsp_testbench/inst_dsp/\gen_dsp_frmr(0)\/inst_dsp_frmr/data_fifo_rden" type="logic" db_ref_id="1">
+         <obj_property name="ElementShortName">data_fifo_rden</obj_property>
+         <obj_property name="ObjectShortName">data_fifo_rden</obj_property>
+      </wvobject>
+      <wvobject fp_name="/dsp_testbench/inst_dsp/\gen_dsp_frmr(0)\/inst_dsp_frmr/data_fifo_valid" type="logic" db_ref_id="1">
+         <obj_property name="ElementShortName">data_fifo_valid</obj_property>
+         <obj_property name="ObjectShortName">data_fifo_valid</obj_property>
+      </wvobject>
+      <wvobject fp_name="/dsp_testbench/inst_dsp/\gen_dsp_frmr(0)\/inst_dsp_frmr/data_fifo_dout" type="array" db_ref_id="1">
+         <obj_property name="ElementShortName">data_fifo_dout[127:0]</obj_property>
+         <obj_property name="ObjectShortName">data_fifo_dout[127:0]</obj_property>
+         <obj_property name="Radix">HEXRADIX</obj_property>
+      </wvobject>
+      <wvobject fp_name="/dsp_testbench/inst_dsp/\gen_dsp_frmr(0)\/inst_dsp_frmr/data_fifo_afull" type="logic" db_ref_id="1">
+         <obj_property name="ElementShortName">data_fifo_afull</obj_property>
+         <obj_property name="ObjectShortName">data_fifo_afull</obj_property>
+      </wvobject>
+      <wvobject fp_name="/dsp_testbench/inst_dsp/\gen_dsp_frmr(0)\/inst_dsp_frmr/data_fifo_afull_d" type="logic" db_ref_id="1">
+         <obj_property name="ElementShortName">data_fifo_afull_d</obj_property>
+         <obj_property name="ObjectShortName">data_fifo_afull_d</obj_property>
+      </wvobject>
+      <wvobject fp_name="/dsp_testbench/inst_dsp/\gen_dsp_frmr(0)\/inst_dsp_frmr/inst_vita_framer/hdr_fifo/dout" type="array" db_ref_id="1">
+         <obj_property name="DisplayName">label</obj_property>
+         <obj_property name="ElementShortName">dout[127:0]</obj_property>
+         <obj_property name="ObjectShortName">dout[127:0]</obj_property>
+         <obj_property name="Radix">HEXRADIX</obj_property>
+         <obj_property name="label">header_dout[127:0]</obj_property>
+      </wvobject>
+      <wvobject fp_name="/dsp_testbench/inst_dsp/\gen_dsp_frmr(0)\/inst_dsp_frmr/src_fifo_afull" type="logic" db_ref_id="1">
+         <obj_property name="ElementShortName">src_fifo_afull</obj_property>
+         <obj_property name="ObjectShortName">src_fifo_afull</obj_property>
+      </wvobject>
+      <wvobject fp_name="/dsp_testbench/inst_dsp/\gen_dsp_frmr(0)\/inst_dsp_frmr/frmr_fifo_empty" type="logic" db_ref_id="1">
+         <obj_property name="ElementShortName">frmr_fifo_empty</obj_property>
+         <obj_property name="ObjectShortName">frmr_fifo_empty</obj_property>
+      </wvobject>
+      <wvobject fp_name="/dsp_testbench/inst_dsp/\gen_dsp_frmr(0)\/inst_dsp_frmr/frmr_fifo_aempty" type="logic" db_ref_id="1">
+         <obj_property name="ElementShortName">frmr_fifo_aempty</obj_property>
+         <obj_property name="ObjectShortName">frmr_fifo_aempty</obj_property>
+      </wvobject>
+      <wvobject fp_name="/dsp_testbench/inst_dsp/\gen_dsp_frmr(0)\/inst_dsp_frmr/frmr_fifo_rden" type="logic" db_ref_id="1">
+         <obj_property name="ElementShortName">frmr_fifo_rden</obj_property>
+         <obj_property name="ObjectShortName">frmr_fifo_rden</obj_property>
+      </wvobject>
+      <wvobject fp_name="/dsp_testbench/inst_dsp/\gen_dsp_frmr(0)\/inst_dsp_frmr/frmr_fifo_vld" type="logic" db_ref_id="1">
+         <obj_property name="ElementShortName">frmr_fifo_vld</obj_property>
+         <obj_property name="ObjectShortName">frmr_fifo_vld</obj_property>
+      </wvobject>
+      <wvobject fp_name="/dsp_testbench/inst_dsp/\gen_dsp_frmr(0)\/inst_dsp_frmr/frmr_fifo_dout" type="array" db_ref_id="1">
+         <obj_property name="ElementShortName">frmr_fifo_dout[127:0]</obj_property>
+         <obj_property name="ObjectShortName">frmr_fifo_dout[127:0]</obj_property>
+         <obj_property name="Radix">HEXRADIX</obj_property>
+      </wvobject>
+      <wvobject fp_name="/dsp_testbench/inst_dsp/\gen_dsp_frmr(0)\/inst_dsp_frmr/fifo_depth" type="other" db_ref_id="1">
+         <obj_property name="ElementShortName">fifo_depth</obj_property>
+         <obj_property name="ObjectShortName">fifo_depth</obj_property>
+      </wvobject>
+      <wvobject fp_name="/dsp_testbench/inst_dsp/\gen_dsp_frmr(0)\/inst_dsp_frmr/ibw" type="other" db_ref_id="1">
+         <obj_property name="ElementShortName">ibw</obj_property>
+         <obj_property name="ObjectShortName">ibw</obj_property>
+      </wvobject>
+   </wvobject>
+   <wvobject fp_name="/dsp_testbench/inst_dsp/\gen_dsp_frmr(0)\/inst_dsp_frmr/inst_vita_framer/din_vld" type="logic" db_ref_id="1">
+      <obj_property name="ElementShortName">din_vld</obj_property>
+      <obj_property name="ObjectShortName">din_vld</obj_property>
+   </wvobject>
+   <wvobject fp_name="/dsp_testbench/inst_dsp/\gen_dsp_frmr(0)\/inst_dsp_frmr/inst_vita_framer/din_vld_mskd" type="logic" db_ref_id="1">
+      <obj_property name="ElementShortName">din_vld_mskd</obj_property>
+      <obj_property name="ObjectShortName">din_vld_mskd</obj_property>
+   </wvobject>
+   <wvobject fp_name="/dsp_testbench/inst_dsp/\gen_dsp_frmr(0)\/inst_dsp_frmr/inst_vita_framer/src_fifo_afull" type="logic" db_ref_id="1">
+      <obj_property name="ElementShortName">src_fifo_afull</obj_property>
+      <obj_property name="ObjectShortName">src_fifo_afull</obj_property>
+   </wvobject>
+</wave_config>
