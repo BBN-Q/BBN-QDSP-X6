@@ -1,0 +1,3 @@
+# Constraint for clk*4
+NET "*/inst_decimator/*phase_*" TNM_NET = FFS "tgrp_en4";
+TIMESPEC TS_MCYCLE2 = FROM "tgrp_en2" TO "tgrp_en2" TS_sys_clk*4;
