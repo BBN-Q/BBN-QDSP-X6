@@ -1,0 +1,201 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<wave_config>
+   <wave_state>
+   </wave_state>
+   <db_ref_list>
+      <db_ref path="C:/Users/qlab/Documents/II-v1.6/dsp_testbench_isim_beh.wdb" id="1" type="auto">
+         <top_modules>
+            <top_module name="dsp_testbench" />
+            <top_module name="ii_dsp_pkg" />
+            <top_module name="numeric_std" />
+            <top_module name="std_logic_1164" />
+            <top_module name="std_logic_arith" />
+            <top_module name="std_logic_unsigned" />
+            <top_module name="textio" />
+            <top_module name="vcomponents" />
+            <top_module name="vital_primitives" />
+            <top_module name="vital_timing" />
+            <top_module name="vpkg" />
+         </top_modules>
+      </db_ref>
+   </db_ref_list>
+   <WVObjectSize size="7" />
+   <wvobject fp_name="/dsp_testbench/inst_dsp/inst_dsp_app/inst_decimator/u_Stage1/clk" type="logic" db_ref_id="1">
+      <obj_property name="ElementShortName">clk</obj_property>
+      <obj_property name="ObjectShortName">clk</obj_property>
+   </wvobject>
+   <wvobject fp_name="/dsp_testbench/inst_dsp/inst_dsp_app/inst_decimator/u_Stage1/reset" type="logic" db_ref_id="1">
+      <obj_property name="ElementShortName">reset</obj_property>
+      <obj_property name="ObjectShortName">reset</obj_property>
+   </wvobject>
+   <wvobject fp_name="/dsp_testbench/inst_dsp/inst_dsp_app/inst_decimator/u_Stage1/enb" type="logic" db_ref_id="1">
+      <obj_property name="ElementShortName">enb</obj_property>
+      <obj_property name="ObjectShortName">enb</obj_property>
+   </wvobject>
+   <wvobject fp_name="/dsp_testbench/inst_dsp/inst_dsp_app/inst_decimator/u_Stage1/enb_1_2_1" type="logic" db_ref_id="1">
+      <obj_property name="ElementShortName">enb_1_2_1</obj_property>
+      <obj_property name="ObjectShortName">enb_1_2_1</obj_property>
+   </wvobject>
+   <wvobject fp_name="/dsp_testbench/inst_dsp/inst_dsp_app/inst_decimator/u_Stage1/enb_1_2_0" type="logic" db_ref_id="1">
+      <obj_property name="ElementShortName">enb_1_2_0</obj_property>
+      <obj_property name="ObjectShortName">enb_1_2_0</obj_property>
+   </wvobject>
+   <wvobject fp_name="group119" type="group">
+      <obj_property name="label">Stage1</obj_property>
+      <obj_property name="DisplayName">label</obj_property>
+      <wvobject fp_name="/dsp_testbench/inst_dsp/inst_dsp_app/inst_decimator/u_Stage1/input" type="array" db_ref_id="1">
+         <obj_property name="ElementShortName">input[11:0]</obj_property>
+         <obj_property name="ObjectShortName">input[11:0]</obj_property>
+         <obj_property name="Radix">SIGNEDDECRADIX</obj_property>
+      </wvobject>
+      <wvobject fp_name="/dsp_testbench/inst_dsp/inst_dsp_app/inst_decimator/u_Stage1/output" type="array" db_ref_id="1">
+         <obj_property name="ElementShortName">output[13:0]</obj_property>
+         <obj_property name="ObjectShortName">output[13:0]</obj_property>
+         <obj_property name="Radix">SIGNEDDECRADIX</obj_property>
+      </wvobject>
+      <wvobject fp_name="/dsp_testbench/inst_dsp/inst_dsp_app/inst_decimator/u_Stage1/input_signed" type="array" db_ref_id="1">
+         <obj_property name="ElementShortName">input_signed[11:0]</obj_property>
+         <obj_property name="ObjectShortName">input_signed[11:0]</obj_property>
+         <obj_property name="Radix">SIGNEDDECRADIX</obj_property>
+      </wvobject>
+      <wvobject fp_name="/dsp_testbench/inst_dsp/inst_dsp_app/inst_decimator/u_Stage1/input_1" type="array" db_ref_id="1">
+         <obj_property name="ElementShortName">input_1[11:0]</obj_property>
+         <obj_property name="ObjectShortName">input_1[11:0]</obj_property>
+         <obj_property name="Radix">SIGNEDDECRADIX</obj_property>
+      </wvobject>
+      <wvobject fp_name="/dsp_testbench/inst_dsp/inst_dsp_app/inst_decimator/u_Stage1/decimcommutator_out1" type="array" db_ref_id="1">
+         <obj_property name="ElementShortName">decimcommutator_out1[11:0]</obj_property>
+         <obj_property name="ObjectShortName">decimcommutator_out1[11:0]</obj_property>
+         <obj_property name="Radix">SIGNEDDECRADIX</obj_property>
+      </wvobject>
+      <wvobject fp_name="/dsp_testbench/inst_dsp/inst_dsp_app/inst_decimator/u_Stage1/decimcommutator_out2" type="array" db_ref_id="1">
+         <obj_property name="ElementShortName">decimcommutator_out2[11:0]</obj_property>
+         <obj_property name="ObjectShortName">decimcommutator_out2[11:0]</obj_property>
+         <obj_property name="Radix">SIGNEDDECRADIX</obj_property>
+      </wvobject>
+      <wvobject fp_name="/dsp_testbench/inst_dsp/inst_dsp_app/inst_decimator/u_Stage1/decimcommutator_out1_signed" type="array" db_ref_id="1">
+         <obj_property name="ElementShortName">decimcommutator_out1_signed[11:0]</obj_property>
+         <obj_property name="ObjectShortName">decimcommutator_out1_signed[11:0]</obj_property>
+         <obj_property name="Radix">SIGNEDDECRADIX</obj_property>
+      </wvobject>
+      <wvobject fp_name="/dsp_testbench/inst_dsp/inst_dsp_app/inst_decimator/u_Stage1/delay2_out1" type="array" db_ref_id="1">
+         <obj_property name="ElementShortName">delay2_out1[11:0]</obj_property>
+         <obj_property name="ObjectShortName">delay2_out1[11:0]</obj_property>
+         <obj_property name="Radix">SIGNEDDECRADIX</obj_property>
+      </wvobject>
+      <wvobject fp_name="/dsp_testbench/inst_dsp/inst_dsp_app/inst_decimator/u_Stage1/phase1_out1" type="array" db_ref_id="1">
+         <obj_property name="ElementShortName">phase1_out1[12:0]</obj_property>
+         <obj_property name="ObjectShortName">phase1_out1[12:0]</obj_property>
+         <obj_property name="Radix">SIGNEDDECRADIX</obj_property>
+      </wvobject>
+      <wvobject fp_name="/dsp_testbench/inst_dsp/inst_dsp_app/inst_decimator/u_Stage1/phase1_out1_signed" type="array" db_ref_id="1">
+         <obj_property name="ElementShortName">phase1_out1_signed[12:0]</obj_property>
+         <obj_property name="ObjectShortName">phase1_out1_signed[12:0]</obj_property>
+         <obj_property name="Radix">SIGNEDDECRADIX</obj_property>
+      </wvobject>
+      <wvobject fp_name="/dsp_testbench/inst_dsp/inst_dsp_app/inst_decimator/u_Stage1/phase1_out1_buff" type="array" db_ref_id="1">
+         <obj_property name="ElementShortName">phase1_out1_buff[12:0]</obj_property>
+         <obj_property name="ObjectShortName">phase1_out1_buff[12:0]</obj_property>
+         <obj_property name="Radix">SIGNEDDECRADIX</obj_property>
+      </wvobject>
+      <wvobject fp_name="/dsp_testbench/inst_dsp/inst_dsp_app/inst_decimator/u_Stage1/decimcommutator_out2_signed" type="array" db_ref_id="1">
+         <obj_property name="ElementShortName">decimcommutator_out2_signed[11:0]</obj_property>
+         <obj_property name="ObjectShortName">decimcommutator_out2_signed[11:0]</obj_property>
+         <obj_property name="Radix">SIGNEDDECRADIX</obj_property>
+      </wvobject>
+      <wvobject fp_name="/dsp_testbench/inst_dsp/inst_dsp_app/inst_decimator/u_Stage1/delay3_out1" type="array" db_ref_id="1">
+         <obj_property name="ElementShortName">delay3_out1[11:0]</obj_property>
+         <obj_property name="ObjectShortName">delay3_out1[11:0]</obj_property>
+         <obj_property name="Radix">SIGNEDDECRADIX</obj_property>
+      </wvobject>
+      <wvobject fp_name="/dsp_testbench/inst_dsp/inst_dsp_app/inst_decimator/u_Stage1/phase2_out1" type="array" db_ref_id="1">
+         <obj_property name="ElementShortName">phase2_out1[12:0]</obj_property>
+         <obj_property name="ObjectShortName">phase2_out1[12:0]</obj_property>
+         <obj_property name="Radix">SIGNEDDECRADIX</obj_property>
+      </wvobject>
+      <wvobject fp_name="/dsp_testbench/inst_dsp/inst_dsp_app/inst_decimator/u_Stage1/phase2_out1_signed" type="array" db_ref_id="1">
+         <obj_property name="ElementShortName">phase2_out1_signed[12:0]</obj_property>
+         <obj_property name="ObjectShortName">phase2_out1_signed[12:0]</obj_property>
+         <obj_property name="Radix">SIGNEDDECRADIX</obj_property>
+      </wvobject>
+      <wvobject fp_name="/dsp_testbench/inst_dsp/inst_dsp_app/inst_decimator/u_Stage1/phase2_out1_buff" type="array" db_ref_id="1">
+         <obj_property name="ElementShortName">phase2_out1_buff[12:0]</obj_property>
+         <obj_property name="ObjectShortName">phase2_out1_buff[12:0]</obj_property>
+         <obj_property name="Radix">SIGNEDDECRADIX</obj_property>
+      </wvobject>
+      <wvobject fp_name="/dsp_testbench/inst_dsp/inst_dsp_app/inst_decimator/u_Stage1/sum1_out1" type="array" db_ref_id="1">
+         <obj_property name="ElementShortName">sum1_out1[13:0]</obj_property>
+         <obj_property name="ObjectShortName">sum1_out1[13:0]</obj_property>
+         <obj_property name="Radix">SIGNEDDECRADIX</obj_property>
+      </wvobject>
+      <wvobject fp_name="/dsp_testbench/inst_dsp/inst_dsp_app/inst_decimator/u_Stage1/delay1_out1" type="array" db_ref_id="1">
+         <obj_property name="ElementShortName">delay1_out1[13:0]</obj_property>
+         <obj_property name="ObjectShortName">delay1_out1[13:0]</obj_property>
+         <obj_property name="Radix">SIGNEDDECRADIX</obj_property>
+      </wvobject>
+      <wvobject fp_name="/dsp_testbench/inst_dsp/inst_dsp_app/inst_decimator/u_Stage1/gain_cast" type="array" db_ref_id="1">
+         <obj_property name="ElementShortName">gain_cast[27:0]</obj_property>
+         <obj_property name="ObjectShortName">gain_cast[27:0]</obj_property>
+         <obj_property name="Radix">SIGNEDDECRADIX</obj_property>
+      </wvobject>
+      <wvobject fp_name="/dsp_testbench/inst_dsp/inst_dsp_app/inst_decimator/u_Stage1/gain_out1" type="array" db_ref_id="1">
+         <obj_property name="ElementShortName">gain_out1[13:0]</obj_property>
+         <obj_property name="ObjectShortName">gain_out1[13:0]</obj_property>
+         <obj_property name="Radix">SIGNEDDECRADIX</obj_property>
+      </wvobject>
+      <wvobject fp_name="/dsp_testbench/inst_dsp/inst_dsp_app/inst_decimator/u_Stage1/delay6_out1" type="array" db_ref_id="1">
+         <obj_property name="ElementShortName">delay6_out1[13:0]</obj_property>
+         <obj_property name="ObjectShortName">delay6_out1[13:0]</obj_property>
+         <obj_property name="Radix">SIGNEDDECRADIX</obj_property>
+      </wvobject>
+   </wvobject>
+   <wvobject fp_name="group134" type="group">
+      <obj_property name="label">DecimCommutator</obj_property>
+      <obj_property name="DisplayName">label</obj_property>
+      <wvobject fp_name="/dsp_testbench/inst_dsp/inst_dsp_app/inst_decimator/u_Stage1/u_DecimCommutator/input" type="array" db_ref_id="1">
+         <obj_property name="ElementShortName">input[11:0]</obj_property>
+         <obj_property name="ObjectShortName">input[11:0]</obj_property>
+         <obj_property name="Radix">SIGNEDDECRADIX</obj_property>
+      </wvobject>
+      <wvobject fp_name="/dsp_testbench/inst_dsp/inst_dsp_app/inst_decimator/u_Stage1/u_DecimCommutator/output1" type="array" db_ref_id="1">
+         <obj_property name="ElementShortName">output1[11:0]</obj_property>
+         <obj_property name="ObjectShortName">output1[11:0]</obj_property>
+         <obj_property name="Radix">SIGNEDDECRADIX</obj_property>
+      </wvobject>
+      <wvobject fp_name="/dsp_testbench/inst_dsp/inst_dsp_app/inst_decimator/u_Stage1/u_DecimCommutator/output2" type="array" db_ref_id="1">
+         <obj_property name="ElementShortName">output2[11:0]</obj_property>
+         <obj_property name="ObjectShortName">output2[11:0]</obj_property>
+         <obj_property name="Radix">SIGNEDDECRADIX</obj_property>
+      </wvobject>
+      <wvobject fp_name="/dsp_testbench/inst_dsp/inst_dsp_app/inst_decimator/u_Stage1/u_DecimCommutator/input_signed" type="array" db_ref_id="1">
+         <obj_property name="ElementShortName">input_signed[11:0]</obj_property>
+         <obj_property name="ObjectShortName">input_signed[11:0]</obj_property>
+         <obj_property name="Radix">SIGNEDDECRADIX</obj_property>
+      </wvobject>
+      <wvobject fp_name="/dsp_testbench/inst_dsp/inst_dsp_app/inst_decimator/u_Stage1/u_DecimCommutator/delay1_out1" type="array" db_ref_id="1">
+         <obj_property name="ElementShortName">delay1_out1[11:0]</obj_property>
+         <obj_property name="ObjectShortName">delay1_out1[11:0]</obj_property>
+         <obj_property name="Radix">SIGNEDDECRADIX</obj_property>
+      </wvobject>
+      <wvobject fp_name="/dsp_testbench/inst_dsp/inst_dsp_app/inst_decimator/u_Stage1/u_DecimCommutator/downsamp1_out1" type="array" db_ref_id="1">
+         <obj_property name="ElementShortName">downsamp1_out1[11:0]</obj_property>
+         <obj_property name="ObjectShortName">downsamp1_out1[11:0]</obj_property>
+         <obj_property name="Radix">SIGNEDDECRADIX</obj_property>
+      </wvobject>
+      <wvobject fp_name="/dsp_testbench/inst_dsp/inst_dsp_app/inst_decimator/u_Stage1/u_DecimCommutator/delay2_out1" type="array" db_ref_id="1">
+         <obj_property name="ElementShortName">delay2_out1[11:0]</obj_property>
+         <obj_property name="ObjectShortName">delay2_out1[11:0]</obj_property>
+         <obj_property name="Radix">SIGNEDDECRADIX</obj_property>
+      </wvobject>
+      <wvobject fp_name="/dsp_testbench/inst_dsp/inst_dsp_app/inst_decimator/u_Stage1/u_DecimCommutator/downsamp2_out1" type="array" db_ref_id="1">
+         <obj_property name="ElementShortName">downsamp2_out1[11:0]</obj_property>
+         <obj_property name="ObjectShortName">downsamp2_out1[11:0]</obj_property>
+         <obj_property name="Radix">SIGNEDDECRADIX</obj_property>
+      </wvobject>
+      <wvobject fp_name="/dsp_testbench/inst_dsp/inst_dsp_app/inst_decimator/u_Stage1/u_DecimCommutator/delay3_out1" type="array" db_ref_id="1">
+         <obj_property name="ElementShortName">delay3_out1[11:0]</obj_property>
+         <obj_property name="ObjectShortName">delay3_out1[11:0]</obj_property>
+         <obj_property name="Radix">SIGNEDDECRADIX</obj_property>
+      </wvobject>
+   </wvobject>
+</wave_config>

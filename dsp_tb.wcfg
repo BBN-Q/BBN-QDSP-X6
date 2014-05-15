@@ -7,7 +7,6 @@
          <top_modules>
             <top_module name="dsp_testbench" />
             <top_module name="ii_dsp_pkg" />
-            <top_module name="iirdecimfilter_pkg" />
             <top_module name="numeric_std" />
             <top_module name="std_logic_1164" />
             <top_module name="std_logic_arith" />
@@ -115,8 +114,8 @@
       <obj_property name="label">dsp_app</obj_property>
       <obj_property name="DisplayName">label</obj_property>
       <wvobject fp_name="/dsp_testbench/inst_dsp/inst_dsp_app/muxed_filter_in" type="array" db_ref_id="1">
-         <obj_property name="ElementShortName">muxed_filter_in[15:0]</obj_property>
-         <obj_property name="ObjectShortName">muxed_filter_in[15:0]</obj_property>
+         <obj_property name="ElementShortName">muxed_filter_in[11:0]</obj_property>
+         <obj_property name="ObjectShortName">muxed_filter_in[11:0]</obj_property>
          <obj_property name="Radix">SIGNEDDECRADIX</obj_property>
       </wvobject>
       <wvobject fp_name="/dsp_testbench/inst_dsp/inst_dsp_app/dst_dout" type="array" db_ref_id="1">
@@ -136,6 +135,7 @@
       <wvobject fp_name="/dsp_testbench/inst_dsp/inst_dsp_app/dst_vld" type="array" db_ref_id="1">
          <obj_property name="ElementShortName">dst_vld[1:0]</obj_property>
          <obj_property name="ObjectShortName">dst_vld[1:0]</obj_property>
+         <obj_property name="Reversed">false</obj_property>
       </wvobject>
       <wvobject fp_name="/dsp_testbench/inst_dsp/inst_dsp_app/dst_frame" type="array" db_ref_id="1">
          <obj_property name="ElementShortName">dst_frame[1:0]</obj_property>
