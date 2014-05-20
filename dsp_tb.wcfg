@@ -5,6 +5,7 @@
    <db_ref_list>
       <db_ref path="C:/Users/qlab/Documents/II-v1.6/dsp_testbench_isim_beh.wdb" id="1" type="auto">
          <top_modules>
+            <top_module name="channelfilter_pkg" />
             <top_module name="dsp_testbench" />
             <top_module name="ii_dsp_pkg" />
             <top_module name="numeric_std" />
@@ -19,7 +20,7 @@
          </top_modules>
       </db_ref>
    </db_ref_list>
-   <WVObjectSize size="12" />
+   <WVObjectSize size="17" />
    <wvobject fp_name="/dsp_testbench/testbench_state" type="other" db_ref_id="1">
       <obj_property name="ElementShortName">testbench_state</obj_property>
       <obj_property name="ObjectShortName">testbench_state</obj_property>
@@ -35,6 +36,28 @@
    <wvobject fp_name="/dsp_testbench/rst" type="logic" db_ref_id="1">
       <obj_property name="ElementShortName">rst</obj_property>
       <obj_property name="ObjectShortName">rst</obj_property>
+   </wvobject>
+   <wvobject fp_name="/dsp_testbench/wb_adr_i" type="array" db_ref_id="1">
+      <obj_property name="ElementShortName">wb_adr_i[15:0]</obj_property>
+      <obj_property name="ObjectShortName">wb_adr_i[15:0]</obj_property>
+      <obj_property name="Radix">HEXRADIX</obj_property>
+   </wvobject>
+   <wvobject fp_name="/dsp_testbench/wb_dat_i" type="array" db_ref_id="1">
+      <obj_property name="ElementShortName">wb_dat_i[31:0]</obj_property>
+      <obj_property name="ObjectShortName">wb_dat_i[31:0]</obj_property>
+      <obj_property name="Radix">HEXRADIX</obj_property>
+   </wvobject>
+   <wvobject fp_name="/dsp_testbench/wb_we_i" type="logic" db_ref_id="1">
+      <obj_property name="ElementShortName">wb_we_i</obj_property>
+      <obj_property name="ObjectShortName">wb_we_i</obj_property>
+   </wvobject>
+   <wvobject fp_name="/dsp_testbench/wb_stb_i" type="logic" db_ref_id="1">
+      <obj_property name="ElementShortName">wb_stb_i</obj_property>
+      <obj_property name="ObjectShortName">wb_stb_i</obj_property>
+   </wvobject>
+   <wvobject fp_name="/dsp_testbench/wb_ack_o" type="logic" db_ref_id="1">
+      <obj_property name="ElementShortName">wb_ack_o</obj_property>
+      <obj_property name="ObjectShortName">wb_ack_o</obj_property>
    </wvobject>
    <wvobject fp_name="group33" type="group">
       <obj_property name="label">dsp_top</obj_property>
@@ -113,11 +136,6 @@
    <wvobject fp_name="group32" type="group">
       <obj_property name="label">dsp_app</obj_property>
       <obj_property name="DisplayName">label</obj_property>
-      <wvobject fp_name="/dsp_testbench/inst_dsp/inst_dsp_app/muxed_filter_in" type="array" db_ref_id="1">
-         <obj_property name="ElementShortName">muxed_filter_in[11:0]</obj_property>
-         <obj_property name="ObjectShortName">muxed_filter_in[11:0]</obj_property>
-         <obj_property name="Radix">SIGNEDDECRADIX</obj_property>
-      </wvobject>
       <wvobject fp_name="/dsp_testbench/inst_dsp/inst_dsp_app/dst_dout" type="array" db_ref_id="1">
          <obj_property name="ElementShortName">dst_dout[1:0]</obj_property>
          <obj_property name="ObjectShortName">dst_dout[1:0]</obj_property>

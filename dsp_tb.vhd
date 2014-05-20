@@ -21,10 +21,11 @@ signal fs_clk : std_logic := '0';
 signal rst : std_logic := '1';
 
 -- wishbone signals
-signal wb_adr_o : std_logic_vector(15 downto 0) := (others => '0');
-signal wb_dat_o : std_logic_vector(31 downto 0) := (others => '0');
-signal wb_we_o  : std_logic := '0';
-signal wb_stb_o : std_logic := '0';
+signal wb_adr_i : std_logic_vector(15 downto 0) := (others => '0');
+signal wb_dat_i : std_logic_vector(31 downto 0) := (others => '0');
+signal wb_we_i  : std_logic := '0';
+signal wb_stb_i : std_logic := '0';
+signal wb_ack_o : std_logic := '0';
 
 -- ADC raw interface
 signal adc0_raw_rden : std_logic := '0';
@@ -47,7 +48,7 @@ signal ofifo_vld    : std_logic_vector(1 downto 0) := "00";
 signal dsp0_dout    : std_logic_vector(127 downto 0) := (others => '0');
 signal dsp1_dout    : std_logic_vector(127 downto 0) := (others => '0');
 
-type testbench_states is (RESETTING, RUNNING, STOPPING);
+type testbench_states is (RESETTING, WB_WRITE, RUNNING, STOPPING);
 signal testbench_state : testbench_states := RESETTING;
 
 component afifo_1k48x12
@@ -142,7 +143,7 @@ port map (
 
 inst_dsp : entity work.ii_dsp_top
 generic map (
-	dsp_frmr_offset => x"0007",
+	dsp_frmr_offset => x"0700",
 	dsp_app_offset => x"0000"
 )
 port map (
@@ -152,10 +153,11 @@ port map (
 	-- Slave Wishbone Interface
 	wb_rst_i => rst,
 	wb_clk_i => clk,
-	wb_adr_i => wb_adr_o,
-	wb_dat_i => wb_dat_o,
-	wb_we_i  => wb_we_o,
-	wb_stb_i => wb_stb_o,
+	wb_adr_i => wb_adr_i,
+	wb_dat_i => wb_dat_i,
+	wb_we_i  => wb_we_i,
+	wb_stb_i => wb_stb_i,
+	wb_ack_o => wb_ack_o,
 
 	-- Input serialized raw data interface
 	rden(0)    => adc0_raw_rden,
@@ -184,6 +186,16 @@ begin
 	
 	RST <= '0';
 	wait for 100 ns;
+
+	testbench_state <= WB_WRITE;
+	wb_adr_i <= X"0710";
+	wb_dat_i <= x"00001000";
+	wb_we_i <= '1';
+	wb_stb_i <= '1';
+
+	wait until wb_ack_o = '1';
+
+	wb_stb_i <= '0';
 
 	testbench_state <= RUNNING;
 	wait for 2 us;
