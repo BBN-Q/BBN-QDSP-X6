@@ -167,6 +167,7 @@ port map (
 	din_vld(1) => adc1_raw_vld,
 	din(0)     => adc0_raw_dout,
 	din(1)     => adc1_raw_dout,
+	frame_in   => adc1_raw_vld & adc0_raw_vld,
 
 	-- VITA-49 Output FIFO Interface
 	ofifo_empty   => ofifo_empty,

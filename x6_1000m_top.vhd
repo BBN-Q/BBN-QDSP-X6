@@ -586,9 +586,11 @@ architecture arch of x6_1000m_top is
   signal adc0_raw_rden        : std_logic;
   signal adc0_raw_vld         : std_logic;
   signal adc0_raw_dout        : std_logic_vector(11 downto 0);
+  signal adc0_frame_out       : std_logic;
   signal adc1_raw_rden        : std_logic;
   signal adc1_raw_vld         : std_logic;
   signal adc1_raw_dout        : std_logic_vector(11 downto 0);
+  signal adc1_frame_out       : std_logic;
 ------------------------------------------------------------------------------
 -- DAC interface
 ------------------------------------------------------------------------------
@@ -1793,11 +1795,13 @@ begin
     adc0_raw_rden        => adc0_raw_rden,
     adc0_raw_vld         => adc0_raw_vld,
     adc0_raw_dout        => adc0_raw_dout,
+    adc0_frame_out       => adc0_frame_out,
 
     -- ADC1 raw interface
     adc1_raw_rden        => adc1_raw_rden,
     adc1_raw_vld         => adc1_raw_vld,
     adc1_raw_dout        => adc1_raw_dout,
+    adc1_frame_out       => adc1_frame_out,
 
     -- DAC0 data source fifo interface
     dac0_src_aempty      => vfifo0_o_aempty,
@@ -1937,6 +1941,7 @@ begin
     din_vld(1) => adc1_raw_vld,
     din(0)     => adc0_raw_dout,
     din(1)     => adc1_raw_dout,
+    frame_in   => adc1_frame_out & adc0_frame_out,
 
     -- VITA-49 Output FIFO Interface
     ofifo_empty  => rtr_src_aempty(2 downto 0),
