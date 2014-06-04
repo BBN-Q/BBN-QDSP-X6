@@ -41,12 +41,13 @@ signal adc1_raw_data : std_logic_vector(47 downto 0) := (others => '0');
 signal adc1_raw_dout : std_logic_vector(11 downto 0) := (others => '0');
 
 -- DSP VITA interface
-signal ofifo_empty  : std_logic_vector(1 downto 0) := "00";
-signal ofifo_aempty : std_logic_vector(1 downto 0) := "00";
-signal ofifo_rden   : std_logic_vector(1 downto 0) := "00";
-signal ofifo_vld    : std_logic_vector(1 downto 0) := "00";
+signal ofifo_empty  : std_logic_vector(2 downto 0) := "000";
+signal ofifo_aempty : std_logic_vector(2 downto 0) := "000";
+signal ofifo_rden   : std_logic_vector(2 downto 0) := "000";
+signal ofifo_vld    : std_logic_vector(2 downto 0) := "000";
 signal dsp0_dout    : std_logic_vector(127 downto 0) := (others => '0');
 signal dsp1_dout    : std_logic_vector(127 downto 0) := (others => '0');
+signal dsp2_dout    : std_logic_vector(127 downto 0) := (others => '0');
 
 type testbench_states is (RESETTING, WB_WRITE, RUNNING, STOPPING);
 signal testbench_state : testbench_states := RESETTING;
@@ -173,7 +174,8 @@ port map (
 	ofifo_rden    => ofifo_rden,
 	ofifo_vld     => ofifo_vld,
 	ofifo_dout(0) => dsp0_dout,
-	ofifo_dout(1) => dsp1_dout
+	ofifo_dout(1) => dsp1_dout,
+	ofifo_dout(2) => dsp2_dout
 );
 
 ofifo_rden <= not ofifo_aempty;

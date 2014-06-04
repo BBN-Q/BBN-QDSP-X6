@@ -719,6 +719,7 @@ architecture arch of x6_1000m_top is
 ------------------------------------------------------------------------------
   signal dsp0_dout            : std_logic_vector(127 downto 0);
   signal dsp1_dout            : std_logic_vector(127 downto 0);
+  signal dsp2_dout            : std_logic_vector(127 downto 0);
 
 begin
 
@@ -1907,12 +1908,15 @@ begin
     ts_pps_pls           => h_pps_demet_re
   );
 
-inst_dsp : entity work.ii_dsp_top
-generic map (
+  adc0_fifo_rd <= '1';
+  adc1_fifo_rd <= '1';
+
+  inst_dsp : entity work.ii_dsp_top
+  generic map (
     dsp_frmr_offset => MR_BSP,
     dsp_app_offset => x"0000"
-)
-port map (
+  )
+  port map (
     srst => backend_rst,
     sys_clk => sys_clk,
 
@@ -1935,13 +1939,14 @@ port map (
     din(1)     => adc1_raw_dout,
 
     -- VITA-49 Output FIFO Interface
-    ofifo_empty  => rtr_src_aempty(2 downto 1),
-    ofifo_aempty => rtr_src_empty(2 downto 1),
-    ofifo_rden   => rtr_src_rden(2 downto 1),
-    ofifo_vld    => rtr_src_vld(2 downto 1),
+    ofifo_empty  => rtr_src_aempty(2 downto 0),
+    ofifo_aempty => rtr_src_empty(2 downto 0),
+    ofifo_rden   => rtr_src_rden(2 downto 0),
+    ofifo_vld    => rtr_src_vld(2 downto 0),
     ofifo_dout(0) => dsp0_dout,
-    ofifo_dout(1) => dsp1_dout
-);
+    ofifo_dout(1) => dsp1_dout,
+    ofifo_dout(2) => dsp2_dout
+  );
 
 
 ------------------------------------------------------------------------------
@@ -1951,10 +1956,12 @@ port map (
   -- rtr_src_empty  <= adc1_fifo_empty & adc0_fifo_empty & lpbk_fifo_empty;
   -- rtr_src_vld    <= adc1_fifo_valid & adc0_fifo_valid & lpbk_fifo_vld;
   -- rtr_src_data   <= adc1_fifo_dout & adc0_fifo_dout & lpbk_fifo_dout;
-  rtr_src_aempty(0) <= lpbk_fifo_aempty;
-  rtr_src_empty(0)  <= lpbk_fifo_empty;
-  rtr_src_vld(0) <= lpbk_fifo_vld;
-  rtr_src_data <= dsp1_dout & dsp0_dout & lpbk_fifo_dout;
+  -- rtr_src_aempty(0) <= lpbk_fifo_aempty;
+  -- rtr_src_empty(0)  <= lpbk_fifo_empty;
+  -- rtr_src_vld(0) <= lpbk_fifo_vld;
+  -- rtr_src_data <= dsp2_dout & dsp1_dout & dsp0_dout & lpbk_fifo_dout;
+  lpbk_fifo_rden <= '1';
+  rtr_src_data <= dsp2_dout & dsp1_dout & dsp0_dout;
 
   inst_router : ii_vita_router
   generic map (
@@ -1979,9 +1986,7 @@ port map (
     dst_data             => rtr_dst_data
   );
 
-  lpbk_fifo_rden <= rtr_src_rden(0);
-  adc0_fifo_rd <= '1';
-  adc1_fifo_rd <= '1';
+  -- lpbk_fifo_rden <= rtr_src_rden(0);
   -- adc0_fifo_rd   <= rtr_src_rden(1);
   -- adc1_fifo_rd   <= rtr_src_rden(2);
 

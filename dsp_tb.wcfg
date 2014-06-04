@@ -107,20 +107,20 @@
          <obj_property name="Radix">SIGNEDDECRADIX</obj_property>
       </wvobject>
       <wvobject fp_name="/dsp_testbench/ofifo_empty" type="array" db_ref_id="1">
-         <obj_property name="ElementShortName">ofifo_empty[1:0]</obj_property>
-         <obj_property name="ObjectShortName">ofifo_empty[1:0]</obj_property>
+         <obj_property name="ElementShortName">ofifo_empty[2:0]</obj_property>
+         <obj_property name="ObjectShortName">ofifo_empty[2:0]</obj_property>
       </wvobject>
       <wvobject fp_name="/dsp_testbench/ofifo_aempty" type="array" db_ref_id="1">
-         <obj_property name="ElementShortName">ofifo_aempty[1:0]</obj_property>
-         <obj_property name="ObjectShortName">ofifo_aempty[1:0]</obj_property>
+         <obj_property name="ElementShortName">ofifo_aempty[2:0]</obj_property>
+         <obj_property name="ObjectShortName">ofifo_aempty[2:0]</obj_property>
       </wvobject>
       <wvobject fp_name="/dsp_testbench/ofifo_rden" type="array" db_ref_id="1">
-         <obj_property name="ElementShortName">ofifo_rden[1:0]</obj_property>
-         <obj_property name="ObjectShortName">ofifo_rden[1:0]</obj_property>
+         <obj_property name="ElementShortName">ofifo_rden[2:0]</obj_property>
+         <obj_property name="ObjectShortName">ofifo_rden[2:0]</obj_property>
       </wvobject>
       <wvobject fp_name="/dsp_testbench/ofifo_vld" type="array" db_ref_id="1">
-         <obj_property name="ElementShortName">ofifo_vld[1:0]</obj_property>
-         <obj_property name="ObjectShortName">ofifo_vld[1:0]</obj_property>
+         <obj_property name="ElementShortName">ofifo_vld[2:0]</obj_property>
+         <obj_property name="ObjectShortName">ofifo_vld[2:0]</obj_property>
       </wvobject>
       <wvobject fp_name="/dsp_testbench/dsp0_dout" type="array" db_ref_id="1">
          <obj_property name="ElementShortName">dsp0_dout[127:0]</obj_property>
@@ -136,9 +136,19 @@
    <wvobject fp_name="group32" type="group">
       <obj_property name="label">dsp_app</obj_property>
       <obj_property name="DisplayName">label</obj_property>
+      <wvobject fp_name="/dsp_testbench/inst_dsp/inst_dsp_app/phase_inc[0]" type="array" db_ref_id="1">
+         <obj_property name="ElementShortName">[0]</obj_property>
+         <obj_property name="ObjectShortName">phase_inc[0]</obj_property>
+         <obj_property name="Radix">SIGNEDDECRADIX</obj_property>
+      </wvobject>
       <wvobject fp_name="/dsp_testbench/inst_dsp/inst_dsp_app/dst_dout" type="array" db_ref_id="1">
-         <obj_property name="ElementShortName">dst_dout[1:0]</obj_property>
-         <obj_property name="ObjectShortName">dst_dout[1:0]</obj_property>
+         <obj_property name="ElementShortName">dst_dout[2:0]</obj_property>
+         <obj_property name="ObjectShortName">dst_dout[2:0]</obj_property>
+         <wvobject fp_name="/dsp_testbench/inst_dsp/inst_dsp_app/dst_dout[2]" type="array" db_ref_id="1">
+            <obj_property name="ElementShortName">[2]</obj_property>
+            <obj_property name="ObjectShortName">dst_dout[2]</obj_property>
+            <obj_property name="Radix">SIGNEDDECRADIX</obj_property>
+         </wvobject>
          <wvobject fp_name="/dsp_testbench/inst_dsp/inst_dsp_app/dst_dout[1]" type="array" db_ref_id="1">
             <obj_property name="ElementShortName">[1]</obj_property>
             <obj_property name="ObjectShortName">dst_dout[1]</obj_property>
@@ -151,13 +161,13 @@
          </wvobject>
       </wvobject>
       <wvobject fp_name="/dsp_testbench/inst_dsp/inst_dsp_app/dst_vld" type="array" db_ref_id="1">
-         <obj_property name="ElementShortName">dst_vld[1:0]</obj_property>
-         <obj_property name="ObjectShortName">dst_vld[1:0]</obj_property>
+         <obj_property name="ElementShortName">dst_vld[2:0]</obj_property>
+         <obj_property name="ObjectShortName">dst_vld[2:0]</obj_property>
          <obj_property name="Reversed">false</obj_property>
       </wvobject>
       <wvobject fp_name="/dsp_testbench/inst_dsp/inst_dsp_app/dst_frame" type="array" db_ref_id="1">
-         <obj_property name="ElementShortName">dst_frame[1:0]</obj_property>
-         <obj_property name="ObjectShortName">dst_frame[1:0]</obj_property>
+         <obj_property name="ElementShortName">dst_frame[2:0]</obj_property>
+         <obj_property name="ObjectShortName">dst_frame[2:0]</obj_property>
       </wvobject>
    </wvobject>
    <wvobject fp_name="group103" type="group">
