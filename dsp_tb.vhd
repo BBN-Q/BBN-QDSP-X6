@@ -29,16 +29,20 @@ signal wb_ack_o : std_logic := '0';
 
 -- ADC raw interface
 signal adc0_raw_rden : std_logic := '0';
-signal adc0_raw_dvld  : std_logic := '0';
+signal adc0_raw_dvld : std_logic := '0';
 signal adc0_raw_vld  : std_logic := '0';
+signal adc0_raw_vld_d: std_logic := '0';
 signal adc0_raw_data : std_logic_vector(47 downto 0) := (others => '0');
 signal adc0_raw_dout : std_logic_vector(11 downto 0) := (others => '0');
+signal adc0_frame    : std_logic := '0'; 
 
 signal adc1_raw_rden : std_logic := '0';
-signal adc1_raw_dvld  : std_logic := '0';
+signal adc1_raw_dvld : std_logic := '0';
 signal adc1_raw_vld  : std_logic := '0';
+signal adc1_raw_vld_d: std_logic := '0';
 signal adc1_raw_data : std_logic_vector(47 downto 0) := (others => '0');
 signal adc1_raw_dout : std_logic_vector(11 downto 0) := (others => '0');
+signal adc1_frame    : std_logic := '0';
 
 -- DSP VITA interface
 signal ofifo_empty  : std_logic_vector(2 downto 0) := "000";
@@ -142,6 +146,17 @@ port map (
 	valid => adc1_raw_vld
 );
 
+--Deserialized frame creator
+adc0_frame <= adc0_raw_vld and adc0_raw_vld_d;
+adc1_frame <= adc1_raw_vld and adc1_raw_vld_d;
+frameDeser : process( clk )
+begin
+if rising_edge(clk) then
+  adc0_raw_vld_d <= adc0_raw_vld;
+  adc1_raw_vld_d <= adc1_raw_vld;
+end if ;
+end process ; -- frameDeser
+
 inst_dsp : entity work.ii_dsp_top
 generic map (
 	dsp_frmr_offset => x"0700",
@@ -167,7 +182,7 @@ port map (
 	din_vld(1) => adc1_raw_vld,
 	din(0)     => adc0_raw_dout,
 	din(1)     => adc1_raw_dout,
-	frame_in   => adc1_raw_vld & adc0_raw_vld,
+	frame_in   => adc1_frame & adc0_frame,
 
 	-- VITA-49 Output FIFO Interface
 	ofifo_empty   => ofifo_empty,
@@ -201,7 +216,7 @@ begin
 	wb_stb_i <= '0';
 
 	testbench_state <= RUNNING;
-	wait for 2 us;
+	wait for fs_period*128;
 
 	testbench_state <= STOPPING;
 
