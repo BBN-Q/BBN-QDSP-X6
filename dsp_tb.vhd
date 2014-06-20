@@ -16,6 +16,9 @@ architecture behavior of dsp_testbench is
 constant clk_period : time := 10 ns;
 constant fs_period : time := 12 ns;
 
+constant frame_size : integer := 256;
+constant decimation_factor : integer := 4;
+
 signal clk : std_logic := '0';
 signal fs_clk : std_logic := '0';
 signal rst : std_logic := '1';
@@ -113,7 +116,7 @@ begin
 			adc0_raw_dvld <= '1';
 			adc1_raw_data <= cnt_slv0 & cnt_slv1 & cnt_slv2 & cnt_slv3;
 			adc1_raw_dvld <= '1';
-			if cnt <= 1024 then
+			if cnt <= 4*frame_size then
 				cnt := cnt + 4;
 			else
 				cnt := 0;
@@ -202,13 +205,39 @@ begin
 	testbench_state <= RESETTING;
 	wait for 100 ns;
 	
-	RST <= '0';
+	rst <= '0';
 	wait for 100 ns;
 
 	testbench_state <= WB_WRITE;
+	-- write the phase increment
 	wb_adr_i <= X"0710";
-	wb_dat_i <= x"00001000";
+	wb_dat_i <= x"00001000"; -- phase increment
 	wb_we_i <= '1';
+	wb_stb_i <= '1';
+
+	wait until wb_ack_o = '1';
+	wb_stb_i <= '0';
+	wait until rising_edge(clk);
+
+	-- write frame sizes
+	wb_adr_i <= x"0700";
+	wb_dat_i <= std_logic_vector(to_unsigned(8 + frame_size, 32));
+	wb_stb_i <= '1';
+
+	wait until wb_ack_o = '1';
+	wb_stb_i <= '0';
+	wait until rising_edge(clk);
+
+	wb_adr_i <= x"0701";
+	wb_dat_i <= std_logic_vector(to_unsigned(8 + frame_size/decimation_factor, 32));
+	wb_stb_i <= '1';
+
+	wait until wb_ack_o = '1';
+	wb_stb_i <= '0';
+	wait until rising_edge(clk);
+
+	wb_adr_i <= x"0702";
+	wb_dat_i <= std_logic_vector(to_unsigned(8 + frame_size/decimation_factor, 32));
 	wb_stb_i <= '1';
 
 	wait until wb_ack_o = '1';
@@ -216,7 +245,7 @@ begin
 	wb_stb_i <= '0';
 
 	testbench_state <= RUNNING;
-	wait for fs_period*128;
+	wait for fs_period*frame_size/2;
 
 	testbench_state <= STOPPING;
 
