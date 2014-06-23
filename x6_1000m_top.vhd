@@ -608,9 +608,9 @@ architecture arch of x6_1000m_top is
   signal rtr_src_rden         : std_logic_vector(2 downto 0);
   signal rtr_src_vld          : std_logic_vector(2 downto 0);
   signal rtr_src_data         : std_logic_vector(128*3-1 downto 0);
-  signal rtr_dst_rdy          : std_logic_vector(3 downto 0);
-  signal rtr_dst_wren         : std_logic_vector(3 downto 0);
-  signal rtr_dst_data         : std_logic_vector(128*4-1 downto 0);
+  signal rtr_dst_rdy          : std_logic;
+  signal rtr_dst_wren         : std_logic;
+  signal rtr_dst_data         : std_logic_vector(127 downto 0);
 ------------------------------------------------------------------------------
 -- LPDDR2
 ------------------------------------------------------------------------------
@@ -1635,91 +1635,91 @@ begin
 ------------------------------------------------------------------------------
 -- Aurora
 ------------------------------------------------------------------------------
-  gen_aurora : if (ADD_AURORA) generate
-    rio0 : ii_aurora_4l_intf_top
-    generic map (
-      USE_CHIPSCOPE        => 0,
-      SIM_GTXRESET_SPEEDUP => 0,
-      addr_bits            => 2,
-      offset               => MR_AU0
-    )
-    port map (
-      -- System reset and clocks
-      srst                 => frontend_rst,
-      sys_clk              => sys_clk,
-      run_o                => open,
+  -- gen_aurora : if (ADD_AURORA) generate
+  --   rio0 : ii_aurora_4l_intf_top
+  --   generic map (
+  --     USE_CHIPSCOPE        => 0,
+  --     SIM_GTXRESET_SPEEDUP => 0,
+  --     addr_bits            => 2,
+  --     offset               => MR_AU0
+  --   )
+  --   port map (
+  --     -- System reset and clocks
+  --     srst                 => frontend_rst,
+  --     sys_clk              => sys_clk,
+  --     run_o                => open,
 
-      -- Data source i/f
-      src_rdy              => rio0_src_rdy,
-      src_valid            => rio0_src_valid,
-      src_din              => rio0_src_din,
+  --     -- Data source i/f
+  --     src_rdy              => rio0_src_rdy,
+  --     src_valid            => rio0_src_valid,
+  --     src_din              => rio0_src_din,
 
-      -- Destination FIFO i/f
-      dest_rdy             => '1',
-      dest_valid           => open,
-      dest_dout            => open,
+  --     -- Destination FIFO i/f
+  --     dest_rdy             => '1',
+  --     dest_valid           => open,
+  --     dest_dout            => open,
 
-      -- slave wishbone interface
-      wb_rst_i             => wb_rst,
-      wb_clk_i             => sys_clk,
-      wb_adr_i             => wb_adr_o,
-      wb_dat_i             => wb_dat_o,
-      wb_we_i              => wb_we_o,
-      wb_stb_i             => wb_stb_o,
-      wb_ack_o             => wb_ack_i(10),
-      wb_dat_o             => wb_dat_i,
+  --     -- slave wishbone interface
+  --     wb_rst_i             => wb_rst,
+  --     wb_clk_i             => sys_clk,
+  --     wb_adr_i             => wb_adr_o,
+  --     wb_dat_i             => wb_dat_o,
+  --     wb_we_i              => wb_we_o,
+  --     wb_stb_i             => wb_stb_o,
+  --     wb_ack_o             => wb_ack_i(10),
+  --     wb_dat_o             => wb_dat_i,
 
-      -- GTX Serial I/O ports
-      gtx_refclk_p         => gtx0_refclk_p,
-      gtx_refclk_n         => gtx0_refclk_n,
-      gtx_rxp              => gtx0_rxp,
-      gtx_rxn              => gtx0_rxn,
-      gtx_txp              => gtx0_txp,
-      gtx_txn              => gtx0_txn
-    );
+  --     -- GTX Serial I/O ports
+  --     gtx_refclk_p         => gtx0_refclk_p,
+  --     gtx_refclk_n         => gtx0_refclk_n,
+  --     gtx_rxp              => gtx0_rxp,
+  --     gtx_rxn              => gtx0_rxn,
+  --     gtx_txp              => gtx0_txp,
+  --     gtx_txn              => gtx0_txn
+  --   );
 
-    rio1 : ii_aurora_4l_intf_top
-    generic map (
-      USE_CHIPSCOPE        => 0,
-      SIM_GTXRESET_SPEEDUP => 0,
-      addr_bits            => 2,
-      offset               => MR_AU1
-    )
-    port map (
-      -- System reset and clocks
-      srst                 => frontend_rst,
-      sys_clk              => sys_clk,
-      run_o                => open,
+  --   rio1 : ii_aurora_4l_intf_top
+  --   generic map (
+  --     USE_CHIPSCOPE        => 0,
+  --     SIM_GTXRESET_SPEEDUP => 0,
+  --     addr_bits            => 2,
+  --     offset               => MR_AU1
+  --   )
+  --   port map (
+  --     -- System reset and clocks
+  --     srst                 => frontend_rst,
+  --     sys_clk              => sys_clk,
+  --     run_o                => open,
 
-      -- Data source i/f
-      src_rdy              => rio1_src_rdy,
-      src_valid            => rio1_src_valid,
-      src_din              => rio1_src_din,
+  --     -- Data source i/f
+  --     src_rdy              => rio1_src_rdy,
+  --     src_valid            => rio1_src_valid,
+  --     src_din              => rio1_src_din,
 
-      -- Destination FIFO i/f
-      dest_rdy             => '1',
-      dest_valid           => open,
-      dest_dout            => open,
+  --     -- Destination FIFO i/f
+  --     dest_rdy             => '1',
+  --     dest_valid           => open,
+  --     dest_dout            => open,
 
-      -- slave wishbone interface
-      wb_rst_i             => wb_rst,
-      wb_clk_i             => sys_clk,
-      wb_adr_i             => wb_adr_o,
-      wb_dat_i             => wb_dat_o,
-      wb_we_i              => wb_we_o,
-      wb_stb_i             => wb_stb_o,
-      wb_ack_o             => wb_ack_i(11),
-      wb_dat_o             => wb_dat_i,
+  --     -- slave wishbone interface
+  --     wb_rst_i             => wb_rst,
+  --     wb_clk_i             => sys_clk,
+  --     wb_adr_i             => wb_adr_o,
+  --     wb_dat_i             => wb_dat_o,
+  --     wb_we_i              => wb_we_o,
+  --     wb_stb_i             => wb_stb_o,
+  --     wb_ack_o             => wb_ack_i(11),
+  --     wb_dat_o             => wb_dat_i,
 
-      -- GTX Serial I/O ports
-      gtx_refclk_p         => gtx1_refclk_p,
-      gtx_refclk_n         => gtx1_refclk_n,
-      gtx_rxp              => gtx1_rxp,
-      gtx_rxn              => gtx1_rxn,
-      gtx_txp              => gtx1_txp,
-      gtx_txn              => gtx1_txn
-    );
-  end generate;
+  --     -- GTX Serial I/O ports
+  --     gtx_refclk_p         => gtx1_refclk_p,
+  --     gtx_refclk_n         => gtx1_refclk_n,
+  --     gtx_rxp              => gtx1_rxp,
+  --     gtx_rxn              => gtx1_rxn,
+  --     gtx_txp              => gtx1_txp,
+  --     gtx_txn              => gtx1_txn
+  --   );
+  -- end generate;
 
   gen_no_aurora : if (not ADD_AURORA) generate
     rio0_src_rdy <= '1';
@@ -1944,10 +1944,10 @@ begin
     frame_in   => adc1_frame_out & adc0_frame_out,
 
     -- VITA-49 Output FIFO Interface
-    ofifo_empty  => rtr_src_aempty(2 downto 0),
-    ofifo_aempty => rtr_src_empty(2 downto 0),
-    ofifo_rden   => rtr_src_rden(2 downto 0),
-    ofifo_vld    => rtr_src_vld(2 downto 0),
+    ofifo_empty  => rtr_src_aempty,
+    ofifo_aempty => rtr_src_empty,
+    ofifo_rden   => rtr_src_rden,
+    ofifo_vld    => rtr_src_vld,
     ofifo_dout(0) => dsp0_dout,
     ofifo_dout(1) => dsp1_dout,
     ofifo_dout(2) => dsp2_dout
@@ -1955,23 +1955,16 @@ begin
 
 
 ------------------------------------------------------------------------------
--- VITA router
+-- DSP VITA mover
 ------------------------------------------------------------------------------
   -- rtr_src_aempty <= adc1_fifo_aempty & adc0_fifo_aempty & lpbk_fifo_aempty;
   -- rtr_src_empty  <= adc1_fifo_empty & adc0_fifo_empty & lpbk_fifo_empty;
   -- rtr_src_vld    <= adc1_fifo_valid & adc0_fifo_valid & lpbk_fifo_vld;
-  -- rtr_src_data   <= adc1_fifo_dout & adc0_fifo_dout & lpbk_fifo_dout;
-  -- rtr_src_aempty(0) <= lpbk_fifo_aempty;
-  -- rtr_src_empty(0)  <= lpbk_fifo_empty;
-  -- rtr_src_vld(0) <= lpbk_fifo_vld;
-  -- rtr_src_data <= dsp2_dout & dsp1_dout & dsp0_dout & lpbk_fifo_dout;
-  lpbk_fifo_rden <= '1';
   rtr_src_data <= dsp2_dout & dsp1_dout & dsp0_dout;
 
-  inst_router : ii_vita_router
+  inst_dsp_mvr : ii_vita_mvr_nx1
   generic map (
-    num_src_ch           => 3,
-    num_dst_ch           => 4
+    num_src_ch           => 3
   )
   port map (
     -- Reset and clock
@@ -1985,37 +1978,28 @@ begin
     src_vld              => rtr_src_vld,
     src_data             => rtr_src_data,
 
-    -- Destination channel interface
-    dst_rdy              => rtr_dst_rdy,
-    dst_wren             => rtr_dst_wren,
-    dst_data             => rtr_dst_data
+    -- Destination channels interface
+    dst_rden             => vfifo2_i_rdy,
+    dst_vld              => vfifo2_i_wren,
+    dst_dout             => vfifo2_i_data
   );
 
-  -- lpbk_fifo_rden <= rtr_src_rden(0);
-  -- adc0_fifo_rd   <= rtr_src_rden(1);
-  -- adc1_fifo_rd   <= rtr_src_rden(2);
-
-  rtr_dst_rdy(0) <= vfifo2_i_rdy;
-  rtr_dst_rdy(1) <= vfifo3_i_rdy;
-
-  vfifo2_i_wren  <= rtr_dst_wren(0);
-  vfifo3_i_wren  <= rtr_dst_wren(1);
-
-  vfifo2_i_data <= rtr_dst_data(127 downto 0);
-  vfifo3_i_data <= rtr_dst_data(128*2-1 downto 128*1);
+  lpbk_fifo_rden <= '1';
+  vfifo3_i_wren  <= '0';
+  vfifo3_i_data <= (others => '0');
 
   -- Register to ease timing closure
-  process (sys_clk)
-  begin
-    if (rising_edge(sys_clk)) then
-      rtr_dst_rdy(2) <= rio0_src_rdy;
-      rtr_dst_rdy(3) <= rio1_src_rdy;
-      rio0_src_valid <= rtr_dst_wren(2);
-      rio1_src_valid <= rtr_dst_wren(3);
-      rio0_src_din   <= rtr_dst_data(128*3-1 downto 128*2);
-      rio1_src_din   <= rtr_dst_data(128*4-1 downto 128*3);
-    end if;
-  end process;
+  -- process (sys_clk)
+  -- begin
+  --   if (rising_edge(sys_clk)) then
+  --     rtr_dst_rdy(2) <= rio0_src_rdy;
+  --     rtr_dst_rdy(3) <= rio1_src_rdy;
+  --     rio0_src_valid <= rtr_dst_wren(2);
+  --     rio1_src_valid <= rtr_dst_wren(3);
+  --     rio0_src_din   <= rtr_dst_data(128*3-1 downto 128*2);
+  --     rio1_src_din   <= rtr_dst_data(128*4-1 downto 128*3);
+  --   end if;
+  -- end process;
 
 ------------------------------------------------------------------------------
 -- Misc.
