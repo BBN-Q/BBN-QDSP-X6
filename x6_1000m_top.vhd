@@ -1941,13 +1941,9 @@ begin
     frame_in   => adc0_frame_out,
 
     -- VITA-49 Output FIFO Interface
-    ofifo_empty  => rtr_src_aempty,
-    ofifo_aempty => rtr_src_empty,
-    ofifo_rden   => rtr_src_rden,
-    ofifo_vld    => rtr_src_vld,
-    ofifo_dout(0) => dsp0_dout,
-    ofifo_dout(1) => dsp1_dout,
-    ofifo_dout(2) => dsp2_dout
+    muxed_vita_rden  => vfifo2_i_rdy,
+    muxed_vita_vld   => vfifo2_i_wren,
+    muxed_vita_data  => vfifo2_i_data
   );
 
 
@@ -1957,29 +1953,6 @@ begin
   -- rtr_src_aempty <= adc1_fifo_aempty & adc0_fifo_aempty & lpbk_fifo_aempty;
   -- rtr_src_empty  <= adc1_fifo_empty & adc0_fifo_empty & lpbk_fifo_empty;
   -- rtr_src_vld    <= adc1_fifo_valid & adc0_fifo_valid & lpbk_fifo_vld;
-  rtr_src_data <= dsp2_dout & dsp1_dout & dsp0_dout;
-
-  inst_dsp_mvr : ii_vita_mvr_nx1
-  generic map (
-    num_src_ch           => 3
-  )
-  port map (
-    -- Reset and clock
-    srst                 => backend_rst,
-    sys_clk              => sys_clk,
-
-    -- Source channels interface
-    src_aempty           => rtr_src_aempty,
-    src_empty            => rtr_src_empty,
-    src_rden             => rtr_src_rden,
-    src_vld              => rtr_src_vld,
-    src_data             => rtr_src_data,
-
-    -- Destination channels interface
-    dst_rden             => vfifo2_i_rdy,
-    dst_vld              => vfifo2_i_wren,
-    dst_dout             => vfifo2_i_data
-  );
 
   lpbk_fifo_rden <= '1';
   vfifo3_i_wren  <= '0';
