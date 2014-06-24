@@ -1935,13 +1935,10 @@ begin
     wb_dat_o => wb_dat_i,
 
     -- Input serialized raw data interface
-    rden(0)     => adc0_raw_rden,
-    rden(1)     => adc1_raw_rden,
-    din_vld(0) => adc0_raw_vld,
-    din_vld(1) => adc1_raw_vld,
-    din(0)     => adc0_raw_dout,
-    din(1)     => adc1_raw_dout,
-    frame_in   => adc1_frame_out & adc0_frame_out,
+    rden     => adc0_raw_rden,
+    din_vld => adc0_raw_vld,
+    din     => adc0_raw_dout,
+    frame_in   => adc0_frame_out,
 
     -- VITA-49 Output FIFO Interface
     ofifo_empty  => rtr_src_aempty,
