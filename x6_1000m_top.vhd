@@ -199,7 +199,7 @@ use work.x6_pkg.all;
 
 entity x6_1000m_top is
   generic (
-    SYS_CLK_FREQ         : integer := 200;  -- system clk freq in MHz
+    SYS_CLK_FREQ         : integer := 260;  -- system clk freq in MHz
     MEM_CLK_FREQ         : integer := 400;  -- memory clk freq in MHz
     PCIE_LANES           : integer := 8;    -- number of PCIE lanes
     ADD_AURORA           : boolean := FALSE;-- instantiate Aurora cores

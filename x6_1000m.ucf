@@ -164,7 +164,7 @@ NET "lpddr2_c?/mem_clk_div2" TNM = "TNM_lpddr2_mmcm_clk";
 NET "lpddr2_c?/tb_clk" TNM = "TNM_lpddr2_tb_clk";
 
 NET "sys_clk" TNM = "TNM_sys_clk";
-TIMESPEC "TS_sys_clk" = PERIOD "TNM_sys_clk" 5 ns;
+TIMESPEC "TS_sys_clk" = PERIOD "TNM_sys_clk" 3.8 ns;
 
 # multi-cycle paths
 INST "*/inst_core/app_data_read*" TNM = "ctl_reg_grp_i";
