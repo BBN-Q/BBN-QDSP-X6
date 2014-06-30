@@ -199,7 +199,7 @@ use work.x6_pkg.all;
 
 entity x6_1000m_top is
   generic (
-    SYS_CLK_FREQ         : integer := 260;  -- system clk freq in MHz
+    SYS_CLK_FREQ         : integer := 200;  -- system clk freq in MHz
     MEM_CLK_FREQ         : integer := 400;  -- memory clk freq in MHz
     PCIE_LANES           : integer := 8;    -- number of PCIE lanes
     ADD_AURORA           : boolean := FALSE;-- instantiate Aurora cores
@@ -483,8 +483,8 @@ architecture arch of x6_1000m_top is
   signal wb_we_o              : std_logic;
   signal wb_stb_o             : std_logic;
   signal wb_cyc_o             : std_logic;
-  signal wb_ack_i             : std_logic_vector(11 downto 0):=(others=>'0');
-  signal wb_ack_i_d           : std_logic_vector(11 downto 0):=(others=>'0');
+  signal wb_ack_i             : std_logic_vector(13 downto 0):=(others=>'0');
+  signal wb_ack_i_d           : std_logic_vector(13 downto 0):=(others=>'0');
   signal wb_ack_int           : std_logic := '0';
   signal wb_dat_i             : std_logic_vector(31 downto 0);
   signal wb_dat_i_d           : std_logic_vector(31 downto 0);
@@ -1915,10 +1915,9 @@ begin
   adc0_fifo_rd <= '1';
   adc1_fifo_rd <= '1';
 
-  inst_dsp : entity work.ii_dsp_top
+  inst_dsp0 : entity work.ii_dsp_top
   generic map (
-    dsp_frmr_offset => MR_BSP,
-    dsp_app_offset => x"0000"
+    dsp_app_offset => MR_DSP0_APP
   )
   port map (
     srst => backend_rst,
@@ -1931,7 +1930,7 @@ begin
     wb_dat_i => wb_dat_o,
     wb_we_i  => wb_we_o,
     wb_stb_i => wb_stb_o,
-    wb_ack_o => wb_ack_i(7),
+    wb_ack_o => wb_ack_i(12),
     wb_dat_o => wb_dat_i,
 
     -- Input serialized raw data interface
@@ -1946,6 +1945,36 @@ begin
     muxed_vita_data  => vfifo2_i_data
   );
 
+  inst_dsp1 : entity work.ii_dsp_top
+  generic map (
+    dsp_app_offset => MR_DSP1_APP
+  )
+  port map (
+    srst => backend_rst,
+    sys_clk => sys_clk,
+
+    -- Slave Wishbone Interface
+    wb_rst_i => wb_rst,
+    wb_clk_i => sys_clk,
+    wb_adr_i => wb_adr_o,
+    wb_dat_i => wb_dat_o,
+    wb_we_i  => wb_we_o,
+    wb_stb_i => wb_stb_o,
+    wb_ack_o => wb_ack_i(13),
+    wb_dat_o => wb_dat_i,
+
+    -- Input serialized raw data interface
+    rden     => adc1_raw_rden,
+    din_vld => adc1_raw_vld,
+    din     => adc1_raw_dout,
+    frame_in   => adc1_frame_out,
+
+    -- VITA-49 Output FIFO Interface
+    muxed_vita_rden  => vfifo3_i_rdy,
+    muxed_vita_vld   => vfifo3_i_wren,
+    muxed_vita_data  => vfifo3_i_data
+  );
+
 
 ------------------------------------------------------------------------------
 -- DSP VITA mover
@@ -1955,21 +1984,7 @@ begin
   -- rtr_src_vld    <= adc1_fifo_valid & adc0_fifo_valid & lpbk_fifo_vld;
 
   lpbk_fifo_rden <= '1';
-  vfifo3_i_wren  <= '0';
-  vfifo3_i_data <= (others => '0');
 
-  -- Register to ease timing closure
-  -- process (sys_clk)
-  -- begin
-  --   if (rising_edge(sys_clk)) then
-  --     rtr_dst_rdy(2) <= rio0_src_rdy;
-  --     rtr_dst_rdy(3) <= rio1_src_rdy;
-  --     rio0_src_valid <= rtr_dst_wren(2);
-  --     rio1_src_valid <= rtr_dst_wren(3);
-  --     rio0_src_din   <= rtr_dst_data(128*3-1 downto 128*2);
-  --     rio1_src_din   <= rtr_dst_data(128*4-1 downto 128*3);
-  --   end if;
-  -- end process;
 
 ------------------------------------------------------------------------------
 -- Misc.

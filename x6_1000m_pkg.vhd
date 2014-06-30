@@ -170,6 +170,11 @@ package x6_pkg is
   constant MR_AU1_CMD_WR       : unsigned(15 downto 0) := unsigned(MR_AU1) + 2;
   constant MR_AU1_CMD_RD       : unsigned(15 downto 0) := unsigned(MR_AU1) + 3;
 
+  --DSP app
+  constant MR_DSP0_APP         : std_logic_vector(15 downto 0) := X"2000";
+  constant MR_DSP1_APP         : std_logic_vector(15 downto 0) := X"2100";
+
+
 -----------------------------------------------------------------------------
 -- Data type declarations
 -----------------------------------------------------------------------------
