@@ -8,6 +8,7 @@ entity DecisionEngine is
   port (
 	rst : in std_logic;
 	clk : in std_logic;
+	ce  : in std_logic;
 
 	data_re : in std_logic_vector(15 downto 0);
 	data_im : in std_logic_vector(15 downto 0);
@@ -44,7 +45,7 @@ kernel_addr <= std_logic_vector(addrct);
 
 addrCounter : process( clk )
 begin
-	if rising_edge(clk) then
+	if rising_edge(clk) and ce = '1' then
 		if rst = '1' then
 			addrct <= (others => '0');
 			state_vld <= '0';
@@ -80,7 +81,7 @@ end process ; -- mult
 --Acumulator
 accum : process( clk )
 begin
-	if rising_edge(clk) then
+	if rising_edge(clk) and ce = '1' then
 		if rst = '1' then
 			accum_re <= (others => '0');
 			accum_im <= (others => '0');
