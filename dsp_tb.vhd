@@ -3,6 +3,7 @@
 library ieee;
 use ieee.std_logic_1164.all;
 use ieee.numeric_std.all;
+use ieee.math_real.all;
 
 library work;
 -- use work.x6_pkg.all;
@@ -48,16 +49,18 @@ signal adc1_raw_dout : std_logic_vector(11 downto 0) := (others => '0');
 signal adc1_frame    : std_logic := '0';
 
 -- DSP VITA interface
-signal ofifo_empty  : std_logic_vector(2 downto 0) := "000";
-signal ofifo_aempty : std_logic_vector(2 downto 0) := "000";
-signal ofifo_rden   : std_logic_vector(2 downto 0) := "000";
-signal ofifo_vld    : std_logic_vector(2 downto 0) := "000";
-signal dsp0_dout    : std_logic_vector(127 downto 0) := (others => '0');
-signal dsp1_dout    : std_logic_vector(127 downto 0) := (others => '0');
-signal dsp2_dout    : std_logic_vector(127 downto 0) := (others => '0');
+signal ofifo_rden   : std_logic := '0';
+signal ofifo_vld    : std_logic := '0';
+signal dsp_dout     : std_logic_vector(127 downto 0) := (others => '0');
+
+--Decision Engine interface
+signal state : std_logic_vector(1 downto 0) := "00";
 
 type testbench_states is (RESETTING, WB_WRITE, RUNNING, STOPPING);
 signal testbench_state : testbench_states := RESETTING;
+
+type DataArray_t is array(natural range <>) of std_logic_vector(31 downto 0);
+constant allOnes : DataArray_t(0 to frame_size/decimation_factor - 1) := (others => (31 => '0', 15 => '0', others => '1'));
 
 component afifo_1k48x12
   port (
@@ -162,8 +165,7 @@ end process ; -- frameDeser
 
 inst_dsp : entity work.ii_dsp_top
 generic map (
-	dsp_frmr_offset => x"0700",
-	dsp_app_offset => x"0000"
+	dsp_app_offset => x"2000"
 )
 port map (
 	srst => rst,
@@ -179,28 +181,68 @@ port map (
 	wb_ack_o => wb_ack_o,
 
 	-- Input serialized raw data interface
-	rden(0)    => adc0_raw_rden,
-	rden(1)    => adc1_raw_rden,
-	din_vld(0) => adc0_raw_vld,
-	din_vld(1) => adc1_raw_vld,
-	din(0)     => adc0_raw_dout,
-	din(1)     => adc1_raw_dout,
-	frame_in   => adc1_frame & adc0_frame,
+	rden    => adc0_raw_rden,
+	din_vld => adc0_raw_vld,
+	din     => adc0_raw_dout,
+	frame_in   => adc0_frame,
 
 	-- VITA-49 Output FIFO Interface
-	ofifo_empty   => ofifo_empty,
-	ofifo_aempty  => ofifo_aempty,
-	ofifo_rden    => ofifo_rden,
-	ofifo_vld     => ofifo_vld,
-	ofifo_dout(0) => dsp0_dout,
-	ofifo_dout(1) => dsp1_dout,
-	ofifo_dout(2) => dsp2_dout
+	muxed_vita_rden => ofifo_rden,
+	muxed_vita_vld  => ofifo_vld,
+	muxed_vita_data => dsp_dout,
+
+    -- Decision Engine outputs
+    state => state
 );
 
-ofifo_rden <= not ofifo_aempty;
+ofifo_rden <= ofifo_vld;
 
 --  Test Bench Statements
 stim_proc : process
+
+	procedure wb_write(
+		addr : in std_logic_vector(15 downto 0);
+		data : in std_logic_vector(31 downto 0) ) is 
+	begin
+		wb_adr_i <= addr;
+		wb_dat_i <= data;
+		wb_we_i <= '1';
+		wb_stb_i <= '1';
+
+		wait until wb_ack_o = '1';
+		wb_stb_i <= '0';
+		wait until rising_edge(clk);
+
+	end procedure wb_write;
+
+	procedure wb_write(
+		addr : in natural;
+		data : in natural ) is
+	begin
+		wb_write(std_logic_vector(to_unsigned(addr, 16)), std_logic_vector(to_unsigned(data, 32)) );
+	end procedure;
+
+	procedure wb_write(
+		addr : in natural;
+		data : in std_logic_vector(31 downto 0) ) is
+	begin
+		wb_write(std_logic_vector(to_unsigned(addr, 16)), data);
+	end procedure;
+
+	procedure write_kernel(
+		physChan : in natural;
+		demodChan : in natural;
+		dataArray : in DataArray_t) is
+
+	variable wbOffset : natural := 8192 + physChan*256 + 48 + 2*demodChan;
+	begin
+		for ct in dataArray'range loop
+			wb_write(wbOffset, ct);
+			wb_write(wbOffset+1, dataArray(ct));
+		end loop;
+	end procedure;
+
+
 begin
 	testbench_state <= RESETTING;
 	wait for 100 ns;
@@ -209,40 +251,26 @@ begin
 	wait for 100 ns;
 
 	testbench_state <= WB_WRITE;
-	-- write the phase increment
-	wb_adr_i <= X"0710";
-	wb_dat_i <= x"00001000"; -- phase increment
-	wb_we_i <= '1';
-	wb_stb_i <= '1';
+	for phys in 0 to 0 loop
+		-- write the phase increments
+		for demod in 0 to 1 loop
+			wb_write(8192 + phys*256 + 16 + demod, (2*phys+demod+1)* 10486);
+		end loop;
 
-	wait until wb_ack_o = '1';
-	wb_stb_i <= '0';
-	wait until rising_edge(clk);
+		-- write frame sizes and stream IDs
+		wb_write(8192 + phys*256, frame_size);
+		wb_write(8192 + phys*256 + 32, 256*(phys+1));
+		for demod in 1 to 2 loop
+			wb_write(8192 + phys*256 + demod, frame_size/decimation_factor);
+			wb_write(8192 + phys*256 + 32 + demod, 256*(phys+1) + 16*demod);
+		end loop;
 
-	-- write frame sizes
-	wb_adr_i <= x"0700";
-	wb_dat_i <= std_logic_vector(to_unsigned(8 + frame_size, 32));
-	wb_stb_i <= '1';
-
-	wait until wb_ack_o = '1';
-	wb_stb_i <= '0';
-	wait until rising_edge(clk);
-
-	wb_adr_i <= x"0701";
-	wb_dat_i <= std_logic_vector(to_unsigned(8 + frame_size/decimation_factor, 32));
-	wb_stb_i <= '1';
-
-	wait until wb_ack_o = '1';
-	wb_stb_i <= '0';
-	wait until rising_edge(clk);
-
-	wb_adr_i <= x"0702";
-	wb_dat_i <= std_logic_vector(to_unsigned(8 + frame_size/decimation_factor, 32));
-	wb_stb_i <= '1';
-
-	wait until wb_ack_o = '1';
-
-	wb_stb_i <= '0';
+		--write integration kernels
+		for demod in 0 to 1 loop
+			wb_write(8192 + phys*256 + 24 + demod, frame_size/decimation_factor);
+			write_kernel(phys, demod, allOnes);
+		end loop;
+	end loop;
 
 	testbench_state <= RUNNING;
 	wait for fs_period*frame_size/2;
