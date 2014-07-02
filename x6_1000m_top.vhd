@@ -719,9 +719,8 @@ architecture arch of x6_1000m_top is
 ------------------------------------------------------------------------------
 -- Custom DSP stuff
 ------------------------------------------------------------------------------
-  signal dsp0_dout            : std_logic_vector(127 downto 0);
-  signal dsp1_dout            : std_logic_vector(127 downto 0);
-  signal dsp2_dout            : std_logic_vector(127 downto 0);
+  signal state0               : std_logic_vector(1 downto 0);
+  signal state1               : std_logic_vector(1 downto 0);
 
 begin
 
@@ -937,28 +936,32 @@ begin
 ------------------------------------------------------------------------------
 -- Digital I/O
 ------------------------------------------------------------------------------
-  inst_dio_top : ii_dio_top
-  generic map (
-    width                => 32,
-    diff_en              => FALSE,
-    addr_bits            => 2,
-    offset               => MR_DIO
-  )
-  port map (
-    -- Wishbone interface signals
-    wb_rst_i             => wb_rst,
-    wb_clk_i             => sys_clk,
-    wb_adr_i             => wb_adr_o,
-    wb_dat_i             => wb_dat_o,
-    wb_we_i              => wb_we_o,
-    wb_stb_i             => wb_stb_o,
-    wb_ack_o             => wb_ack_i(5),
-    wb_dat_o             => wb_dat_i,
-    -- user registers
-    clk                  => sys_clk,
-    dio_p                => dio_p,
-    dio_n                => dio_n
-  );
+  -- inst_dio_top : ii_dio_top
+  -- generic map (
+  --   width                => 32,
+  --   diff_en              => FALSE,
+  --   addr_bits            => 2,
+  --   offset               => MR_DIO
+  -- )
+  -- port map (
+  --   -- Wishbone interface signals
+  --   wb_rst_i             => wb_rst,
+  --   wb_clk_i             => sys_clk,
+  --   wb_adr_i             => wb_adr_o,
+  --   wb_dat_i             => wb_dat_o,
+  --   wb_we_i              => wb_we_o,
+  --   wb_stb_i             => wb_stb_o,
+  --   wb_ack_o             => wb_ack_i(5),
+  --   wb_dat_o             => wb_dat_i,
+  --   -- user registers
+  --   clk                  => sys_clk,
+  --   dio_p                => dio_p,
+  --   dio_n                => dio_n
+  -- );
+  wb_ack_i(5) <= '0';
+  dio_p(31 downto 4) <= (others => '0');
+  dio_p(3 downto 0) <= state1 & state0;
+  dio_n(31 downto 0) <= (others => '0');
 
 -----------------------------------------------------------------------------
 -- Temperature controller
@@ -1935,14 +1938,17 @@ begin
 
     -- Input serialized raw data interface
     rden     => adc0_raw_rden,
-    din_vld => adc0_raw_vld,
-    din     => adc0_raw_dout,
-    frame_in   => adc0_frame_out,
+    din_vld  => adc0_raw_vld,
+    din      => adc0_raw_dout,
+    frame_in => adc0_frame_out,
 
     -- VITA-49 Output FIFO Interface
     muxed_vita_rden  => vfifo2_i_rdy,
     muxed_vita_vld   => vfifo2_i_wren,
-    muxed_vita_data  => vfifo2_i_data
+    muxed_vita_data  => vfifo2_i_data,
+
+    -- Decision Engine outputs
+    state => state0 
   );
 
   inst_dsp1 : entity work.ii_dsp_top
@@ -1965,16 +1971,18 @@ begin
 
     -- Input serialized raw data interface
     rden     => adc1_raw_rden,
-    din_vld => adc1_raw_vld,
-    din     => adc1_raw_dout,
-    frame_in   => adc1_frame_out,
+    din_vld  => adc1_raw_vld,
+    din      => adc1_raw_dout,
+    frame_in => adc1_frame_out,
 
     -- VITA-49 Output FIFO Interface
     muxed_vita_rden  => vfifo3_i_rdy,
     muxed_vita_vld   => vfifo3_i_wren,
-    muxed_vita_data  => vfifo3_i_data
-  );
+    muxed_vita_data  => vfifo3_i_data,
 
+    -- Decision Engine outputs
+    state => state1
+  );
 
 ------------------------------------------------------------------------------
 -- DSP VITA mover
