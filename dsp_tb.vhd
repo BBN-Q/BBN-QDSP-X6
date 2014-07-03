@@ -69,7 +69,8 @@ signal testbench_state : testbench_states := RESETTING;
 type KernelArray_t is array(natural range <>) of std_logic_vector(31 downto 0);
 constant allOnes : KernelArray_t(0 to 2*frame_size/decimation_factor - 1) := (others => (31 => '0', 15 => '0', others => '1'));
 
-signal testData0 : WFArray_t(0 to num_lines("testWFs.in")-1);
+signal testData0 : WFArray_t(0 to num_lines("testWFs.in")-1) := read_wf_file("testWFs.in");
+
 
 component afifo_1k48x12
   port (
@@ -277,10 +278,6 @@ stim_proc : process
 
 
 begin
-	--For some reason if I initialize this signal at definition the funciton is not called.
-	testData0 <= read_wf_file("../II-Readout-Filter/testWFs.in");
-
-
 	testbench_state <= RESETTING;
 	wait for 100 ns;
 	

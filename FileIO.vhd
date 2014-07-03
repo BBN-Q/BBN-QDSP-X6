@@ -28,22 +28,22 @@ impure function read_wf_file(fileName : string) return WFArray_t is
 	variable wfs : WFArray_t(0 to num_lines(fileName)-1);
 	file FID : text;
     variable ln : line;
-    variable eol : boolean;
+    variable vld : boolean;
     variable dummy : integer;
-    variable linect, wordct : natural := 0;
+    variable linect, wordct : natural;
 
 	begin 
 		file_open(FID, fileName, read_mode);
+		report "Opened file " & fileName;
+		linect := 0;
 		lineReading: while not endfile(FID) loop
 			readline(FID, ln);
-			read(ln, dummy, eol);
 			wordct := 0;
-			wfs(linect)(wordct) := std_logic_vector(to_unsigned(dummy, 12));
-			wordCounting : while not eol loop
-				read(ln, dummy, eol);
+			read(ln, dummy, vld);
+			wordCounting : while vld loop
+				wfs(linect)(wordct) := std_logic_vector(to_signed(dummy, 12));
+				read(ln, dummy, vld);
 				wordct := wordct + 1;
-				report "Read wordct = " & integer'image(wordct);
-				wfs(linect)(wordct) := std_logic_vector(to_unsigned(dummy, 12));
 			end loop wordCounting;
 			linect := linect + 1;
 		end loop lineReading;
