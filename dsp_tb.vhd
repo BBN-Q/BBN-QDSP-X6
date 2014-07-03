@@ -3,7 +3,11 @@
 library ieee;
 use ieee.std_logic_1164.all;
 use ieee.numeric_std.all;
-use ieee.math_real.all;
+
+use std.textio.all;
+use ieee.std_logic_textio.all;
+
+use work.FileIO.all;
 
 library work;
 -- use work.x6_pkg.all;
@@ -14,8 +18,8 @@ end dsp_testbench;
 architecture behavior of dsp_testbench is
 
 -- Clock period definitions
-constant clk_period : time := 10 ns;
-constant fs_period : time := 12 ns;
+constant clk_period : time := 5 ns;
+constant fs_period : time := 4 ns;
 
 constant frame_size : integer := 256;
 constant decimation_factor : integer := 4;
@@ -49,9 +53,12 @@ signal adc1_raw_dout : std_logic_vector(11 downto 0) := (others => '0');
 signal adc1_frame    : std_logic := '0';
 
 -- DSP VITA interface
-signal ofifo_rden   : std_logic := '0';
-signal ofifo_vld    : std_logic := '0';
-signal dsp_dout     : std_logic_vector(127 downto 0) := (others => '0');
+signal vita_rden   : std_logic := '0';
+signal vita_vld    : std_logic := '0';
+signal vita_dout     : std_logic_vector(127 downto 0) := (others => '0');
+
+--Trigger the input
+signal trigger : std_logic := '0';
 
 --Decision Engine interface
 signal state : std_logic_vector(1 downto 0) := "00";
@@ -59,8 +66,10 @@ signal state : std_logic_vector(1 downto 0) := "00";
 type testbench_states is (RESETTING, WB_WRITE, RUNNING, STOPPING);
 signal testbench_state : testbench_states := RESETTING;
 
-type DataArray_t is array(natural range <>) of std_logic_vector(31 downto 0);
-constant allOnes : DataArray_t(0 to frame_size/decimation_factor - 1) := (others => (31 => '0', 15 => '0', others => '1'));
+type KernelArray_t is array(natural range <>) of std_logic_vector(31 downto 0);
+constant allOnes : KernelArray_t(0 to 2*frame_size/decimation_factor - 1) := (others => (31 => '0', 15 => '0', others => '1'));
+
+signal testData0 : WFArray_t(0 to num_lines("testWFs.in")-1);
 
 component afifo_1k48x12
   port (
@@ -99,10 +108,9 @@ end process;
 -- data processes
 adc01_data : process( fs_clk )
 	variable cnt : natural := 0;
-	variable cnt_slv0 : std_logic_vector(11 downto 0) := (others => '0');
-	variable cnt_slv1 : std_logic_vector(11 downto 0) := (others => '0');
-	variable cnt_slv2 : std_logic_vector(11 downto 0) := (others => '0');
-	variable cnt_slv3 : std_logic_vector(11 downto 0) := (others => '0');
+	variable wfct : natural := 0;
+	type PLAYSTATE_t is (WAITING, PLAYING);
+	variable playState : PLAYSTATE_t;
 begin
 	if rising_edge(fs_clk) then
 		if (rst = '1') or (testbench_state /= RUNNING) then
@@ -110,23 +118,47 @@ begin
 			adc0_raw_dvld <= '0';
 			adc1_raw_data <= (others => '0');
 			adc1_raw_dvld <= '0';
+			playState := WAITING;
+			wfct := 0;
+			cnt := 0;
 		else -- RUNNING
-			cnt_slv0 := std_logic_vector(to_signed(cnt+0, 12));
-			cnt_slv1 := std_logic_vector(to_signed(cnt+1, 12));
-			cnt_slv2 := std_logic_vector(to_signed(cnt+2, 12));
-			cnt_slv3 := std_logic_vector(to_signed(cnt+3, 12));
-			adc0_raw_data <= cnt_slv0 & cnt_slv1 & cnt_slv2 & cnt_slv3;
-			adc0_raw_dvld <= '1';
-			adc1_raw_data <= cnt_slv0 & cnt_slv1 & cnt_slv2 & cnt_slv3;
-			adc1_raw_dvld <= '1';
-			if cnt <= 4*frame_size then
-				cnt := cnt + 4;
-			else
-				cnt := 0;
-			end if;
+
+			case( playState ) is
+			
+				when WAITING =>
+					cnt := 0;
+					adc0_raw_data <= (others => '0');
+					adc0_raw_dvld <= '0';
+					if trigger = '1' then
+						playState := PLAYING;
+					end if;
+
+				when PLAYING =>
+					adc0_raw_data <= testData0(wfct)(cnt) & testData0(wfct)(cnt+1) & testData0(wfct)(cnt+2) & testData0(wfct)(cnt+3);
+					adc0_raw_dvld <= '1';
+					cnt := cnt + 4;
+
+	
+				when others =>
+					playState := WAITING;
+			end case ;
 		end if;
 	end if;
 end process ; -- adc01_data
+
+--output to file process
+vita2stream : process( clk )
+file FID : text open write_mode is "vitastream.out";
+variable ln : line;
+begin
+	if rising_edge(clk) then
+		--Write vita stream to file
+		if vita_vld = '1' then
+			write(ln, vita_dout);
+			writeline(FID, ln);
+		end if;
+	end if ;
+end process ; -- vita2stream
 
 adc0_serializer : afifo_1k48x12
 port map (
@@ -187,15 +219,15 @@ port map (
 	frame_in   => adc0_frame,
 
 	-- VITA-49 Output FIFO Interface
-	muxed_vita_rden => ofifo_rden,
-	muxed_vita_vld  => ofifo_vld,
-	muxed_vita_data => dsp_dout,
+	muxed_vita_rden => vita_rden,
+	muxed_vita_vld  => vita_vld,
+	muxed_vita_data => vita_dout,
 
     -- Decision Engine outputs
     state => state
 );
 
-ofifo_rden <= ofifo_vld;
+vita_rden <= '1';
 
 --  Test Bench Statements
 stim_proc : process
@@ -230,12 +262,13 @@ stim_proc : process
 	end procedure;
 
 	procedure write_kernel(
-		physChan : in natural;
-		demodChan : in natural;
-		dataArray : in DataArray_t) is
+		phys : in natural;
+		demod : in natural;
+		dataArray : in KernelArray_t) is
 
-	variable wbOffset : natural := 8192 + physChan*256 + 48 + 2*demodChan;
+	variable wbOffset : natural := 8192 + phys*256 + 48 + 2*demod;
 	begin
+		wb_write(8192 + phys*256 + 24 + demod, dataArray'length);
 		for ct in dataArray'range loop
 			wb_write(wbOffset, ct);
 			wb_write(wbOffset+1, dataArray(ct));
@@ -244,6 +277,10 @@ stim_proc : process
 
 
 begin
+	--For some reason if I initialize this signal at definition the funciton is not called.
+	testData0 <= read_wf_file("../II-Readout-Filter/testWFs.in");
+
+
 	testbench_state <= RESETTING;
 	wait for 100 ns;
 	
@@ -261,19 +298,25 @@ begin
 		wb_write(8192 + phys*256, frame_size);
 		wb_write(8192 + phys*256 + 32, 256*(phys+1));
 		for demod in 1 to 2 loop
-			wb_write(8192 + phys*256 + demod, frame_size/decimation_factor);
+			wb_write(8192 + phys*256 + demod, 2*frame_size/decimation_factor);
 			wb_write(8192 + phys*256 + 32 + demod, 256*(phys+1) + 16*demod);
 		end loop;
 
 		--write integration kernels
 		for demod in 0 to 1 loop
-			wb_write(8192 + phys*256 + 24 + demod, frame_size/decimation_factor);
 			write_kernel(phys, demod, allOnes);
 		end loop;
 	end loop;
 
 	testbench_state <= RUNNING;
-	wait for fs_period*frame_size/2;
+
+	--pump the trigger every 20us
+	for ct in 0 to 1 loop
+		trigger <= '1';
+		wait until rising_edge(clk);
+		trigger <= '0';
+		wait for 20 us;
+	end loop;
 
 	testbench_state <= STOPPING;
 
