@@ -1727,6 +1727,8 @@ begin
   gen_no_aurora : if (not ADD_AURORA) generate
     rio0_src_rdy <= '1';
     rio1_src_rdy <= '1';
+    wb_ack_i(10) <= '0';
+    wb_ack_i(11) <= '0';
   end generate;
 
 ------------------------------------------------------------------------------
