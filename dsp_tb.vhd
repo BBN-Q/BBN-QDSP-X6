@@ -21,7 +21,7 @@ architecture behavior of dsp_testbench is
 constant clk_period : time := 5 ns;
 constant fs_period : time := 4 ns;
 
-constant frame_size : integer := 256;
+constant frame_size : integer := 512;
 constant decimation_factor : integer := 4;
 
 signal clk : std_logic := '0';
@@ -138,8 +138,11 @@ begin
 					adc0_raw_data <= testData0(wfct)(cnt) & testData0(wfct)(cnt+1) & testData0(wfct)(cnt+2) & testData0(wfct)(cnt+3);
 					adc0_raw_dvld <= '1';
 					cnt := cnt + 4;
+					if cnt = testData0(0)'length then
+						playState := WAITING;
+						wfct := wfct + 1;
+					end if ;
 
-	
 				when others =>
 					playState := WAITING;
 			end case ;
@@ -147,7 +150,8 @@ begin
 	end if;
 end process ; -- adc01_data
 
---output to file process
+--output vita packet stream to file
+--after inspection it seems each 128bit word has 4 32 bit words stacked in big-endian style (word3 word2 word1 word0)
 vita2stream : process( clk )
 file FID : text open write_mode is "vitastream.out";
 variable ln : line;
@@ -155,8 +159,11 @@ begin
 	if rising_edge(clk) then
 		--Write vita stream to file
 		if vita_vld = '1' then
-			write(ln, vita_dout);
-			writeline(FID, ln);
+			--Deserialize the 128bit word into 4 32 bit words
+			for ct in 0 to 3 loop
+				hwrite(ln, vita_dout(32*(ct+1)-1 downto 32*ct));
+				writeline(FID, ln);
+			end loop;
 		end if;
 	end if ;
 end process ; -- vita2stream
@@ -231,6 +238,22 @@ port map (
 vita_rden <= '1';
 
 --  Test Bench Statements
+trigPro : process
+begin
+	--pump the trigger every 20us
+	while true loop
+		if testbench_state = RUNNING then
+			trigger <= '1';
+			wait for 10ns;
+			trigger <= '0';
+			wait for 20 us;
+		else
+			wait for 1 us;
+		end if;
+	end loop;
+end process ; -- trigPro
+
+
 stim_proc : process
 
 	procedure wb_write(
@@ -292,10 +315,10 @@ begin
 		end loop;
 
 		-- write frame sizes and stream IDs
-		wb_write(8192 + phys*256, frame_size);
+		wb_write(8192 + phys*256, frame_size+8);
 		wb_write(8192 + phys*256 + 32, 256*(phys+1));
 		for demod in 1 to 2 loop
-			wb_write(8192 + phys*256 + demod, 2*frame_size/decimation_factor);
+			wb_write(8192 + phys*256 + demod, 2*frame_size/decimation_factor+8);
 			wb_write(8192 + phys*256 + 32 + demod, 256*(phys+1) + 16*demod);
 		end loop;
 
@@ -307,13 +330,7 @@ begin
 
 	testbench_state <= RUNNING;
 
-	--pump the trigger every 20us
-	for ct in 0 to 1 loop
-		trigger <= '1';
-		wait until rising_edge(clk);
-		trigger <= '0';
-		wait for 20 us;
-	end loop;
+	wait for 50 us;
 
 	testbench_state <= STOPPING;
 
