@@ -25,7 +25,7 @@
          </top_modules>
       </db_ref>
    </db_ref_list>
-   <WVObjectSize size="11" />
+   <WVObjectSize size="12" />
    <wvobject fp_name="/dsp_testbench/testbench_state" type="other" db_ref_id="1">
       <obj_property name="ElementShortName">testbench_state</obj_property>
       <obj_property name="ObjectShortName">testbench_state</obj_property>
@@ -41,6 +41,10 @@
    <wvobject fp_name="/dsp_testbench/rst" type="logic" db_ref_id="1">
       <obj_property name="ElementShortName">rst</obj_property>
       <obj_property name="ObjectShortName">rst</obj_property>
+   </wvobject>
+   <wvobject fp_name="/dsp_testbench/trigger" type="logic" db_ref_id="1">
+      <obj_property name="ElementShortName">trigger</obj_property>
+      <obj_property name="ObjectShortName">trigger</obj_property>
    </wvobject>
    <wvobject fp_name="/dsp_testbench/wb_adr_i" type="array" db_ref_id="1">
       <obj_property name="ElementShortName">wb_adr_i[15:0]</obj_property>
