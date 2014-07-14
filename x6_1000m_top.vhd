@@ -959,8 +959,9 @@ begin
   --   dio_n                => dio_n
   -- );
   wb_ack_i(5) <= '0';
-  dio_p(31 downto 4) <= (others => '0');
-  dio_p(3 downto 0) <= state1 & state0;
+  dio_p(31 downto 16) <= (others => '0');
+  dio_p(15 downto 12) <= state1 & state0;
+  dio_p(11 downto 0) <= (others => '0');
   dio_n(31 downto 0) <= (others => '0');
 
 -----------------------------------------------------------------------------
