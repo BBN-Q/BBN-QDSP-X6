@@ -53,6 +53,8 @@ begin
 			addrct <= addrct + 1;
 			if addrct = unsigned(kernel_len) - 1 then
 				state_vld <= '1';
+			else
+				state_vld <= '0';
 			end if ;
 		end if;
 	end if ;
