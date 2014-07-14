@@ -722,6 +722,11 @@ architecture arch of x6_1000m_top is
   signal state0               : std_logic_vector(1 downto 0);
   signal state1               : std_logic_vector(1 downto 0);
 
+------------------------------------------------------------------------------
+-- Chipscope debug
+------------------------------------------------------------------------------
+  signal control0, control1 : std_logic_vector(35 downto 0) ;
+
 begin
 
 -----------------------------------------------------------------------------
@@ -1986,6 +1991,35 @@ begin
     -- Decision Engine outputs
     state => state1
   );
+
+  inst_chipscope_icon : entity work.chipscope_icon
+  port map (
+    CONTROL0 => control0,
+    CONTROL1 => control1);
+
+  inst_chipscope_dsp0 : entity work.chipscope_ila_vita
+  port map (
+    CONTROL => control0,
+    CLK => sys_clk,
+    DATA(159 downto 142) => (others => '0'),
+    DATA(141) => adc0_frame_out,
+    DATA(140) => adc0_raw_vld,
+    DATA(139 downto 128) => adc0_raw_dout,
+    DATA(127 downto 0) => vfifo2_i_data,
+    TRIG0(1) => vfifo2_i_rdy,
+    TRIG0(0) => vfifo2_i_wren);
+
+  inst_chipscope_dsp1 : entity work.chipscope_ila_vita
+  port map (
+    CONTROL => control1,
+    CLK => sys_clk,
+    DATA(159 downto 142) => (others => '0'),
+    DATA(141) => adc1_frame_out,
+    DATA(140) => adc1_raw_vld,
+    DATA(139 downto 128) => adc1_raw_dout,
+    DATA(127 downto 0) => vfifo3_i_data,
+    TRIG0(1) => vfifo3_i_rdy,
+    TRIG0(0) => vfifo3_i_wren);
 
 ------------------------------------------------------------------------------
 -- DSP VITA mover
