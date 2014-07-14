@@ -5283,7 +5283,7 @@
       <wvobject fp_name="/dsp_testbench/inst_dsp/result_re" type="array" db_ref_id="1">
          <obj_property name="ElementShortName">result_re[1:0]</obj_property>
          <obj_property name="ObjectShortName">result_re[1:0]</obj_property>
-         <obj_property name="Radix">SIGNEDDECRADIX</obj_property>
+         <obj_property name="Radix">HEXRADIX</obj_property>
          <wvobject fp_name="/dsp_testbench/inst_dsp/result_re[1]" type="array" db_ref_id="1">
             <obj_property name="ElementShortName">[1]</obj_property>
             <obj_property name="ObjectShortName">result_re[1]</obj_property>
@@ -5298,7 +5298,7 @@
       <wvobject fp_name="/dsp_testbench/inst_dsp/result_im" type="array" db_ref_id="1">
          <obj_property name="ElementShortName">result_im[1:0]</obj_property>
          <obj_property name="ObjectShortName">result_im[1:0]</obj_property>
-         <obj_property name="Radix">SIGNEDDECRADIX</obj_property>
+         <obj_property name="Radix">HEXRADIX</obj_property>
          <wvobject fp_name="/dsp_testbench/inst_dsp/result_im[1]" type="array" db_ref_id="1">
             <obj_property name="ElementShortName">[1]</obj_property>
             <obj_property name="ObjectShortName">result_im[1]</obj_property>
@@ -5319,36 +5319,36 @@
          <obj_property name="ObjectShortName">state_vld[1:0]</obj_property>
       </wvobject>
       <wvobject fp_name="/dsp_testbench/inst_dsp/frame_size" type="array" db_ref_id="1">
-         <obj_property name="ElementShortName">frame_size[2:0]</obj_property>
-         <obj_property name="ObjectShortName">frame_size[2:0]</obj_property>
+         <obj_property name="ElementShortName">frame_size[4:0]</obj_property>
+         <obj_property name="ObjectShortName">frame_size[4:0]</obj_property>
          <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
       </wvobject>
       <wvobject fp_name="group50" type="group">
          <obj_property name="label">Framer FIFO Outputs</obj_property>
          <obj_property name="DisplayName">label</obj_property>
          <wvobject fp_name="/dsp_testbench/inst_dsp/frmr_rdy" type="array" db_ref_id="1">
-            <obj_property name="ElementShortName">frmr_rdy[2:0]</obj_property>
-            <obj_property name="ObjectShortName">frmr_rdy[2:0]</obj_property>
+            <obj_property name="ElementShortName">frmr_rdy[4:0]</obj_property>
+            <obj_property name="ObjectShortName">frmr_rdy[4:0]</obj_property>
          </wvobject>
          <wvobject fp_name="/dsp_testbench/inst_dsp/frmr_fifo_vld" type="array" db_ref_id="1">
-            <obj_property name="ElementShortName">frmr_fifo_vld[2:0]</obj_property>
-            <obj_property name="ObjectShortName">frmr_fifo_vld[2:0]</obj_property>
+            <obj_property name="ElementShortName">frmr_fifo_vld[4:0]</obj_property>
+            <obj_property name="ObjectShortName">frmr_fifo_vld[4:0]</obj_property>
          </wvobject>
          <wvobject fp_name="/dsp_testbench/inst_dsp/frmr_fifo_rden" type="array" db_ref_id="1">
-            <obj_property name="ElementShortName">frmr_fifo_rden[2:0]</obj_property>
-            <obj_property name="ObjectShortName">frmr_fifo_rden[2:0]</obj_property>
+            <obj_property name="ElementShortName">frmr_fifo_rden[4:0]</obj_property>
+            <obj_property name="ObjectShortName">frmr_fifo_rden[4:0]</obj_property>
          </wvobject>
          <wvobject fp_name="/dsp_testbench/inst_dsp/frmr_fifo_empty" type="array" db_ref_id="1">
-            <obj_property name="ElementShortName">frmr_fifo_empty[2:0]</obj_property>
-            <obj_property name="ObjectShortName">frmr_fifo_empty[2:0]</obj_property>
+            <obj_property name="ElementShortName">frmr_fifo_empty[4:0]</obj_property>
+            <obj_property name="ObjectShortName">frmr_fifo_empty[4:0]</obj_property>
          </wvobject>
          <wvobject fp_name="/dsp_testbench/inst_dsp/frmr_fifo_dout" type="array" db_ref_id="1">
-            <obj_property name="ElementShortName">frmr_fifo_dout[2:0]</obj_property>
-            <obj_property name="ObjectShortName">frmr_fifo_dout[2:0]</obj_property>
+            <obj_property name="ElementShortName">frmr_fifo_dout[4:0]</obj_property>
+            <obj_property name="ObjectShortName">frmr_fifo_dout[4:0]</obj_property>
          </wvobject>
          <wvobject fp_name="/dsp_testbench/inst_dsp/frmr_fifo_aempty" type="array" db_ref_id="1">
-            <obj_property name="ElementShortName">frmr_fifo_aempty[2:0]</obj_property>
-            <obj_property name="ObjectShortName">frmr_fifo_aempty[2:0]</obj_property>
+            <obj_property name="ElementShortName">frmr_fifo_aempty[4:0]</obj_property>
+            <obj_property name="ObjectShortName">frmr_fifo_aempty[4:0]</obj_property>
          </wvobject>
       </wvobject>
       <wvobject fp_name="group131" type="group">
@@ -5663,24 +5663,24 @@
             <obj_property name="ObjectShortName">sys_clk</obj_property>
          </wvobject>
          <wvobject fp_name="/dsp_testbench/inst_dsp/inst_dsp_mvr/src_aempty" type="array" db_ref_id="1">
-            <obj_property name="ElementShortName">src_aempty[2:0]</obj_property>
-            <obj_property name="ObjectShortName">src_aempty[2:0]</obj_property>
+            <obj_property name="ElementShortName">src_aempty[4:0]</obj_property>
+            <obj_property name="ObjectShortName">src_aempty[4:0]</obj_property>
          </wvobject>
          <wvobject fp_name="/dsp_testbench/inst_dsp/inst_dsp_mvr/src_empty" type="array" db_ref_id="1">
-            <obj_property name="ElementShortName">src_empty[2:0]</obj_property>
-            <obj_property name="ObjectShortName">src_empty[2:0]</obj_property>
+            <obj_property name="ElementShortName">src_empty[4:0]</obj_property>
+            <obj_property name="ObjectShortName">src_empty[4:0]</obj_property>
          </wvobject>
          <wvobject fp_name="/dsp_testbench/inst_dsp/inst_dsp_mvr/src_rden" type="array" db_ref_id="1">
-            <obj_property name="ElementShortName">src_rden[2:0]</obj_property>
-            <obj_property name="ObjectShortName">src_rden[2:0]</obj_property>
+            <obj_property name="ElementShortName">src_rden[4:0]</obj_property>
+            <obj_property name="ObjectShortName">src_rden[4:0]</obj_property>
          </wvobject>
          <wvobject fp_name="/dsp_testbench/inst_dsp/inst_dsp_mvr/src_vld" type="array" db_ref_id="1">
-            <obj_property name="ElementShortName">src_vld[2:0]</obj_property>
-            <obj_property name="ObjectShortName">src_vld[2:0]</obj_property>
+            <obj_property name="ElementShortName">src_vld[4:0]</obj_property>
+            <obj_property name="ObjectShortName">src_vld[4:0]</obj_property>
          </wvobject>
          <wvobject fp_name="/dsp_testbench/inst_dsp/inst_dsp_mvr/src_data" type="array" db_ref_id="1">
-            <obj_property name="ElementShortName">src_data[383:0]</obj_property>
-            <obj_property name="ObjectShortName">src_data[383:0]</obj_property>
+            <obj_property name="ElementShortName">src_data[639:0]</obj_property>
+            <obj_property name="ObjectShortName">src_data[639:0]</obj_property>
          </wvobject>
          <wvobject fp_name="/dsp_testbench/inst_dsp/inst_dsp_mvr/dst_wrd_cnt" type="array" db_ref_id="1">
             <obj_property name="ElementShortName">dst_wrd_cnt[8:0]</obj_property>
@@ -5723,12 +5723,12 @@
             <obj_property name="ObjectShortName">ch_sel</obj_property>
          </wvobject>
          <wvobject fp_name="/dsp_testbench/inst_dsp/inst_dsp_mvr/src_vld_d" type="array" db_ref_id="1">
-            <obj_property name="ElementShortName">src_vld_d[2:0]</obj_property>
-            <obj_property name="ObjectShortName">src_vld_d[2:0]</obj_property>
+            <obj_property name="ElementShortName">src_vld_d[4:0]</obj_property>
+            <obj_property name="ObjectShortName">src_vld_d[4:0]</obj_property>
          </wvobject>
          <wvobject fp_name="/dsp_testbench/inst_dsp/inst_dsp_mvr/src_data_d" type="array" db_ref_id="1">
-            <obj_property name="ElementShortName">src_data_d[383:0]</obj_property>
-            <obj_property name="ObjectShortName">src_data_d[383:0]</obj_property>
+            <obj_property name="ElementShortName">src_data_d[639:0]</obj_property>
+            <obj_property name="ObjectShortName">src_data_d[639:0]</obj_property>
          </wvobject>
          <wvobject fp_name="/dsp_testbench/inst_dsp/inst_dsp_mvr/fifo_rst" type="logic" db_ref_id="1">
             <obj_property name="ElementShortName">fifo_rst</obj_property>
