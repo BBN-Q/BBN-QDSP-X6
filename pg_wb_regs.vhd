@@ -9,22 +9,23 @@ entity pg_wb_regs is
   );
   port (
     -- Wishbone interface signals
-    wb_rst_i             : in  std_logic;
-    wb_clk_i             : in  std_logic;
-    wb_adr_i             : in  std_logic_vector(15 downto 0);
-    wb_dat_i             : in  std_logic_vector(31 downto 0);
-    wb_we_i              : in  std_logic;
-    wb_stb_i             : in  std_logic;
-    wb_ack_o             : out std_logic;
-    wb_dat_o             : out std_logic_vector(31 downto 0);
+    wb_rst_i          : in  std_logic;
+    wb_clk_i          : in  std_logic;
+    wb_adr_i          : in  std_logic_vector(15 downto 0);
+    wb_dat_i          : in  std_logic_vector(31 downto 0);
+    wb_we_i           : in  std_logic;
+    wb_stb_i          : in  std_logic;
+    wb_ack_o          : out std_logic;
+    wb_dat_o          : out std_logic_vector(31 downto 0);
 
     -- User registers
-    control              : out std_logic_vector(31 downto 0);
-    status               : in std_logic_vector(31 downto 0);
-    wf_length            : out std_logic_vector(15 downto 0);
+    control           : out std_logic_vector(31 downto 0);
+    status            : in std_logic_vector(31 downto 0);
+    wf_length         : out std_logic_vector(15 downto 0);
 
-    wf_wr_addr           : out std_logic_vector(31 downto 0) ;
-    wf_wr_data           : out std_logic_vector(31 downto 0) 
+    wf_wr_addr        : out std_logic_vector(31 downto 0) ;
+    wf_wr_data        : out std_logic_vector(31 downto 0) ;
+    wf_wr_we          : out std_logic
 
   );
 end pg_wb_regs;
@@ -112,9 +113,17 @@ architecture arch of pg_wb_regs is
 
   wb_reg_i(1) <= status;
 
-  wf_length <= wb_reg_o(2)(15 downto 0);
-  wb_reg_i(2) <= wb_reg_o(2);
-  wb_reg_init(2) <= x"00001000";
+  wf_length <= wb_reg_o(8)(15 downto 0);
+  wb_reg_i(8) <= wb_reg_o(8);
+  wb_reg_init(8) <= x"00001000";
+
+  wf_wr_addr <= wb_reg_o(9);
+  wb_reg_i(9) <= wb_reg_o(9);
+  wf_wr_data <= wb_reg_o(10);
+  wb_reg_i(10) <= wb_reg_o(10);
+
+  --use the write strobe of the data as write enable for BRAM
+  wf_wr_we <= wr_stb(10);
 
 end arch;
 

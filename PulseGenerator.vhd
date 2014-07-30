@@ -1,31 +1,37 @@
+library ieee;
+use ieee.std_logic_1164.all;
+use ieee.numeric_std.all;
+
 entity PulseGenerator is
 	generic (wb_offset : std_logic_vector(15 downto 0));
 	port (
-	sys_clk : std_logic;
-	reset : std_logic;
+	sys_clk : in std_logic;
+	reset : in std_logic;
+	trigger : in std_logic;
 
 	--DAC interface
 	--clock from pins
-	dac_clk_in_p : std_logic;
-	dac_clk_in_n : std_logic;
+	dac_clk_in_p :  in std_logic;
+	dac_clk_in_n :  in std_logic;
 
 	--clock to pins
-	dac_clk_out_p : std_logic;
-	dac_clk_out_n : std_logic;
+	dac_clk_out_p : out std_logic;
+	dac_clk_out_n : out std_logic;
 
 	--data to pins
-	dac_data_out_p : std_logic_vector(15 downto 0) ;
-	dac_data_out_n : std_logic_vector(15 downto 0) ;
+	dac_data_out_p : out std_logic_vector(15 downto 0) ;
+	dac_data_out_n : out std_logic_vector(15 downto 0) ;
+	output_enable  : out std_logic;
 
 	--wishbone interface
-	wb_rst_i             : in  std_logic;
-	wb_clk_i             : in  std_logic;
-	wb_adr_i             : in  std_logic_vector(15 downto 0);
-	wb_dat_i             : in  std_logic_vector(31 downto 0);
-	wb_we_i              : in  std_logic;
-	wb_stb_i             : in  std_logic;
-	wb_ack_o             : out std_logic;
-	wb_dat_o             : out std_logic_vector(31 downto 0)
+	wb_rst_i       : in  std_logic;
+	wb_clk_i       : in  std_logic;
+	wb_adr_i       : in  std_logic_vector(15 downto 0);
+	wb_dat_i       : in  std_logic_vector(31 downto 0);
+	wb_we_i        : in  std_logic;
+	wb_stb_i       : in  std_logic;
+	wb_ack_o       : out std_logic;
+	wb_dat_o       : out std_logic_vector(31 downto 0)
 	) ;
 end entity ; -- PulseGenerator
 
@@ -35,9 +41,15 @@ signal control, status : std_logic_vector(31 downto 0) := (others => '0');
 signal wf_length : std_logic_vector(15 downto 0) := (others => '0');
 
 signal clk_reset, io_reset : std_logic := '0';
+signal ddr_clk : std_logic;
+
+signal dac_data : std_logic_vector(63 downto 0) ;
 
 signal wf_wr_addr, wf_wr_data : std_logic_vector(31 downto 0) ;
+signal wf_wr_we : std_logic;
 signal wf_rd_addr : unsigned(11 downto 0) ;
+
+
 
 begin
 
@@ -45,7 +57,7 @@ begin
 
 	inst_pg_regs : entity work.pg_wb_regs
 	generic map (
-		offset               => dsp_app_offset
+		offset      => wb_offset
 	)
 	port map (
 		-- Wishbone interface signals
@@ -61,7 +73,10 @@ begin
 		-- User registers
 		control     => control,
 		status      => status,
-		wf_length   => wf_length
+		wf_length   => wf_length,
+		wf_wr_addr  => wf_wr_addr,
+		wf_wr_data  => wf_wr_data,
+		wf_wr_we    => wf_wr_we
 	);
 
 
@@ -69,7 +84,7 @@ begin
 my_wf_bram : entity work.WF_BRAM
   PORT MAP (
     clka => sys_clk,
-    wea => wf_wr_addr(16),
+    wea(0) => wf_wr_we,
     addra => wf_wr_addr(12 downto 0),
     dina => wf_wr_data,
     clkb => ddr_clk,
@@ -79,7 +94,7 @@ my_wf_bram : entity work.WF_BRAM
 
 --Playback logic SM
 playback : process( ddr_clk )
-type state_t is (IDLE, PLAYING)
+type state_t is (IDLE, PLAYING);
 variable state : state_t;
 begin
 	if rising_edge(ddr_clk) then
@@ -89,12 +104,12 @@ begin
 						--wait for trigger
 						wf_rd_addr <= (others => '0');
 						output_enable <= '0';
-						if trigger_sync = '1' then
+						if trigger = '1' then
 							state := PLAYING;
 						end if;
 
 					when PLAYING =>
-						output_enable <= '1'
+						output_enable <= '1';
 						wf_rd_addr <= wf_rd_addr + 1;
 						if wf_rd_addr = unsigned(wf_length(12 downto 0)) then
 							state := IDLE;
@@ -106,9 +121,6 @@ begin
 				end case ;		
 	end if ;
 end process ; -- playback
-
-
-
 
 --Serialization
 dac_gear_out : entity work.DAC_SEROUT
@@ -122,14 +134,11 @@ dac_gear_out : entity work.DAC_SEROUT
 
 	-- Clock and reset signals
   CLK_IN_P => dac_clk_in_p,     -- Differential clock from IOB
-  CLK_IN_N => dac_clk_in_n ,     -- Differential clock from IOB
+  CLK_IN_N => dac_clk_in_n,     -- Differential clock from IOB
   CLK_DIV_OUT => ddr_clk,     -- Slow clock output
   CLK_RESET => clk_reset,         --clocking logic reset
-  IO_RESET =>  io_reset);          --system reset
+  IO_RESET =>  io_reset         --system reset
 	);
-
-
-
 
 
 end architecture ; -- arch
