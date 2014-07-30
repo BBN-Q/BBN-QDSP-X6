@@ -378,8 +378,8 @@ entity x6_1000m_top is
     cfg                  : in    std_logic_vector(3 downto 0);
 
     -- Digital I/O
-    dio_p                : inout std_logic_vector(31 downto 0);
-    dio_n                : inout std_logic_vector(31 downto 0);
+    dio_p                : out std_logic_vector(31 downto 0);
+    dio_n                : out std_logic_vector(31 downto 0);
     h_pps                : in    std_logic;
 
     -- CPLD interface
@@ -483,8 +483,8 @@ architecture arch of x6_1000m_top is
   signal wb_we_o              : std_logic;
   signal wb_stb_o             : std_logic;
   signal wb_cyc_o             : std_logic;
-  signal wb_ack_i             : std_logic_vector(13 downto 0):=(others=>'0');
-  signal wb_ack_i_d           : std_logic_vector(13 downto 0):=(others=>'0');
+  signal wb_ack_i             : std_logic_vector(15 downto 0):=(others=>'0');
+  signal wb_ack_i_d           : std_logic_vector(15 downto 0):=(others=>'0');
   signal wb_ack_int           : std_logic := '0';
   signal wb_dat_i             : std_logic_vector(31 downto 0);
   signal wb_dat_i_d           : std_logic_vector(31 downto 0);
@@ -726,6 +726,10 @@ architecture arch of x6_1000m_top is
 -- Chipscope debug
 ------------------------------------------------------------------------------
   signal control0, control1 : std_logic_vector(35 downto 0) ;
+
+
+-----------------------------------------------------------------------------
+ signal dac0_trig, dac1_trig : std_logic;
 
 begin
 
@@ -1851,10 +1855,10 @@ begin
     adc0_ext_sync_n      => adc0_ext_sync_n,
     adc1_ext_sync_p      => adc1_ext_sync_p,
     adc1_ext_sync_n      => adc1_ext_sync_n,
-    dac0_ext_sync_p      => dac0_ext_sync_p,
-    dac0_ext_sync_n      => dac0_ext_sync_n,
-    dac1_ext_sync_p      => dac1_ext_sync_p,
-    dac1_ext_sync_n      => dac1_ext_sync_n,
+    dac0_ext_sync_p      => '0',
+    dac0_ext_sync_n      => '0',
+    dac1_ext_sync_p      => '0',
+    dac1_ext_sync_n      => '0',
 
     -- ADC0 and ADC1 interface
     adc0_spi_sclk        => adc0_spi_sclk,
@@ -1888,14 +1892,15 @@ begin
     dac0_spi_sdo         => dac0_spi_sdo,
     dac0_clk_in_p        => dac0_clk_in_p,
     dac0_clk_in_n        => dac0_clk_in_n,
-    dac0_dclk_p          => dac0_dclk_p,
-    dac0_dclk_n          => dac0_dclk_n,
+    dac0_dclk_p          => open,
+    dac0_dclk_n          => open,
     dac0_sync_p          => dac0_sync_p,
     dac0_sync_n          => dac0_sync_n,
     dac0_sync2_p         => dac0_sync2_p,
     dac0_sync2_n         => dac0_sync2_n,
-    dac0_data_p          => dac0_data_p,
-    dac0_data_n          => dac0_data_n,
+    dac0_data_p          => open,
+    dac0_data_n          => open,
+
     dac1_resetb          => dac1_resetb,
     dac1_spi_sclk        => dac1_spi_sclk,
     dac1_spi_sdenb       => dac1_spi_sdenb,
@@ -1903,14 +1908,14 @@ begin
     dac1_spi_sdo         => dac1_spi_sdo,
     dac1_clk_in_p        => dac1_clk_in_p,
     dac1_clk_in_n        => dac1_clk_in_n,
-    dac1_dclk_p          => dac1_dclk_p,
-    dac1_dclk_n          => dac1_dclk_n,
+    dac1_dclk_p          => open,
+    dac1_dclk_n          => open,
     dac1_sync_p          => dac1_sync_p,
     dac1_sync_n          => dac1_sync_n,
     dac1_sync2_p         => dac1_sync2_p,
     dac1_sync2_n         => dac1_sync2_n,
-    dac1_data_p          => dac1_data_p,
-    dac1_data_n          => dac1_data_n,
+    dac1_data_p          => open,
+    dac1_data_n          => open,
 
     -- DAC output digitizer interface
     dac_dig_en           => dac_dig_en,
@@ -1926,7 +1931,98 @@ begin
   adc0_fifo_rd <= '1';
   adc1_fifo_rd <= '1';
 
-  inst_dsp0 : entity work.ii_dsp_top
+--Buffer the DAC triggers to single-ended
+pg0_trigbuf : IBUFDS
+generic map (
+  DIFF_TERM     => true,
+  IOSTANDARD    => "LVPECL_25"
+)
+port map (
+  I       => dac0_ext_sync_p,
+  IB      => dac0_ext_sync_n,
+  O       => dac0_trig
+);
+
+pg1_trigbuf : IBUFDS
+generic map (
+  DIFF_TERM     => true,
+  IOSTANDARD    => "LVPECL_25"
+)
+port map (
+  I       => dac1_ext_sync_p,
+  IB      => dac1_ext_sync_n,
+  O       => dac1_trig
+);
+
+
+pg0 : entity work.PulseGenerator
+    generic map (
+        wb_offset => MR_PG0
+    )
+    port map (
+    sys_clk => sys_clk,
+    reset => backend_rst,
+    trigger => dac0_trig,
+
+    --DAC interface
+    --clock from pins
+    dac_clk_in_p => dac0_clk_in_p,
+    dac_clk_in_n => dac0_clk_in_n,
+
+    --clock to pins
+    dac_clk_out_p => dac0_dclk_p,
+    dac_clk_out_n => dac0_dclk_n,
+
+    --data to pins
+    dac_data_out_p => dac0_data_p,
+    dac_data_out_n => dac0_data_n,
+
+    --wishbone interface
+    wb_rst_i => wb_rst,
+    wb_clk_i => sys_clk,
+    wb_adr_i => wb_adr_o,
+    wb_dat_i => wb_dat_o,
+    wb_we_i  => wb_we_o,
+    wb_stb_i => wb_stb_o,
+    wb_ack_o => wb_ack_i(14),
+    wb_dat_o => wb_dat_i
+    ) ;
+
+pg1 : entity work.PulseGenerator
+    generic map (
+        wb_offset => MR_PG1
+    )
+    port map (
+    sys_clk => sys_clk,
+    reset => backend_rst,
+    trigger => dac1_trig,
+
+    --DAC interface
+    --clock from pins
+    dac_clk_in_p => dac1_clk_in_p,
+    dac_clk_in_n => dac1_clk_in_n,
+
+    --clock to pins
+    dac_clk_out_p => dac1_dclk_p,
+    dac_clk_out_n => dac1_dclk_n,
+
+    --data to pins
+    dac_data_out_p => dac1_data_p,
+    dac_data_out_n => dac1_data_n,
+
+    --wishbone interface
+    wb_rst_i => wb_rst,
+    wb_clk_i => sys_clk,
+    wb_adr_i => wb_adr_o,
+    wb_dat_i => wb_dat_o,
+    wb_we_i  => wb_we_o,
+    wb_stb_i => wb_stb_o,
+    wb_ack_o => wb_ack_i(15),
+    wb_dat_o => wb_dat_i
+    ) ;
+
+
+inst_dsp0 : entity work.ii_dsp_top
   generic map (
     dsp_app_offset => MR_DSP0_APP
   )

@@ -174,6 +174,11 @@ package x6_pkg is
   constant MR_DSP0_APP         : std_logic_vector(15 downto 0) := X"2000";
   constant MR_DSP1_APP         : std_logic_vector(15 downto 0) := X"2100";
 
+  --Pulse generators
+  constant MR_PG0         : std_logic_vector(15 downto 0) := X"2200";
+  constant MR_PG1         : std_logic_vector(15 downto 0) := X"2300";
+
+
 
 -----------------------------------------------------------------------------
 -- Data type declarations
