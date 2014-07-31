@@ -729,7 +729,7 @@ architecture arch of x6_1000m_top is
 
 
 -----------------------------------------------------------------------------
- signal dac0_trig, dac1_trig : std_logic;
+ signal dac0_trig, dac1_trig, adc0_trig, adc1_trig : std_logic;
 
 begin
 
@@ -1741,198 +1741,363 @@ begin
     wb_ack_i(11) <= '0';
   end generate;
 
-------------------------------------------------------------------------------
--- Analog Frontend Interface
-------------------------------------------------------------------------------
-  inst_afe_top : ii_afe_intf_top
+-- ------------------------------------------------------------------------------
+-- -- Analog Frontend Interface
+-- ------------------------------------------------------------------------------
+--   inst_afe_top : ii_afe_intf_top
+--   generic map (
+--     G_SIM                => false,
+--     SYS_CLK_FREQ         => SYS_CLK_FREQ,
+--     offset               => MR_AFE
+--   )
+--   port map (
+--     srst                 => frontend_rst,
+--     sys_clk              => sys_clk,
+
+--     -- reference clock
+--     ref_clk200           => ref_clk200,
+--     clk200_locked        => clks_locked,
+
+--     -- Slave Wishbone interface
+--     wb_rst_i             => wb_rst,
+--     wb_clk_i             => sys_clk,
+--     wb_adr_i             => wb_adr_o,
+--     wb_dat_i             => wb_dat_o,
+--     wb_we_i              => wb_we_o,
+--     wb_stb_i             => wb_stb_o,
+--     wb_ack_o             => wb_ack_i(8),
+--     wb_dat_o             => wb_dat_i,
+
+--     -- Alerts
+--     adc_trigger_o        => adc_trigger_o,
+--     dac_trigger_o        => dac_trigger_o,
+--     adc0_overrange       => adc0_overrange,
+--     adc1_overrange       => adc1_overrange,
+--     adc0_overflow        => adc0_overflow,
+--     adc1_overflow        => adc1_overflow,
+--     dac0_underflow       => dac0_underflow,
+--     dac1_underflow       => dac1_underflow,
+--     ovr_alrt_clr         => alert_clr(20),
+--     ovf_alrt_clr         => alert_clr(21),
+--     trig_alrt_clr        => alert_clr(24),
+--     udf_alrt_clr         => alert_clr(26),
+
+--     -- System interface
+--     ref_adc_clk          => ref_adc_clk,
+--     ref_dac_clk          => ref_dac_clk,
+--     adc_run_o            => adc_run_o,
+--     dac_run_o            => dac_run_o,
+
+--     -- DAC stream ID
+--     dac0_stream_id       => dac0_stream_id,
+--     dac1_stream_id       => dac1_stream_id,
+
+--     -- ADC0 fifo interface
+--     adc0_fifo_empty      => adc0_fifo_empty,
+--     adc0_fifo_aempty     => adc0_fifo_aempty,
+--     adc0_fifo_rd         => adc0_fifo_rd,
+--     adc0_fifo_vld        => adc0_fifo_valid,
+--     adc0_fifo_dout       => adc0_fifo_dout,
+
+--     -- ADC1 fifo interface
+--     adc1_fifo_empty      => adc1_fifo_empty,
+--     adc1_fifo_aempty     => adc1_fifo_aempty,
+--     adc1_fifo_rd         => adc1_fifo_rd,
+--     adc1_fifo_vld        => adc1_fifo_valid,
+--     adc1_fifo_dout       => adc1_fifo_dout,
+
+--     -- ADC0 raw interface
+--     adc0_raw_rden        => adc0_raw_rden,
+--     adc0_raw_vld         => adc0_raw_vld,
+--     adc0_raw_dout        => adc0_raw_dout,
+--     adc0_frame_out       => adc0_frame_out,
+
+--     -- ADC1 raw interface
+--     adc1_raw_rden        => adc1_raw_rden,
+--     adc1_raw_vld         => adc1_raw_vld,
+--     adc1_raw_dout        => adc1_raw_dout,
+--     adc1_frame_out       => adc1_frame_out,
+
+--     -- DAC0 data source fifo interface
+--     dac0_src_aempty      => vfifo0_o_aempty,
+--     dac0_src_empty       => vfifo0_o_empty,
+--     dac0_src_rden        => vfifo0_o_rden,
+--     dac0_src_vld         => vfifo0_o_vld,
+--     dac0_src_din         => vfifo0_o_data,
+
+--     -- DAC1 data source fifo interface
+--     dac1_src_aempty      => vfifo1_o_aempty,
+--     dac1_src_empty       => vfifo1_o_empty,
+--     dac1_src_rden        => vfifo1_o_rden,
+--     dac1_src_vld         => vfifo1_o_vld,
+--     dac1_src_din         => vfifo1_o_data,
+
+--     -- PLL interface
+--     pll_vcxo_en          => pll_vcxo_en,
+--     pll_vcxo_scl         => pll_vcxo_scl,
+--     pll_vcxo_sda         => pll_vcxo_sda,
+--     pll_pwr_down_n       => pll_pwr_down_n,
+--     pll_reset_n          => pll_reset_n,
+--     pll_spi_sclk         => pll_spi_sclk,
+--     pll_spi_le           => pll_spi_le,
+--     pll_spi_mosi         => pll_spi_mosi,
+--     pll_spi_miso         => pll_spi_miso,
+--     pll_ext_clk_sel      => pll_ext_clk_sel,
+--     pll_lock             => pll_lock,
+--     ref_adc_clk_p        => ref_adc_clk_p,
+--     ref_adc_clk_n        => ref_adc_clk_n,
+--     ref_dac_clk_p        => ref_dac_clk_p,
+--     ref_dac_clk_n        => ref_dac_clk_n,
+
+--     -- ADC external sync
+--     ext_sync_sel         => ext_sync_sel,
+--     adc0_ext_sync_p      => adc0_ext_sync_p,
+--     adc0_ext_sync_n      => adc0_ext_sync_n,
+--     adc1_ext_sync_p      => adc1_ext_sync_p,
+--     adc1_ext_sync_n      => adc1_ext_sync_n,
+--     dac0_ext_sync_p      => '0',
+--     dac0_ext_sync_n      => '0',
+--     dac1_ext_sync_p      => '0',
+--     dac1_ext_sync_n      => '0',
+
+--     -- ADC0 and ADC1 interface
+--     adc0_spi_sclk        => adc0_spi_sclk,
+--     adc0_spi_sdenb       => adc0_spi_sdenb,
+--     adc0_spi_sdio        => adc0_spi_sdio,
+--     adc0_reset_p         => adc0_reset_p,
+--     adc0_reset_n         => adc0_reset_n,
+--     adc0_da_dclk_p       => adc0_da_dclk_p,
+--     adc0_da_dclk_n       => adc0_da_dclk_n,
+--     adc0_da_p            => adc0_da_p,
+--     adc0_da_n            => adc0_da_n,
+--     adc0_ovra_p          => adc0_ovra_p,
+--     adc0_ovra_n          => adc0_ovra_n,
+--     adc1_spi_sclk        => adc1_spi_sclk,
+--     adc1_spi_sdenb       => adc1_spi_sdenb,
+--     adc1_spi_sdio        => adc1_spi_sdio,
+--     adc1_reset_p         => adc1_reset_p,
+--     adc1_reset_n         => adc1_reset_n,
+--     adc1_da_dclk_p       => adc1_da_dclk_p,
+--     adc1_da_dclk_n       => adc1_da_dclk_n,
+--     adc1_da_p            => adc1_da_p,
+--     adc1_da_n            => adc1_da_n,
+--     adc1_ovra_p          => adc1_ovra_p,
+--     adc1_ovra_n          => adc1_ovra_n,
+
+--     -- DAC0 and DAC1 interface signals
+--     dac0_resetb          => dac0_resetb,
+--     dac0_spi_sclk        => dac0_spi_sclk,
+--     dac0_spi_sdenb       => dac0_spi_sdenb,
+--     dac0_spi_sdio        => dac0_spi_sdio,
+--     dac0_spi_sdo         => dac0_spi_sdo,
+--     dac0_clk_in_p        => dac0_clk_in_p,
+--     dac0_clk_in_n        => dac0_clk_in_n,
+--     dac0_dclk_p          => open,
+--     dac0_dclk_n          => open,
+--     dac0_sync_p          => dac0_sync_p,
+--     dac0_sync_n          => dac0_sync_n,
+--     dac0_sync2_p         => dac0_sync2_p,
+--     dac0_sync2_n         => dac0_sync2_n,
+--     dac0_data_p          => open,
+--     dac0_data_n          => open,
+
+--     dac1_resetb          => dac1_resetb,
+--     dac1_spi_sclk        => dac1_spi_sclk,
+--     dac1_spi_sdenb       => dac1_spi_sdenb,
+--     dac1_spi_sdio        => dac1_spi_sdio,
+--     dac1_spi_sdo         => dac1_spi_sdo,
+--     dac1_clk_in_p        => dac1_clk_in_p,
+--     dac1_clk_in_n        => dac1_clk_in_n,
+--     dac1_dclk_p          => open,
+--     dac1_dclk_n          => open,
+--     dac1_sync_p          => dac1_sync_p,
+--     dac1_sync_n          => dac1_sync_n,
+--     dac1_sync2_p         => dac1_sync2_p,
+--     dac1_sync2_n         => dac1_sync2_n,
+--     dac1_data_p          => open,
+--     dac1_data_n          => open,
+
+--     -- DAC output digitizer interface
+--     dac_dig_en           => dac_dig_en,
+--     dac0_dig_p           => dac0_dig_p,
+--     dac0_dig_n           => dac0_dig_n,
+--     dac1_dig_p           => dac1_dig_p,
+--     dac1_dig_n           => dac1_dig_n,
+
+--     -- PPS pulse input (ie. GPS)
+--     ts_pps_pls           => h_pps_demet_re
+--   );
+
+-----------------------------------------------------------------------------
+-- Instantiate AFE registers
+-----------------------------------------------------------------------------
+  inst_afe_regs: ii_afe_intf_regs
   generic map (
-    G_SIM                => false,
-    SYS_CLK_FREQ         => SYS_CLK_FREQ,
+    addr_bits            => 8,
     offset               => MR_AFE
   )
   port map (
-    srst                 => frontend_rst,
-    sys_clk              => sys_clk,
-
-    -- reference clock
-    ref_clk200           => ref_clk200,
-    clk200_locked        => clks_locked,
-
-    -- Slave Wishbone interface
-    wb_rst_i             => wb_rst,
-    wb_clk_i             => sys_clk,
-    wb_adr_i             => wb_adr_o,
-    wb_dat_i             => wb_dat_o,
-    wb_we_i              => wb_we_o,
-    wb_stb_i             => wb_stb_o,
+    -- Wishbone interface signals
+    wb_rst_i             => wb_rst_i,
+    wb_clk_i             => wb_clk_i,
+    wb_adr_i             => wb_adr_i,
+    wb_dat_i             => wb_dat_i,
+    wb_we_i              => wb_we_i,
+    wb_stb_i             => wb_stb_i,
     wb_ack_o             => wb_ack_i(8),
-    wb_dat_o             => wb_dat_i,
+    wb_dat_o             => wb_dat_o,
 
-    -- Alerts
-    adc_trigger_o        => adc_trigger_o,
-    dac_trigger_o        => dac_trigger_o,
-    adc0_overrange       => adc0_overrange,
-    adc1_overrange       => adc1_overrange,
-    adc0_overflow        => adc0_overflow,
-    adc1_overflow        => adc1_overflow,
-    dac0_underflow       => dac0_underflow,
-    dac1_underflow       => dac1_underflow,
-    ovr_alrt_clr         => alert_clr(20),
-    ovf_alrt_clr         => alert_clr(21),
-    trig_alrt_clr        => alert_clr(24),
-    udf_alrt_clr         => alert_clr(26),
-
-    -- System interface
-    ref_adc_clk          => ref_adc_clk,
-    ref_dac_clk          => ref_dac_clk,
-    adc_run_o            => adc_run_o,
-    dac_run_o            => dac_run_o,
-
-    -- DAC stream ID
-    dac0_stream_id       => dac0_stream_id,
-    dac1_stream_id       => dac1_stream_id,
-
-    -- ADC0 fifo interface
-    adc0_fifo_empty      => adc0_fifo_empty,
-    adc0_fifo_aempty     => adc0_fifo_aempty,
-    adc0_fifo_rd         => adc0_fifo_rd,
-    adc0_fifo_vld        => adc0_fifo_valid,
-    adc0_fifo_dout       => adc0_fifo_dout,
-
-    -- ADC1 fifo interface
-    adc1_fifo_empty      => adc1_fifo_empty,
-    adc1_fifo_aempty     => adc1_fifo_aempty,
-    adc1_fifo_rd         => adc1_fifo_rd,
-    adc1_fifo_vld        => adc1_fifo_valid,
-    adc1_fifo_dout       => adc1_fifo_dout,
-
-    -- ADC0 raw interface
-    adc0_raw_rden        => adc0_raw_rden,
-    adc0_raw_vld         => adc0_raw_vld,
-    adc0_raw_dout        => adc0_raw_dout,
-    adc0_frame_out       => adc0_frame_out,
-
-    -- ADC1 raw interface
-    adc1_raw_rden        => adc1_raw_rden,
-    adc1_raw_vld         => adc1_raw_vld,
-    adc1_raw_dout        => adc1_raw_dout,
-    adc1_frame_out       => adc1_frame_out,
-
-    -- DAC0 data source fifo interface
-    dac0_src_aempty      => vfifo0_o_aempty,
-    dac0_src_empty       => vfifo0_o_empty,
-    dac0_src_rden        => vfifo0_o_rden,
-    dac0_src_vld         => vfifo0_o_vld,
-    dac0_src_din         => vfifo0_o_data,
-
-    -- DAC1 data source fifo interface
-    dac1_src_aempty      => vfifo1_o_aempty,
-    dac1_src_empty       => vfifo1_o_empty,
-    dac1_src_rden        => vfifo1_o_rden,
-    dac1_src_vld         => vfifo1_o_vld,
-    dac1_src_din         => vfifo1_o_data,
-
-    -- PLL interface
-    pll_vcxo_en          => pll_vcxo_en,
-    pll_vcxo_scl         => pll_vcxo_scl,
-    pll_vcxo_sda         => pll_vcxo_sda,
+    -- User registers
     pll_pwr_down_n       => pll_pwr_down_n,
     pll_reset_n          => pll_reset_n,
-    pll_spi_sclk         => pll_spi_sclk,
-    pll_spi_le           => pll_spi_le,
-    pll_spi_mosi         => pll_spi_mosi,
-    pll_spi_miso         => pll_spi_miso,
-    pll_ext_clk_sel      => pll_ext_clk_sel,
     pll_lock             => pll_lock,
-    ref_adc_clk_p        => ref_adc_clk_p,
-    ref_adc_clk_n        => ref_adc_clk_n,
-    ref_dac_clk_p        => ref_dac_clk_p,
-    ref_dac_clk_n        => ref_dac_clk_n,
-
-    -- ADC external sync
+    pll_spi_rdy          => pll_spi_rdy,
+    pll_spi_rdata_valid  => pll_spi_rdata_valid,
+    pll_spi_wr_strb      => pll_spi_wr_strb,
+    pll_spi_addr         => pll_spi_addr,
+    pll_spi_wdata        => pll_spi_wdata,
+    pll_spi_rdata        => pll_spi_rdata,
+    pll_vcxo_sdo         => pll_vcxo_sdo,
+    pll_vcxo_scl         => pll_vcxo_scl,
+    pll_vcxo_sdi         => pll_vcxo_sda,
+    pll_vcxo_en          => pll_vcxo_en,
+    pll_ext_clk_sel      => pll_ext_clk_sel,
+    adc_run              => adc_run_o,
+    dac_run              => dac_run_o,
     ext_sync_sel         => ext_sync_sel,
-    adc0_ext_sync_p      => adc0_ext_sync_p,
-    adc0_ext_sync_n      => adc0_ext_sync_n,
-    adc1_ext_sync_p      => adc1_ext_sync_p,
-    adc1_ext_sync_n      => adc1_ext_sync_n,
-    dac0_ext_sync_p      => '0',
-    dac0_ext_sync_n      => '0',
-    dac1_ext_sync_p      => '0',
-    dac1_ext_sync_n      => '0',
-
-    -- ADC0 and ADC1 interface
-    adc0_spi_sclk        => adc0_spi_sclk,
-    adc0_spi_sdenb       => adc0_spi_sdenb,
-    adc0_spi_sdio        => adc0_spi_sdio,
-    adc0_reset_p         => adc0_reset_p,
-    adc0_reset_n         => adc0_reset_n,
-    adc0_da_dclk_p       => adc0_da_dclk_p,
-    adc0_da_dclk_n       => adc0_da_dclk_n,
-    adc0_da_p            => adc0_da_p,
-    adc0_da_n            => adc0_da_n,
-    adc0_ovra_p          => adc0_ovra_p,
-    adc0_ovra_n          => adc0_ovra_n,
-    adc1_spi_sclk        => adc1_spi_sclk,
-    adc1_spi_sdenb       => adc1_spi_sdenb,
-    adc1_spi_sdio        => adc1_spi_sdio,
-    adc1_reset_p         => adc1_reset_p,
-    adc1_reset_n         => adc1_reset_n,
-    adc1_da_dclk_p       => adc1_da_dclk_p,
-    adc1_da_dclk_n       => adc1_da_dclk_n,
-    adc1_da_p            => adc1_da_p,
-    adc1_da_n            => adc1_da_n,
-    adc1_ovra_p          => adc1_ovra_p,
-    adc1_ovra_n          => adc1_ovra_n,
-
-    -- DAC0 and DAC1 interface signals
-    dac0_resetb          => dac0_resetb,
-    dac0_spi_sclk        => dac0_spi_sclk,
-    dac0_spi_sdenb       => dac0_spi_sdenb,
-    dac0_spi_sdio        => dac0_spi_sdio,
-    dac0_spi_sdo         => dac0_spi_sdo,
-    dac0_clk_in_p        => dac0_clk_in_p,
-    dac0_clk_in_n        => dac0_clk_in_n,
-    dac0_dclk_p          => open,
-    dac0_dclk_n          => open,
-    dac0_sync_p          => dac0_sync_p,
-    dac0_sync_n          => dac0_sync_n,
-    dac0_sync2_p         => dac0_sync2_p,
-    dac0_sync2_n         => dac0_sync2_n,
-    dac0_data_p          => open,
-    dac0_data_n          => open,
-
-    dac1_resetb          => dac1_resetb,
-    dac1_spi_sclk        => dac1_spi_sclk,
-    dac1_spi_sdenb       => dac1_spi_sdenb,
-    dac1_spi_sdio        => dac1_spi_sdio,
-    dac1_spi_sdo         => dac1_spi_sdo,
-    dac1_clk_in_p        => dac1_clk_in_p,
-    dac1_clk_in_n        => dac1_clk_in_n,
-    dac1_dclk_p          => open,
-    dac1_dclk_n          => open,
-    dac1_sync_p          => dac1_sync_p,
-    dac1_sync_n          => dac1_sync_n,
-    dac1_sync2_p         => dac1_sync2_p,
-    dac1_sync2_n         => dac1_sync2_n,
-    dac1_data_p          => open,
-    dac1_data_n          => open,
-
-    -- DAC output digitizer interface
-    dac_dig_en           => dac_dig_en,
-    dac0_dig_p           => dac0_dig_p,
-    dac0_dig_n           => dac0_dig_n,
-    dac1_dig_p           => dac1_dig_p,
-    dac1_dig_n           => dac1_dig_n,
-
-    -- PPS pulse input (ie. GPS)
-    ts_pps_pls           => h_pps_demet_re
+    adc_ch_en            => adc_ch_en,
+    adc_pdwn_n           => adc_pdwn_n,
+    adc_window_size      => adc_window_size,
+    adc_trigger_mode     => adc_trigger_mode,
+    adc_decimation       => adc_decimation,
+    adc_en_pri_trig      => adc_en_pri_trig,
+    adc_stop_pri         => adc_stop_pri,
+    adc_en_num_pri       => adc_en_num_pri,
+    adc_retrig_num_pri   => adc_retrig_num_pri,
+    adc_pri_busy         => adc_pri_busy,
+    adc_num_pri          => adc_num_pri,
+    adc_pri              => adc_pri,
+    adc_trig_fifo_wr_strb=> adc_trig_fifo_wr_strb,
+    adc_trig_cycle_del   => adc_trig_cycle_del,
+    adc_trig_width       => adc_trig_width,
+    adc0_spi_access_strb => adc0_spi_access_strb,
+    adc0_spi_wdata       => adc0_spi_wdata,
+    adc0_spi_addr        => adc0_spi_addr,
+    adc0_spi_rd_wrn      => adc0_spi_rd_wrn,
+    adc0_spi_rdy         => adc0_spi_rdy,
+    adc0_spi_rdata_valid => adc0_spi_rdata_valid,
+    adc0_spi_rdata       => adc0_spi_rdata,
+    adc1_spi_access_strb => adc1_spi_access_strb,
+    adc1_spi_wdata       => adc1_spi_wdata,
+    adc1_spi_addr        => adc1_spi_addr,
+    adc1_spi_rd_wrn      => adc1_spi_rd_wrn,
+    adc1_spi_rdy         => adc1_spi_rdy,
+    adc1_spi_rdata_valid => adc1_spi_rdata_valid,
+    adc1_spi_rdata       => adc1_spi_rdata,
+    adc_phy_init         => adc_phy_init,
+    skip_adc_phy_cal     => skip_adc_phy_cal,
+    adc0_eye_aligned     => adc0_eye_aligned,
+    adc0_prbs_locked     => adc0_prbs_locked,
+    adc0_prbs_aligned    => adc0_prbs_aligned,
+    adc0_phy_rdy         => adc0_phy_rdy,
+    adc1_eye_aligned     => adc1_eye_aligned,
+    adc1_prbs_locked     => adc1_prbs_locked,
+    adc1_prbs_aligned    => adc1_prbs_aligned,
+    adc1_phy_rdy         => adc1_phy_rdy,
+    adc_multx16_en       => adc_multx16_en,
+    ts_initial           => ts_initial,
+    ts_load              => ts_load,
+    ts_arm               => ts_arm,
+    ts_pps_mode          => ts_pps_mode,
+    ts_tsi               => ts_tsi,
+    ts_tsf               => ts_tsf,
+    adc0_frame_size      => adc0_frame_size,
+    adc1_frame_size      => adc1_frame_size,
+    adc0_stream_id       => adc0_stream_id,
+    adc1_stream_id       => adc1_stream_id,
+    adc0_gain            => adc0_gain,
+    adc1_gain            => adc1_gain,
+    adc0_offset          => adc0_offset,
+    adc1_offset          => adc1_offset,
+    dac_ch_en            => dac_ch_en,
+    dac_window_size      => dac_window_size,
+    dac_trigger_mode     => dac_trigger_mode,
+    dac_reset            => dac_reset_reg,
+    phase_inc_wr         => phase_inc_wr,
+    phase_inc            => phase_inc,
+    dac_en_pri_trig      => dac_en_pri_trig,
+    dac_stop_pri         => dac_stop_pri,
+    dac_en_num_pri       => dac_en_num_pri,
+    dac_retrig_num_pri   => dac_retrig_num_pri,
+    dac_pri_busy         => dac_pri_busy,
+    dac_num_pri          => dac_num_pri,
+    dac_pri              => dac_pri,
+    dac_trig_fifo_wr_strb=> dac_trig_fifo_wr_strb,
+    dac_trig_cycle_del   => dac_trig_cycle_del,
+    dac_trig_width       => dac_trig_width,
+    dac0_spi_access_strb => dac0_spi_access_strb,
+    dac0_spi_wdata       => dac0_spi_wdata,
+    dac0_spi_addr        => dac0_spi_addr,
+    dac0_spi_rd_wrn      => dac0_spi_rd_wrn,
+    dac0_spi_sdo         => dac0_spi_sdo_demet,
+    dac0_spi_rdy         => dac0_spi_rdy,
+    dac0_spi_rdata_valid => dac0_spi_rdata_valid,
+    dac0_spi_rdata       => dac0_spi_rdata,
+    dac1_spi_access_strb => dac1_spi_access_strb,
+    dac1_spi_wdata       => dac1_spi_wdata,
+    dac1_spi_addr        => dac1_spi_addr,
+    dac1_spi_rd_wrn      => dac1_spi_rd_wrn,
+    dac1_spi_sdo         => dac1_spi_sdo_demet,
+    dac1_spi_rdy         => dac1_spi_rdy,
+    dac1_spi_rdata_valid => dac1_spi_rdata_valid,
+    dac1_spi_rdata       => dac1_spi_rdata,
+    dac_cal_en           => dac_cal_en,
+    dac0_cal0_done       => dac0_cal0_done,
+    dac0_cal1_done       => dac0_cal1_done,
+    dac1_cal0_done       => dac1_cal0_done,
+    dac1_cal1_done       => dac1_cal1_done,
+    dac0_iodly_cnt       => dac0_iodly_cnt,
+    dac1_iodly_cnt       => dac1_iodly_cnt,
+    dac0_shift_cnt       => dac0_shift_cnt,
+    dac1_shift_cnt       => dac1_shift_cnt,
+    dac0_stream_id       => dac0_stream_id,
+    dac1_stream_id       => dac1_stream_id,
+    dac0_a_gain          => dac0_a_gain,
+    dac0_b_gain          => dac0_b_gain,
+    dac1_a_gain          => dac1_a_gain,
+    dac1_b_gain          => dac1_b_gain,
+    dac0_a_offset        => dac0_a_offset,
+    dac0_b_offset        => dac0_b_offset,
+    dac1_a_offset        => dac1_a_offset,
+    dac1_b_offset        => dac1_b_offset
   );
 
-  adc0_fifo_rd <= '1';
-  adc1_fifo_rd <= '1';
 
---Buffer the DAC triggers to single-ended
-pg0_trigbuf : IBUFDS
+
+--Buffer the ADC/DAC triggers to single-ended
+adc0_trigbuf : IBUFDS
+generic map (
+  DIFF_TERM     => true,
+  IOSTANDARD    => "LVPECL_25"
+)
+port map (
+  I       => adc0_ext_sync_p,
+  IB      => adc0_ext_sync_n,
+  O       => adc0_trig
+);
+
+adc1_trigbuf : IBUFDS
+generic map (
+  DIFF_TERM     => true,
+  IOSTANDARD    => "LVPECL_25"
+)
+port map (
+  I       => adc1_ext_sync_p,
+  IB      => adc1_ext_sync_n,
+  O       => adc1_trig
+);
+
+dac0_trigbuf : IBUFDS
 generic map (
   DIFF_TERM     => true,
   IOSTANDARD    => "LVPECL_25"
@@ -1943,7 +2108,7 @@ port map (
   O       => dac0_trig
 );
 
-pg1_trigbuf : IBUFDS
+dac1_trigbuf : IBUFDS
 generic map (
   DIFF_TERM     => true,
   IOSTANDARD    => "LVPECL_25"
@@ -1954,6 +2119,36 @@ port map (
   O       => dac1_trig
 );
 
+--ADC PHY interfaces
+adc0_phy : entity work.adc_phy
+port map(
+    reset => backend_rst,
+
+    --clock and data lines from ADC chip
+    clk_in_p => adc0_da_dclk_p,
+    clk_in_n => adc0_da_dclk_n,
+    data_in_p => adc0_da_p,
+    data_in_n => adc0_da_n,
+
+    --Data out to other modules
+    data_clk => adc0_data_clk,
+    data_out => adc0_raw_data
+);
+
+adc1_phy : entity work.adc_phy
+port map(
+    reset => backend_rst,
+
+    --clock and data lines from ADC chip
+    clk_in_p => adc1_da_dclk_p,
+    clk_in_n => adc1_da_dclk_n,
+    data_in_p => adc1_da_p,
+    data_in_n => adc1_da_n,
+
+    --Data out to other modules
+    data_clk => adc1_data_clk,
+    data_out => adc1_raw_data
+);
 
 pg0 : entity work.PulseGenerator
     generic map (
