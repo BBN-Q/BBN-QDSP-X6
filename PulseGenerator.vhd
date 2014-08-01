@@ -9,7 +9,7 @@ entity PulseGenerator is
 	reset : in std_logic;
 	trigger : in std_logic;
 
-	--
+	-- DAC PHY interface
 	dac_data_clk : in std_logic;
 	dac_data     : out std_logic_vector(63 downto 0) ;
 
