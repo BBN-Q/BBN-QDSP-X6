@@ -31,16 +31,9 @@ architecture arch of PulseGenerator is
 signal control, status : std_logic_vector(31 downto 0) := (others => '0');
 signal wf_length : std_logic_vector(15 downto 0) := (others => '0');
 
-signal clk_reset, io_reset : std_logic := '0';
-signal ddr_clk : std_logic;
-
-signal dac_data : std_logic_vector(63 downto 0) ;
-
 signal wf_wr_addr, wf_wr_data : std_logic_vector(31 downto 0) ;
 signal wf_wr_we : std_logic;
 signal wf_rd_addr : unsigned(11 downto 0) ;
-
-
 
 begin
 

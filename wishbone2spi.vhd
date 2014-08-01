@@ -23,9 +23,9 @@
 --*   @port spi_rdy         :output, SPI port is ready
 --*   @port spi_rdata_valid :output, SPI read data is valid
 --*   @port spi_rdata       :output, last SPI read data
---*   @port dac_spi_sclk    :output, SPI clock
---*   @port dac_spi_sdenb   :output, SPI enable
---*   @port dac_spi_sdio    : inout, SPI input/output data
+--*   @port spi_sclk    :output, SPI clock
+--*   @port spi_sdenb   :output, SPI enable
+--*   @port spi_sdio    : inout, SPI input/output data
 --*
 --*      @author Innovative Integration
 --*      @version 1.0
@@ -232,7 +232,7 @@ begin
     )
     port map (
       O                    => spi_sdio_i,
-      IO                   => dac_spi_sdio,
+      IO                   => spi_sdio,
       I                    => spi_sdio_o,
       T                    => sdio_oe_n
     );
@@ -247,13 +247,13 @@ begin
       if (srst = '1' or (spi_state = idle)) then
         spi_sdio_o    <= '0';
         sdio_oe_n     <= '1';
-        dac_spi_sclk  <= '0';
-        dac_spi_sdenb <= '1';
+        spi_sclk  <= '0';
+        spi_sdenb <= '1';
       else
         spi_sdio_o    <= sdo;
         sdio_oe_n     <= not sdio_oe;
-        dac_spi_sclk  <= sclk;
-        dac_spi_sdenb <= sdenb;
+        spi_sclk  <= sclk;
+        spi_sdenb <= sdenb;
       end if;
     end if;
   end process;
