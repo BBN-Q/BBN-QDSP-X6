@@ -2,6 +2,9 @@ library ieee;
 use ieee.std_logic_1164.all;
 use ieee.numeric_std.all;
 
+library unisim;
+use unisim.vcomponents.all;
+
 -- Interface to the PHY layer of the DAC
 -- Takes clock from DAC and returns data with clock
 -- Provides divided clock to input wide data on too
@@ -12,6 +15,8 @@ entity dac_phy is
   	reset : in std_logic;
   	sys_clk : in std_logic;
 
+  	dac_resetb : out std_logic;
+
 	--clock lines from DAC chip
 	clk_in_p : in std_logic;
 	clk_in_n : in std_logic;
@@ -21,6 +26,9 @@ entity dac_phy is
 	data_out_n : out std_logic_vector(15 downto 0) ;
 	clk_out_p : out std_logic;
 	clk_out_n : out std_logic;
+
+	sync_out_p : out std_logic;
+	sync_out_n : out std_logic;
 
 	--Data in to be serialized
 	data_clk : out std_logic;
@@ -45,6 +53,20 @@ end entity ; -- dac_phy
 architecture arch of dac_phy is
 
 begin
+
+dac_resetb <= 'Z';
+
+--Drive sync off not reset for now
+reset_buf : OBUFDS
+generic map (
+  IOSTANDARD    => "LVDS_25"
+)
+port map (
+  O       => sync_out_p,
+  OB      => sync_out_n,
+  I       => not reset
+);
+
 
 --Serialization
 dac_gear_out : entity work.DAC_SEROUT

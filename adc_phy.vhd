@@ -2,6 +2,9 @@ library ieee;
 use ieee.std_logic_1164.all;
 use ieee.numeric_std.all;
 
+library unisim;
+use unisim.vcomponents.all;
+
 -- Interface to the PHY layer of the ADC
 -- Takes clock and data lines and returns serialized data with a divided clock
 -- Also handles SPI comms from wishbone registers
@@ -11,15 +14,18 @@ entity adc_phy is
   	reset : in std_logic;
   	sys_clk : in std_logic;
 
-	--clock and data lines from ADC chip
-	clk_in_p : in std_logic;
-	clk_in_n : in std_logic;
-	data_in_p : in std_logic_vector(11 downto 0) ;
-	data_in_n : in std_logic_vector(11 downto 0) ;
+    adc_reset_p : out std_logic;
+    adc_reset_n : out std_logic;
 
-	--Data out to other modules
-	data_clk : out std_logic;
-	data_out : out std_logic_vector(47 downto 0);
+  	--clock and data lines from ADC chip
+  	clk_in_p : in std_logic;
+  	clk_in_n : in std_logic;
+  	data_in_p : in std_logic_vector(11 downto 0) ;
+  	data_in_n : in std_logic_vector(11 downto 0) ;
+
+  	--Data out to other modules
+  	data_clk : out std_logic;
+  	data_out : out std_logic_vector(47 downto 0);
 
 	--SPI wishbone
     spi_access_strb      : in  std_logic;
@@ -40,6 +46,17 @@ end entity ; -- adc_phy
 architecture arch of adc_phy is
 
 begin
+
+--Differential buffer for reset
+reset_buf : OBUFDS
+generic map (
+  IOSTANDARD    => "LVDS_25"
+)
+port map (
+  O       => adc_reset_p,
+  OB      => adc_reset_n,
+  I       => reset
+);
 
 --Deserialize the ADC data
 adc_gear_in : entity work.ADC_DESIN
