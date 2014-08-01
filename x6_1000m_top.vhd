@@ -1873,6 +1873,28 @@ begin
     dac1_shift_cnt       => '0'
   );
 
+-----------------------------------------------------------------------------
+-- Instantiate cdce72010 pll spi control interface
+-----------------------------------------------------------------------------
+  inst_pll : ii_cdce72010_spi
+  port map (
+    srst            => srst,
+    clk             => sys_clk,
+
+    -- User interface
+    spi_wr_strb     => pll_spi_wr_strb,
+    spi_wdata       => pll_spi_wdata,
+    spi_addr        => pll_spi_addr,
+    spi_rdy         => pll_spi_rdy,
+    spi_rdata_valid => pll_spi_rdata_valid,
+    spi_rdata       => pll_spi_rdata,
+
+    -- PLL spi interface
+    spi_sclk        => pll_spi_sclk,
+    spi_le          => pll_spi_le,
+    spi_mosi        => pll_spi_mosi,
+    spi_miso        => pll_spi_miso
+  );
 
 --Buffer the ADC/DAC triggers to single-ended
 adc0_trigbuf : IBUFDS
