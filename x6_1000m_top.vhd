@@ -1961,7 +1961,7 @@ port map(
 
     --Data out to other modules
     data_clk => adc1_data_clk,
-    data_out => adc1_raw_data
+    data_out => adc1_raw_data,
 
     --SPI
     spi_access_strb => adc1_spi_access_strb,

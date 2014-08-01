@@ -24,7 +24,7 @@ entity dac_phy is
 
 	--Data in to be serialized
 	data_clk : out std_logic;
-	data : in std_logic_vector(63 downto 0) 
+	data : in std_logic_vector(63 downto 0);
 
 	--SPI wishbone
     spi_access_strb      : in  std_logic;

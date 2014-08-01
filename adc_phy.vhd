@@ -19,7 +19,7 @@ entity adc_phy is
 
 	--Data out to other modules
 	data_clk : out std_logic;
-	data_out : out std_logic_vector(47 downto 0) 
+	data_out : out std_logic_vector(47 downto 0);
 
 	--SPI wishbone
     spi_access_strb      : in  std_logic;
