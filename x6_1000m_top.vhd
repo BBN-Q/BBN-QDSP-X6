@@ -275,10 +275,6 @@ entity x6_1000m_top is
     pll_spi_miso         : in    std_logic;
     pll_ext_clk_sel      : out   std_logic;
     pll_lock             : in    std_logic;
-    ref_adc_clk_p        : in    std_logic;
-    ref_adc_clk_n        : in    std_logic;
-    ref_dac_clk_p        : in    std_logic;
-    ref_dac_clk_n        : in    std_logic;
 
     -- External sync
     ext_sync_sel         : out   std_logic;
@@ -301,8 +297,6 @@ entity x6_1000m_top is
     adc0_da_dclk_n       : in    std_logic;
     adc0_da_p            : in    std_logic_vector(11 downto 0);
     adc0_da_n            : in    std_logic_vector(11 downto 0);
-    adc0_ovra_p          : in    std_logic;
-    adc0_ovra_n          : in    std_logic;
     adc1_spi_sclk        : out   std_logic;
     adc1_spi_sdenb       : out   std_logic;
     adc1_spi_sdio        : inout std_logic;
@@ -312,8 +306,6 @@ entity x6_1000m_top is
     adc1_da_dclk_n       : in    std_logic;
     adc1_da_p            : in    std_logic_vector(11 downto 0);
     adc1_da_n            : in    std_logic_vector(11 downto 0);
-    adc1_ovra_p          : in    std_logic;
-    adc1_ovra_n          : in    std_logic;
 
     -- DAC0 and DAC1 interface signals
     dac0_resetb          : out   std_logic;
@@ -327,8 +319,6 @@ entity x6_1000m_top is
     dac0_dclk_n          : out   std_logic;
     dac0_sync_p          : out   std_logic;
     dac0_sync_n          : out   std_logic;
-    dac0_sync2_p         : out   std_logic;
-    dac0_sync2_n         : out   std_logic;
     dac0_data_p          : out   std_logic_vector(15 downto 0);
     dac0_data_n          : out   std_logic_vector(15 downto 0);
     dac1_resetb          : out   std_logic;
@@ -342,17 +332,8 @@ entity x6_1000m_top is
     dac1_dclk_n          : out   std_logic;
     dac1_sync_p          : out   std_logic;
     dac1_sync_n          : out   std_logic;
-    dac1_sync2_p         : out   std_logic;
-    dac1_sync2_n         : out   std_logic;
     dac1_data_p          : out   std_logic_vector(15 downto 0);
     dac1_data_n          : out   std_logic_vector(15 downto 0);
-
-    -- DAC output digitizer interface
-    dac_dig_en           : out   std_logic;
-    dac0_dig_p           : in    std_logic;
-    dac0_dig_n           : in    std_logic;
-    dac1_dig_p           : in    std_logic;
-    dac1_dig_n           : in    std_logic;
 
     -- Serial RapidIO clock control
     sio_xo_scl           : out   std_logic;
@@ -1961,6 +1942,9 @@ port map(
     reset => backend_rst,
     sys_clk => sys_clk,
 
+    adc_reset_p => adc0_reset_p,
+    adc_reset_n => adc0_reset_n,
+
     --clock and data lines from ADC chip
     clk_in_p => adc0_da_dclk_p,
     clk_in_n => adc0_da_dclk_n,
@@ -1990,6 +1974,9 @@ adc1_phy : entity work.adc_phy
 port map(
     reset => backend_rst,
     sys_clk => sys_clk,
+
+    adc_reset_p => adc1_reset_p,
+    adc_reset_n => adc1_reset_n,
 
     --clock and data lines from ADC chip
     clk_in_p => adc1_da_dclk_p,
@@ -2022,6 +2009,8 @@ port map(
     reset => backend_rst,
     sys_clk => sys_clk,
 
+    dac_resetb => dac0_resetb,
+
     --clock from DAC
     clk_in_p => dac0_clk_in_p,
     clk_in_n => dac0_clk_in_n,
@@ -2031,6 +2020,9 @@ port map(
     data_out_n => dac0_data_n,
     clk_out_p => dac0_dclk_p,
     clk_out_n => dac0_dclk_n,
+
+    sync_out_p => dac0_sync_p,
+    sync_out_n => dac0_sync_n,
 
     --Wide data interface at divided clock
     data_clk => dac0_div_clk,
@@ -2056,6 +2048,8 @@ port map(
     reset => backend_rst,
     sys_clk => sys_clk,
 
+    dac_resetb => dac1_resetb,
+
     --clock from DAC
     clk_in_p => dac1_clk_in_p,
     clk_in_n => dac1_clk_in_n,
@@ -2065,6 +2059,9 @@ port map(
     data_out_n => dac1_data_n,
     clk_out_p => dac1_dclk_p,
     clk_out_n => dac1_dclk_n,
+
+    sync_out_p => dac1_sync_p,
+    sync_out_n => dac1_sync_n,
 
     --Wide data interface at divided clock
     data_clk => dac1_div_clk,
