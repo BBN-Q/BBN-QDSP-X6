@@ -732,6 +732,9 @@ architecture arch of x6_1000m_top is
  signal dac0_data, dac1_data : std_logic_vector(63 downto 0) ;
  signal dac0_div_clk, dac1_div_clk : std_logic;
 
+ signal adc0_data_clk, adc1_data_clk : std_logic;
+ signal adc0_raw_data, adc1_raw_data : std_logic_vector(47 downto 0) ;
+
 -- AFE register connections
   signal pll_spi_rdy          : std_logic;
   signal pll_spi_rdata_valid  : std_logic;
@@ -768,6 +771,7 @@ architecture arch of x6_1000m_top is
   signal dac1_spi_rdy         : std_logic;
   signal dac1_spi_rdata_valid : std_logic;
   signal dac1_spi_rdata       : std_logic_vector(7 downto 0);
+  signal dac0_spi_sdo_sysclk, dac1_spi_sdo_sysclk : std_logic;
 
 begin
 
@@ -1782,21 +1786,21 @@ begin
 -----------------------------------------------------------------------------
 -- Instantiate AFE registers
 -----------------------------------------------------------------------------
-  inst_afe_regs: ii_afe_intf_regs
+  inst_afe_regs: entity work.ii_afe_intf_regs
   generic map (
     addr_bits            => 8,
     offset               => MR_AFE
   )
   port map (
     -- Wishbone interface signals
-    wb_rst_i             => wb_rst_i,
-    wb_clk_i             => wb_clk_i,
-    wb_adr_i             => wb_adr_i,
-    wb_dat_i             => wb_dat_i,
-    wb_we_i              => wb_we_i,
-    wb_stb_i             => wb_stb_i,
+    wb_rst_i             => wb_rst,
+    wb_clk_i             => sys_clk,
+    wb_adr_i             => wb_adr_o,
+    wb_dat_i             => wb_dat_o,
+    wb_we_i              => wb_we_o,
+    wb_stb_i             => wb_stb_o,
     wb_ack_o             => wb_ack_i(8),
-    wb_dat_o             => wb_dat_o,
+    wb_dat_o             => wb_dat_i,
 
     -- User registers
     pll_pwr_down_n       => pll_pwr_down_n,
@@ -1843,13 +1847,14 @@ begin
     adc1_prbs_aligned    => '0',
     adc1_phy_rdy         => '0',
 
+    adc_pri_busy         => '0',
     dac_pri_busy         => '0',
 
     dac0_spi_access_strb => dac0_spi_access_strb,
     dac0_spi_wdata       => dac0_spi_wdata,
     dac0_spi_addr        => dac0_spi_addr,
     dac0_spi_rd_wrn      => dac0_spi_rd_wrn,
-    dac0_spi_sdo         => dac0_spi_sdo_demet,
+    dac0_spi_sdo         => dac0_spi_sdo_sysclk,
     dac0_spi_rdy         => dac0_spi_rdy,
     dac0_spi_rdata_valid => dac0_spi_rdata_valid,
     dac0_spi_rdata       => dac0_spi_rdata,
@@ -1858,7 +1863,7 @@ begin
     dac1_spi_wdata       => dac1_spi_wdata,
     dac1_spi_addr        => dac1_spi_addr,
     dac1_spi_rd_wrn      => dac1_spi_rd_wrn,
-    dac1_spi_sdo         => dac1_spi_sdo_demet,
+    dac1_spi_sdo         => dac1_spi_sdo_sysclk,
     dac1_spi_rdy         => dac1_spi_rdy,
     dac1_spi_rdata_valid => dac1_spi_rdata_valid,
     dac1_spi_rdata       => dac1_spi_rdata,
@@ -1867,18 +1872,27 @@ begin
     dac0_cal1_done       => '0',
     dac1_cal0_done       => '0',
     dac1_cal1_done       => '0',
-    dac0_iodly_cnt       => '0',
-    dac1_iodly_cnt       => '0',
-    dac0_shift_cnt       => '0',
-    dac1_shift_cnt       => '0'
+    dac0_iodly_cnt       => (others => '0'),
+    dac1_iodly_cnt       => (others => '0'),
+    dac0_shift_cnt       => (others => '0'),
+    dac1_shift_cnt       => (others => '0')
   );
+
+--Syncrhonize dac0_spi_sdo onto system clock domain.  Not really sure what this signal is for...
+sync_dac0_sdo : entity work.reg_synchronizer
+generic map(REG_WIDTH => 1)
+port map ( reset => frontend_rst, clk => sys_clk, i_data(0) => dac0_spi_sdo, o_data(0) => dac0_spi_sdo_sysclk);
+
+sync_dac1_sdo : entity work.reg_synchronizer
+generic map(REG_WIDTH => 1)
+port map ( reset => frontend_rst, clk => sys_clk, i_data(0) => dac1_spi_sdo, o_data(0) => dac1_spi_sdo_sysclk);
 
 -----------------------------------------------------------------------------
 -- Instantiate cdce72010 pll spi control interface
 -----------------------------------------------------------------------------
-  inst_pll : ii_cdce72010_spi
+  inst_pll : entity work.ii_cdce72010_spi
   port map (
-    srst            => srst,
+    srst            => frontend_rst,
     clk             => sys_clk,
 
     -- User interface
@@ -1945,6 +1959,7 @@ port map (
 adc0_phy : entity work.adc_phy
 port map(
     reset => backend_rst,
+    sys_clk => sys_clk,
 
     --clock and data lines from ADC chip
     clk_in_p => adc0_da_dclk_p,
@@ -1974,6 +1989,7 @@ port map(
 adc1_phy : entity work.adc_phy
 port map(
     reset => backend_rst,
+    sys_clk => sys_clk,
 
     --clock and data lines from ADC chip
     clk_in_p => adc1_da_dclk_p,
@@ -2004,6 +2020,7 @@ port map(
 dac0_phy : entity work.dac_phy
 port map(
     reset => backend_rst,
+    sys_clk => sys_clk,
 
     --clock from DAC
     clk_in_p => dac0_clk_in_p,
@@ -2037,6 +2054,7 @@ port map(
 dac1_phy : entity work.dac_phy
 port map(
     reset => backend_rst,
+    sys_clk => sys_clk,
 
     --clock from DAC
     clk_in_p => dac1_clk_in_p,
@@ -2126,6 +2144,7 @@ inst_dsp0 : entity work.ii_dsp_top
   port map (
     srst => backend_rst,
     sys_clk => sys_clk,
+    trigger => dac0_trig,
 
     -- Slave Wishbone Interface
     wb_rst_i => wb_rst,
@@ -2137,11 +2156,9 @@ inst_dsp0 : entity work.ii_dsp_top
     wb_ack_o => wb_ack_i(12),
     wb_dat_o => wb_dat_i,
 
-    -- Input serialized raw data interface
-    rden     => adc0_raw_rden,
-    din_vld  => adc0_raw_vld,
-    din      => adc0_raw_dout,
-    frame_in => adc0_frame_out,
+    -- Input raw data interface
+    raw_data_clk => adc0_data_clk,
+    raw_data => adc0_raw_data,
 
     -- VITA-49 Output FIFO Interface
     muxed_vita_rden  => vfifo2_i_rdy,
@@ -2159,6 +2176,7 @@ inst_dsp0 : entity work.ii_dsp_top
   port map (
     srst => backend_rst,
     sys_clk => sys_clk,
+    trigger => dac1_trig,
 
     -- Slave Wishbone Interface
     wb_rst_i => wb_rst,
@@ -2170,11 +2188,9 @@ inst_dsp0 : entity work.ii_dsp_top
     wb_ack_o => wb_ack_i(13),
     wb_dat_o => wb_dat_i,
 
-    -- Input serialized raw data interface
-    rden     => adc1_raw_rden,
-    din_vld  => adc1_raw_vld,
-    din      => adc1_raw_dout,
-    frame_in => adc1_frame_out,
+    -- Input raw data interface
+    raw_data_clk => adc1_data_clk,
+    raw_data => adc1_raw_data,
 
     -- VITA-49 Output FIFO Interface
     muxed_vita_rden  => vfifo3_i_rdy,

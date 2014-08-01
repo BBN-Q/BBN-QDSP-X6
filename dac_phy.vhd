@@ -17,10 +17,10 @@ entity dac_phy is
 	clk_in_n : in std_logic;
 
 	--data and clock out to DAC
-	data_out_p : in std_logic_vector(15 downto 0) ;
-	data_out_n : in std_logic_vector(15 downto 0) ;
-	clk_out_p : std_logic;
-	clk_out_n : std_logic;
+	data_out_p : out std_logic_vector(15 downto 0) ;
+	data_out_n : out std_logic_vector(15 downto 0) ;
+	clk_out_p : out std_logic;
+	clk_out_n : out std_logic;
 
 	--Data in to be serialized
 	data_clk : out std_logic;
