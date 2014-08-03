@@ -463,25 +463,31 @@ TIMESPEC "TS_ADC_DCLK" = PERIOD "TNM_ADC_DCLK" 2 ns;  #500MHz
 ## INST "inst_afe_top/inst_dac1_intf/inst_dac_intf/dac5682z_phy_inst/idelayctrl_inst" LOC = "IDELAYCTRL_X0Y2";
 ## INST "inst_afe_top/inst_idelayctrl" LOC = "IDELAYCTRL_X0Y4";
 ## 
-## INST "inst_afe_top/inst_adc0" AREA_GROUP = "AG_adc0_intf";
-## AREA_GROUP "AG_adc0_intf" RANGE = SLICE_X0Y60:SLICE_X23Y99;
-## AREA_GROUP "AG_adc0_intf" RANGE = RAMB18_X0Y24:RAMB18_X1Y39;
-## AREA_GROUP "AG_adc0_intf" RANGE = RAMB36_X0Y12:RAMB36_X1Y19;
-## 
-## INST "inst_afe_top/inst_adc1" AREA_GROUP = "AG_adc1_intf";
-## AREA_GROUP "AG_adc1_intf" RANGE = SLICE_X0Y20:SLICE_X23Y59;
-## AREA_GROUP "AG_adc1_intf" RANGE = RAMB18_X0Y8:RAMB18_X1Y23;
-## AREA_GROUP "AG_adc1_intf" RANGE = RAMB36_X0Y4:RAMB36_X1Y11;
-## 
-## INST "inst_afe_top/inst_dac0_intf" AREA_GROUP = "AG_dac0_intf";
-## AREA_GROUP "AG_dac0_intf" RANGE = SLICE_X0Y140:SLICE_X23Y179;
-## AREA_GROUP "AG_dac0_intf" RANGE = RAMB36_X0Y28:RAMB36_X1Y35;
-## AREA_GROUP "AG_dac0_intf" RANGE = DSP48_X0Y56:DSP48_X1Y71;
-## 
-## INST "inst_afe_top/inst_dac1_intf" AREA_GROUP = "AG_dac1_intf";
-## AREA_GROUP "AG_dac1_intf" RANGE = SLICE_X0Y100:SLICE_X23Y139;
-## AREA_GROUP "AG_dac1_intf" RANGE = RAMB36_X0Y20:RAMB36_X1Y27;
-## AREA_GROUP "AG_dac1_intf" RANGE = DSP48_X0Y40:DSP48_X1Y55;
+
+## Not sure why we need this but.... 
+## see http://forums.xilinx.com/t5/Implementation/PhysDesignRules-2506-error-when-porting-to-14-7/td-p/402435/page/3
+INST "adc0_phy/adc_gear_in/clkout_buf_inst" LOC=BUFR_X0Y3;
+
+
+INST "adc0_phy" AREA_GROUP = "AG_adc0_intf";
+AREA_GROUP "AG_adc0_intf" RANGE = SLICE_X0Y60:SLICE_X23Y99;
+AREA_GROUP "AG_adc0_intf" RANGE = RAMB18_X0Y24:RAMB18_X1Y39;
+AREA_GROUP "AG_adc0_intf" RANGE = RAMB36_X0Y12:RAMB36_X1Y19;
+
+INST "adc1_phy" AREA_GROUP = "AG_adc1_intf";
+AREA_GROUP "AG_adc1_intf" RANGE = SLICE_X0Y20:SLICE_X23Y59;
+AREA_GROUP "AG_adc1_intf" RANGE = RAMB18_X0Y8:RAMB18_X1Y23;
+AREA_GROUP "AG_adc1_intf" RANGE = RAMB36_X0Y4:RAMB36_X1Y11;
+
+INST "dac0_phy" AREA_GROUP = "AG_dac0_intf";
+AREA_GROUP "AG_dac0_intf" RANGE = SLICE_X0Y140:SLICE_X23Y179;
+AREA_GROUP "AG_dac0_intf" RANGE = RAMB36_X0Y28:RAMB36_X1Y35;
+AREA_GROUP "AG_dac0_intf" RANGE = DSP48_X0Y56:DSP48_X1Y71;
+
+INST "dac1_phy" AREA_GROUP = "AG_dac1_intf";
+AREA_GROUP "AG_dac1_intf" RANGE = SLICE_X0Y100:SLICE_X23Y139;
+AREA_GROUP "AG_dac1_intf" RANGE = RAMB36_X0Y20:RAMB36_X1Y27;
+AREA_GROUP "AG_dac1_intf" RANGE = DSP48_X0Y40:DSP48_X1Y55;
 
 INST "inst_vmvr" AREA_GROUP = "AG_vmvr";
 AREA_GROUP "AG_vmvr" RANGE = SLICE_X108Y80:SLICE_X123Y119;
