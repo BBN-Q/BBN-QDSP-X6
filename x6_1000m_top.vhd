@@ -1960,7 +1960,7 @@ port map (
 --ADC PHY interfaces
 adc0_phy : entity work.adc_phy
 port map(
-    reset => backend_rst,
+    reset => frontend_rst,
     sys_clk => sys_clk,
 
     adc_reset_p => adc0_reset_p,
@@ -2078,7 +2078,7 @@ port map(
 
 adc1_phy : entity work.adc_phy
 port map(
-    reset => backend_rst,
+    reset => frontend_rst,
     sys_clk => sys_clk,
 
     adc_reset_p => adc1_reset_p,
@@ -2115,7 +2115,7 @@ port map(
 --DAC PHY interfaces
 dac0_phy : entity work.dac_phy
 port map(
-    reset => backend_rst,
+    reset => frontend_rst,
     sys_clk => sys_clk,
 
     dac_resetb => dac0_resetb,
@@ -2154,7 +2154,7 @@ port map(
 
 dac1_phy : entity work.dac_phy
 port map(
-    reset => backend_rst,
+    reset => frontend_rst,
     sys_clk => sys_clk,
 
     dac_resetb => dac1_resetb,
