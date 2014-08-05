@@ -24,8 +24,11 @@ entity adc_phy is
   	data_in_n : in std_logic_vector(11 downto 0) ;
 
   	--Data out to other modules
-  	data_clk : out std_logic;
+  	data_clk : buffer std_logic;
   	data_out : out std_logic_vector(47 downto 0);
+
+    DELAY_DATA_CE        : in    std_logic_vector(11 downto 0);            -- Enable signal for delay for bit 
+    REF_CLOCK            : in    std_logic;                    -- Reference Clock for IDELAYCTRL. Has to come from BUFG.
 
 	--SPI wishbone
     spi_access_strb      : in  std_logic;
@@ -45,6 +48,8 @@ end entity ; -- adc_phy
 
 architecture arch of adc_phy is
 
+signal delay_data_ce_sync, delay_data_ce_sync_d, delay_ce_pulse : std_logic_vector(11 downto 0) ;
+
 begin
 
 --Differential buffer for reset
@@ -58,6 +63,21 @@ port map (
   I       => reset
 );
 
+
+--edge detector for delay_ce on div_clk
+sync_delay_ce : entity work.reg_synchronizer
+generic map(REG_WIDTH => 12)
+port map ( reset => reset, clk => data_clk, i_data => DELAY_DATA_CE, o_data => delay_data_ce_sync);
+
+edge_detector : process( data_clk )
+begin
+  if rising_edge(data_clk) then
+    delay_data_ce_sync_d <= delay_data_ce_sync;
+    delay_ce_pulse <= delay_data_ce_sync and not delay_data_ce_sync_d;
+  end if ;
+end process ; -- edge_detector
+
+
 --Deserialize the ADC data
 adc_gear_in : entity work.ADC_DESIN
   port map
@@ -67,9 +87,14 @@ adc_gear_in : entity work.ADC_DESIN
   DATA_IN_FROM_PINS_N =>   data_in_n, --Input pins
   DATA_IN_TO_DEVICE =>   data_out, --Output pins
 
+  DELAY_RESET => reset,
+  DELAY_DATA_CE => delay_ce_pulse,
+  DELAY_DATA_INC => (others => '1'),
+  DELAY_LOCKED => open,
+  REF_CLOCK => REF_CLOCK,
   BITSLIP =>   '0',    --product guide says hold to zero if unused
  
--- Clock and reset signals
+  -- Clock and reset signals
   CLK_IN_P =>  clk_in_p,     -- Differential clock from IOB
   CLK_IN_N =>  clk_in_n,     -- Differential clock from IOB
   CLK_DIV_OUT => data_clk,     -- Slow clock output
