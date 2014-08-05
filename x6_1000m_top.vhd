@@ -706,7 +706,7 @@ architecture arch of x6_1000m_top is
 ------------------------------------------------------------------------------
 -- Chipscope debug
 ------------------------------------------------------------------------------
-  signal control0, control1 : std_logic_vector(35 downto 0) ;
+  signal control0, control1, control2, control3 : std_logic_vector(35 downto 0) ;
 
 -----------------------------------------------------------------------------
  signal dac0_trig, dac1_trig, adc0_trig, adc1_trig : std_logic;
@@ -717,6 +717,23 @@ architecture arch of x6_1000m_top is
  signal adc0_raw_data, adc1_raw_data : std_logic_vector(47 downto 0) ;
 
 -- AFE register connections
+
+  signal clk200_locked_d      : std_logic;
+  signal clk200_locked_dd     : std_logic;
+  signal clk200_locked_re     : std_logic;
+  signal idelayctrl_rst_sreg  : std_logic_vector(9 downto 0);
+  signal idelayctrl_rst       : std_logic;
+  signal adc_phy_init_d       : std_logic;
+  signal adc_phy_init_re      : std_logic;
+
+	signal adc_phy_init         : std_logic;
+	signal skip_adc_phy_cal     : std_logic;
+	signal adc0_delay_ce, adc1_delay_ce        : std_logic_vector(11 downto 0) ;
+	signal adc1_eye_aligned     : std_logic_vector(12 downto 0);
+	signal adc1_prbs_locked     : std_logic;
+	signal adc1_prbs_aligned    : std_logic;
+	signal adc1_phy_rdy         : std_logic;
+
   signal pll_spi_rdy          : std_logic;
   signal pll_spi_rdata_valid  : std_logic;
   signal pll_spi_wr_strb      : std_logic;
@@ -994,7 +1011,7 @@ begin
   dio_p(31 downto 16) <= (others => '0');
   dio_p(15 downto 12) <= state1 & state0;
   dio_p(11 downto 0) <= (others => '0');
-  dio_n(31 downto 0) <= (others => '0');
+  -- dio_n(31 downto 0) <= (others => '0');
 
 -----------------------------------------------------------------------------
 -- Temperature controller
@@ -1819,14 +1836,18 @@ begin
     adc1_spi_rdata_valid => adc1_spi_rdata_valid,
     adc1_spi_rdata       => adc1_spi_rdata,
 
+    adc0_delay_ce        => adc0_delay_ce,
     adc0_eye_aligned     => (others => '0'),
     adc0_prbs_locked     => '0',
     adc0_prbs_aligned    => '0',
     adc0_phy_rdy         => '0',
-    adc1_eye_aligned     => (others => '0'),
-    adc1_prbs_locked     => '0',
-    adc1_prbs_aligned    => '0',
-    adc1_phy_rdy         => '0',
+    adc1_eye_aligned     => adc1_eye_aligned,
+    adc1_prbs_locked     => adc1_prbs_locked,
+    adc1_prbs_aligned    => adc1_prbs_aligned,
+    adc1_phy_rdy         => adc1_phy_rdy,
+
+    adc_phy_init         => adc_phy_init,
+    skip_adc_phy_cal     => skip_adc_phy_cal,
 
     adc_pri_busy         => '0',
     dac_pri_busy         => '0',
@@ -1955,6 +1976,9 @@ port map(
     data_clk => adc0_data_clk,
     data_out => adc0_raw_data,
 
+	  DELAY_DATA_CE => adc0_delay_ce,
+	  REF_CLOCK => ref_clk200,
+
     --SPI
     spi_access_strb => adc0_spi_access_strb,
     spi_wdata => adc0_spi_wdata,
@@ -1969,6 +1993,88 @@ port map(
     spi_sdenb => adc0_spi_sdenb,
     spi_sdio => adc0_spi_sdio
 );
+
+
+--   -- Detect a rising edge on clk200_locked and generate a synchronous
+--   -- active high idelayctrl_rst for at least 50ns after ref_clk200 stabilizes
+--   process (ref_clk200)
+--   begin
+--     if (rising_edge(ref_clk200)) then
+--       clk200_locked_d  <= clks_locked;
+--       clk200_locked_dd <= clk200_locked_d;
+--       clk200_locked_re <= clk200_locked_d and not clk200_locked_dd;
+--       if (clk200_locked_re = '1') then
+--         idelayctrl_rst_sreg <= (others => '1');
+--       else
+--         idelayctrl_rst_sreg <= (idelayctrl_rst_sreg(8 downto 0) & '0');
+--       end if;
+--       idelayctrl_rst <= idelayctrl_rst_sreg(9);
+--     end if;
+--   end process;
+
+--   -- Strobe the PHY to start its initialization procedure and
+--   -- calibration on rising edge of adc_phy_init
+--   process (sys_clk)
+--   begin
+--     if (rising_edge(sys_clk)) then
+--       adc_phy_init_d  <= adc_phy_init;
+--       adc_phy_init_re <= adc_phy_init and not adc_phy_init_d;
+--     end if;
+--   end process;
+
+
+-- adc1_phy : ii_ads5400_phy_top
+--   port map (
+--     -- Reset and clocks
+--     srst                 => backend_rst,
+--     sys_clk              => sys_clk,
+--     ref_clk200           => ref_clk200,
+
+--     -- Controls
+--     idelayctrl_rst       => idelayctrl_rst,
+--     phy_init_strb        => adc_phy_init_re,
+--     skip_adc_phy_cal     => skip_adc_phy_cal,
+--     ch_en                => '1',
+--     gain                 => (others => '1'),
+--     offset               => (others => '0'),
+
+--     -- Status
+--     adc_eye_aligned      => adc1_eye_aligned,
+--     adc_prbs_locked      => adc1_prbs_locked,
+--     adc_prbs_aligned     => adc1_prbs_aligned,
+--     adc_phy_rdy          => adc1_phy_rdy,
+--     adc_sync_phase       => open,
+
+--     -- ADC SPI user interface
+--     usr_spi_access_strb  => adc1_spi_access_strb,
+--     usr_spi_wdata        => adc1_spi_wdata,
+--     usr_spi_addr         => adc1_spi_addr,
+--     usr_spi_rd_wrn       => adc1_spi_rd_wrn,
+--     usr_spi_rdy          => adc1_spi_rdy,
+--     usr_spi_rdata_valid  => adc1_spi_rdata_valid,
+--     usr_spi_rdata        => adc1_spi_rdata,
+
+--     -- ADC interface
+--     adc_spi_sclk         => adc1_spi_sclk,
+--     adc_spi_sdenb        => adc1_spi_sdenb,
+--     adc_spi_sdio         => adc1_spi_sdio,
+--     adc_reset_p          => adc1_reset_p,
+--     adc_reset_n          => adc1_reset_n,
+--     adc_da_dclk_p        => adc1_da_dclk_p,
+--     adc_da_dclk_n        => adc1_da_dclk_n,
+--     adc_da_p             => adc1_da_p,
+--     adc_da_n             => adc1_da_n,
+--     adc_ovra_p           => '0',
+--     adc_ovra_n           => '0',
+
+--     -- PHY clock and data output
+--     adc_dclk             => open,
+--     adc_dclk_180         => open,
+--     adc_dclk_div2        => adc1_data_clk,
+--     adc_dout             => adc1_raw_data,
+--     adc_ovr_out          => open
+--   );
+
 
 adc1_phy : entity work.adc_phy
 port map(
@@ -1987,6 +2093,9 @@ port map(
     --Data out to other modules
     data_clk => adc1_data_clk,
     data_out => adc1_raw_data,
+
+	  DELAY_DATA_CE => adc1_delay_ce,
+	  REF_CLOCK => ref_clk200,
 
     --SPI
     spi_access_strb => adc1_spi_access_strb,
@@ -2201,16 +2310,14 @@ inst_dsp0 : entity work.ii_dsp_top
   inst_chipscope_icon : entity work.chipscope_icon
   port map (
     CONTROL0 => control0,
-    CONTROL1 => control1);
+    CONTROL1 => control1,
+    CONTROL2 => control2,
+    CONTROL3 => control3);
 
   inst_chipscope_dsp0 : entity work.chipscope_ila_vita
   port map (
     CONTROL => control0,
     CLK => sys_clk,
-    DATA(159 downto 142) => (others => '0'),
-    DATA(141) => adc0_frame_out,
-    DATA(140) => adc0_raw_vld,
-    DATA(139 downto 128) => adc0_raw_dout,
     DATA(127 downto 0) => vfifo2_i_data,
     TRIG0(1) => vfifo2_i_rdy,
     TRIG0(0) => vfifo2_i_wren);
@@ -2219,13 +2326,29 @@ inst_dsp0 : entity work.ii_dsp_top
   port map (
     CONTROL => control1,
     CLK => sys_clk,
-    DATA(159 downto 142) => (others => '0'),
-    DATA(141) => adc1_frame_out,
-    DATA(140) => adc1_raw_vld,
-    DATA(139 downto 128) => adc1_raw_dout,
     DATA(127 downto 0) => vfifo3_i_data,
     TRIG0(1) => vfifo3_i_rdy,
     TRIG0(0) => vfifo3_i_wren);
+
+  inst_chipscope_adc0 : entity work.chipscope_ila_adc
+  port map (
+    CONTROL => control2,
+    CLK => adc0_data_clk,
+    DATA(47 downto 0) => adc0_raw_data,
+    TRIG0(3) => dac1_trig,
+    TRIG0(2) => dac0_trig,
+    TRIG0(1) => adc1_trig,
+    TRIG0(0) => adc0_trig);
+
+  inst_chipscope_adc1 : entity work.chipscope_ila_adc
+  port map (
+    CONTROL => control3,
+    CLK => adc1_data_clk,
+    DATA(47 downto 0) => adc1_raw_data,
+    TRIG0(3) => dac1_trig,
+    TRIG0(2) => dac0_trig,
+    TRIG0(1) => adc1_trig,
+    TRIG0(0) => adc0_trig);
 
 ------------------------------------------------------------------------------
 -- DSP VITA mover
