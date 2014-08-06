@@ -1,5 +1,3 @@
--- Copyright 2010 by Innovative Integration Inc., All Rights Reserved.
---******************************************************************************
 -- Wishbone to SPI layer.  
 
 -- Generalized port names on a ii_dac5682z_spi module
