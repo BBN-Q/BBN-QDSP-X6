@@ -41,7 +41,7 @@ signal adc0_raw_dvld : std_logic := '0';
 signal adc0_raw_vld  : std_logic := '0';
 signal adc0_raw_vld_d: std_logic := '0';
 signal adc0_raw_data : std_logic_vector(47 downto 0) := (others => '0');
-signal adc0_raw_dout : std_logic_vector(11 downto 0) := (others => '0');
+signal adc0_raw_dout : std_logic_vector(47 downto 0) := (others => '0');
 signal adc0_frame    : std_logic := '0'; 
 
 signal adc1_raw_rden : std_logic := '0';
@@ -49,7 +49,7 @@ signal adc1_raw_dvld : std_logic := '0';
 signal adc1_raw_vld  : std_logic := '0';
 signal adc1_raw_vld_d: std_logic := '0';
 signal adc1_raw_data : std_logic_vector(47 downto 0) := (others => '0');
-signal adc1_raw_dout : std_logic_vector(11 downto 0) := (others => '0');
+signal adc1_raw_dout : std_logic_vector(47 downto 0) := (others => '0');
 signal adc1_frame    : std_logic := '0';
 
 -- DSP VITA interface
@@ -72,7 +72,7 @@ constant allOnes : KernelArray_t(0 to 2*frame_size/decimation_factor - 1) := (ot
 signal testData0 : WFArray_t(0 to num_lines("testWFs.in")-1) := read_wf_file("testWFs.in");
 
 
-component afifo_1k48x12
+component afifo_1k48x48
   port (
     rst : IN STD_LOGIC;
     wr_clk : IN STD_LOGIC;
@@ -80,7 +80,7 @@ component afifo_1k48x12
     din : IN STD_LOGIC_VECTOR(47 DOWNTO 0);
     wr_en : IN STD_LOGIC;
     rd_en : IN STD_LOGIC;
-    dout : OUT STD_LOGIC_VECTOR(11 DOWNTO 0);
+    dout : OUT STD_LOGIC_VECTOR(47 DOWNTO 0);
     full : OUT STD_LOGIC;
     empty : OUT STD_LOGIC;
     valid : OUT STD_LOGIC
@@ -135,7 +135,7 @@ begin
 					end if;
 
 				when PLAYING =>
-					adc0_raw_data <= testData0(wfct)(cnt) & testData0(wfct)(cnt+1) & testData0(wfct)(cnt+2) & testData0(wfct)(cnt+3);
+					adc0_raw_data <= testData0(wfct)(cnt+3) & testData0(wfct)(cnt+2) & testData0(wfct)(cnt+1) & testData0(wfct)(cnt);
 					adc0_raw_dvld <= '1';
 					cnt := cnt + 4;
 					if cnt = testData0(0)'length then
@@ -168,7 +168,7 @@ begin
 	end if ;
 end process ; -- vita2stream
 
-adc0_serializer : afifo_1k48x12
+adc0_buffer : afifo_1k48x48
 port map (
 	rst => rst,
 	wr_clk => fs_clk,
@@ -180,7 +180,7 @@ port map (
 	valid => adc0_raw_vld
 );
 
-adc1_serializer : afifo_1k48x12
+adc1_buffer : afifo_1k48x48
 port map (
 	rst => rst,
 	wr_clk => fs_clk,

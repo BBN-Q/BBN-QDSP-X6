@@ -585,11 +585,11 @@ architecture arch of x6_1000m_top is
   signal adc1_fifo_dout       : std_logic_vector(127 downto 0);
   signal adc0_raw_rden        : std_logic;
   signal adc0_raw_vld         : std_logic;
-  signal adc0_raw_dout        : std_logic_vector(11 downto 0);
+  signal adc0_raw_dout        : std_logic_vector(47 downto 0);
   signal adc0_frame_out       : std_logic;
   signal adc1_raw_rden        : std_logic;
   signal adc1_raw_vld         : std_logic;
-  signal adc1_raw_dout        : std_logic_vector(11 downto 0);
+  signal adc1_raw_dout        : std_logic_vector(47 downto 0);
   signal adc1_frame_out       : std_logic;
 ------------------------------------------------------------------------------
 -- DAC interface
@@ -2001,10 +2001,9 @@ begin
   port map (
     CONTROL => control0,
     CLK => sys_clk,
-    DATA(159 downto 142) => (others => '0'),
-    DATA(141) => adc0_frame_out,
-    DATA(140) => adc0_raw_vld,
-    DATA(139 downto 128) => adc0_raw_dout,
+    DATA(177) => adc0_frame_out,
+    DATA(176) => adc0_raw_vld,
+    DATA(175 downto 128) => adc0_raw_dout,
     DATA(127 downto 0) => vfifo2_i_data,
     TRIG0(1) => vfifo2_i_rdy,
     TRIG0(0) => vfifo2_i_wren);
@@ -2013,10 +2012,9 @@ begin
   port map (
     CONTROL => control1,
     CLK => sys_clk,
-    DATA(159 downto 142) => (others => '0'),
-    DATA(141) => adc1_frame_out,
-    DATA(140) => adc1_raw_vld,
-    DATA(139 downto 128) => adc1_raw_dout,
+    DATA(177) => adc1_frame_out,
+    DATA(176) => adc1_raw_vld,
+    DATA(175 downto 128) => adc1_raw_dout,
     DATA(127 downto 0) => vfifo3_i_data,
     TRIG0(1) => vfifo3_i_rdy,
     TRIG0(0) => vfifo3_i_wren);
