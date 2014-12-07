@@ -1886,13 +1886,11 @@ begin
   );
 
 --Syncrhonize dac0_spi_sdo onto system clock domain.  Not really sure what this signal is for...
-sync_dac0_sdo : entity work.reg_synchronizer
-generic map(REG_WIDTH => 1)
-port map ( reset => frontend_rst, clk => sys_clk, i_data(0) => dac0_spi_sdo, o_data(0) => dac0_spi_sdo_sysclk);
+sync_dac0_sdo : entity work.synchronizer
+port map ( reset => frontend_rst, clk => sys_clk, i_data => dac0_spi_sdo, o_data => dac0_spi_sdo_sysclk);
 
-sync_dac1_sdo : entity work.reg_synchronizer
-generic map(REG_WIDTH => 1)
-port map ( reset => frontend_rst, clk => sys_clk, i_data(0) => dac1_spi_sdo, o_data(0) => dac1_spi_sdo_sysclk);
+sync_dac1_sdo : entity work.synchronizer
+port map ( reset => frontend_rst, clk => sys_clk, i_data => dac1_spi_sdo, o_data => dac1_spi_sdo_sysclk);
 
 -----------------------------------------------------------------------------
 -- Instantiate cdce72010 pll spi control interface
