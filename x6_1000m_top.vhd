@@ -190,6 +190,7 @@
 library ieee;
 use ieee.std_logic_1164.all;
 use ieee.numeric_std.all;
+use ieee.std_logic_misc.or_reduce;
 
 library unisim;
 use unisim.vcomponents.all;
@@ -721,6 +722,9 @@ architecture arch of x6_1000m_top is
 ------------------------------------------------------------------------------
   signal state0               : std_logic_vector(1 downto 0);
   signal state1               : std_logic_vector(1 downto 0);
+  signal state0_vld           : std_logic_vector(1 downto 0);
+  signal state1_vld           : std_logic_vector(1 downto 0);
+  signal state_vld            : std_logic;
 
 ------------------------------------------------------------------------------
 -- Chipscope debug
@@ -964,7 +968,8 @@ begin
   --   dio_n                => dio_n
   -- );
   wb_ack_i(5) <= '0';
-  dio_p(31 downto 16) <= (others => '0');
+  dio_p(31 downto 17) <= (others => '0');
+  dio_p(16) <= or_reduce(state1_vld & state0_vld);
   dio_p(15 downto 12) <= state1 & state0;
   dio_p(11 downto 0) <= (others => '0');
   dio_n(31 downto 0) <= (others => '0');
@@ -1956,7 +1961,8 @@ begin
     muxed_vita_data  => vfifo2_i_data,
 
     -- Decision Engine outputs
-    state => state0 
+    state     => state0,
+    state_vld => state0_vld 
   );
 
   inst_dsp1 : entity work.ii_dsp_top
@@ -1989,7 +1995,8 @@ begin
     muxed_vita_data  => vfifo3_i_data,
 
     -- Decision Engine outputs
-    state => state1
+    state => state1,
+    state_vld => state1_vld 
   );
 
   inst_chipscope_icon : entity work.chipscope_icon
