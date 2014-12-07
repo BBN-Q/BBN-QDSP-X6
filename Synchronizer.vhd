@@ -40,7 +40,6 @@
 -------------------------------------------------------------------------------
 
 library ieee;
-
 use ieee.std_logic_1164.all;
 
 entity synchronizer is
@@ -48,8 +47,8 @@ entity synchronizer is
     G_INIT_VALUE : std_logic := '0'; -- initial value of all flip-flops in the module
     G_NUM_GUARD_FFS : positive := 1); -- number of guard flip-flops after the synchronizing flip-flop
   port(
-    i_reset : in std_logic; -- asynchronous, high-active
-    i_clk : in std_logic; -- destination clock
+    reset : in std_logic; -- asynchronous, high-active
+    clk : in std_logic; -- destination clock
     i_data : in std_logic;
     o_data : out std_logic);
 end synchronizer;
@@ -82,18 +81,23 @@ architecture RTL of synchronizer is
   attribute ASYNC_REG : string;
   attribute ASYNC_REG of s_data_sync_r : signal is "TRUE";
 
+  -- Added by CAR 12 October 2014
+  -- According to UG912 v2013.4 pg 35 this attribute should apply to all registers
+  -- in the synchornizing chain
+  attribute ASYNC_REG of s_data_guard_r : signal is "TRUE";
+
 begin
 
   -------------------------------------------------------------------------------
   -- Synchronizer process
   --
-  p_synchronizer : process(i_clk, i_reset)
+  p_synchronizer : process(clk, reset)
   begin
-    if i_reset = '1' then
+    if reset = '1' then
       s_data_sync_r <= G_INIT_VALUE;
       s_data_guard_r <= (others => G_INIT_VALUE);
 
-    elsif rising_edge(i_clk) then
+    elsif rising_edge(clk) then
       sync_ff : s_data_sync_r <= i_data;
       guard_ffs : if s_data_guard_r'length = 1 then
         s_data_guard_r(0) <= s_data_sync_r; -- avoid "Range is empty (null range)" warnings:
@@ -109,3 +113,39 @@ begin
   o_data <= s_data_guard_r(s_data_guard_r'high);
 
 end RTL;
+
+library ieee;
+use ieee.std_logic_1164.all;
+
+entity reg_synchronizer is
+  generic (
+    REG_WIDTH : natural := 32;
+    G_INIT_VALUE : std_logic := '0'; -- initial value of all flip-flops in the module
+    G_NUM_GUARD_FFS : positive := 1); -- number of guard flip-flops after the synchronizing flip-flop
+  port (
+    reset  : in std_logic; -- active high
+    clk    : in std_logic;
+    i_data : in std_logic_vector( REG_WIDTH - 1 downto 0);
+    o_data : out std_logic_vector( REG_WIDTH - 1 downto 0)
+  );
+end reg_synchronizer;
+
+architecture behavior of reg_synchronizer is
+
+begin
+
+  GEN_REG: for I in 0 to REG_WIDTH - 1 generate
+      synchx : entity work.synchronizer
+    generic map (
+       G_INIT_VALUE => G_INIT_VALUE, 
+       G_NUM_GUARD_FFS => G_NUM_GUARD_FFS
+    )
+    port map (
+      reset => reset,
+      clk => clk,
+      i_data => i_data(I),
+      o_data => o_data(I)
+    );
+  end generate GEN_REG;
+
+end behavior;
