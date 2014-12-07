@@ -892,13 +892,13 @@ package x6_pkg is
       -- ADC0 raw data interface
       adc0_raw_rden        : in    std_logic;
       adc0_raw_vld         : out   std_logic;
-      adc0_raw_dout        : out   std_logic_vector(11 downto 0);
+      adc0_raw_dout        : out   std_logic_vector(47 downto 0);
       adc0_frame_out       : out   std_logic;
 
       -- ADC1 raw data interface
       adc1_raw_rden        : in    std_logic;
       adc1_raw_vld         : out   std_logic;
-      adc1_raw_dout        : out   std_logic_vector(11 downto 0);
+      adc1_raw_dout        : out   std_logic_vector(47 downto 0);
       adc1_frame_out       : out   std_logic;
 
       -- DAC0 data source fifo interface

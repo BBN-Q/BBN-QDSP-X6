@@ -21,9 +21,6 @@ architecture behavior of dsp_testbench is
 constant clk_period : time := 5 ns;
 constant fs_period : time := 4 ns;
 
-constant frame_size : integer := 512;
-constant decimation_factor : integer := 4;
-
 signal clk : std_logic := '0';
 signal fs_clk : std_logic := '0';
 signal rst : std_logic := '1';
@@ -41,16 +38,8 @@ signal adc0_raw_dvld : std_logic := '0';
 signal adc0_raw_vld  : std_logic := '0';
 signal adc0_raw_vld_d: std_logic := '0';
 signal adc0_raw_data : std_logic_vector(47 downto 0) := (others => '0');
-signal adc0_raw_dout : std_logic_vector(11 downto 0) := (others => '0');
-signal adc0_frame    : std_logic := '0'; 
-
-signal adc1_raw_rden : std_logic := '0';
-signal adc1_raw_dvld : std_logic := '0';
-signal adc1_raw_vld  : std_logic := '0';
-signal adc1_raw_vld_d: std_logic := '0';
-signal adc1_raw_data : std_logic_vector(47 downto 0) := (others => '0');
-signal adc1_raw_dout : std_logic_vector(11 downto 0) := (others => '0');
-signal adc1_frame    : std_logic := '0';
+signal adc0_raw_dout : std_logic_vector(47 downto 0) := (others => '0');
+signal adc0_frame    : std_logic := '0';
 
 -- DSP VITA interface
 signal vita_rden   : std_logic := '0';
@@ -66,13 +55,14 @@ signal state : std_logic_vector(1 downto 0) := "00";
 type testbench_states is (RESETTING, WB_WRITE, RUNNING, STOPPING);
 signal testbench_state : testbench_states := RESETTING;
 
+signal testData0 : WFArray_t(0 to num_lines("testWFs.in")-1) := read_wf_file("testWFs.in");
+constant frame_size : integer := testData0(0)'length / 2;
+constant decimation_factor : integer := 16;
+
 type KernelArray_t is array(natural range <>) of std_logic_vector(31 downto 0);
 constant allOnes : KernelArray_t(0 to 2*frame_size/decimation_factor - 1) := (others => (31 => '0', 15 => '0', others => '1'));
 
-signal testData0 : WFArray_t(0 to num_lines("testWFs.in")-1) := read_wf_file("testWFs.in");
-
-
-component afifo_1k48x12
+component afifo_1k48x48
   port (
     rst : IN STD_LOGIC;
     wr_clk : IN STD_LOGIC;
@@ -80,7 +70,7 @@ component afifo_1k48x12
     din : IN STD_LOGIC_VECTOR(47 DOWNTO 0);
     wr_en : IN STD_LOGIC;
     rd_en : IN STD_LOGIC;
-    dout : OUT STD_LOGIC_VECTOR(11 DOWNTO 0);
+    dout : OUT STD_LOGIC_VECTOR(47 DOWNTO 0);
     full : OUT STD_LOGIC;
     empty : OUT STD_LOGIC;
     valid : OUT STD_LOGIC
@@ -117,8 +107,6 @@ begin
 		if (rst = '1') or (testbench_state /= RUNNING) then
 			adc0_raw_data <= (others => '0');
 			adc0_raw_dvld <= '0';
-			adc1_raw_data <= (others => '0');
-			adc1_raw_dvld <= '0';
 			playState := WAITING;
 			wfct := 0;
 			cnt := 0;
@@ -135,10 +123,10 @@ begin
 					end if;
 
 				when PLAYING =>
-					adc0_raw_data <= testData0(wfct)(cnt) & testData0(wfct)(cnt+1) & testData0(wfct)(cnt+2) & testData0(wfct)(cnt+3);
+					adc0_raw_data <= testData0(wfct)(cnt+3) & testData0(wfct)(cnt+2) & testData0(wfct)(cnt+1) & testData0(wfct)(cnt);
 					adc0_raw_dvld <= '1';
 					cnt := cnt + 4;
-					if cnt = testData0(0)'length then
+					if cnt >= testData0(0)'length then
 						playState := WAITING;
 						wfct := wfct + 1;
 					end if ;
@@ -168,7 +156,7 @@ begin
 	end if ;
 end process ; -- vita2stream
 
-adc0_serializer : afifo_1k48x12
+adc0_buffer : afifo_1k48x48
 port map (
 	rst => rst,
 	wr_clk => fs_clk,
@@ -180,26 +168,12 @@ port map (
 	valid => adc0_raw_vld
 );
 
-adc1_serializer : afifo_1k48x12
-port map (
-	rst => rst,
-	wr_clk => fs_clk,
-	rd_clk => clk,
-	din => adc1_raw_data,
-	wr_en => adc1_raw_dvld,
-	rd_en => adc1_raw_rden,
-	dout => adc1_raw_dout,
-	valid => adc1_raw_vld
-);
-
 --Deserialized frame creator
 adc0_frame <= adc0_raw_vld and adc0_raw_vld_d;
-adc1_frame <= adc1_raw_vld and adc1_raw_vld_d;
 frameDeser : process( clk )
 begin
 if rising_edge(clk) then
   adc0_raw_vld_d <= adc0_raw_vld;
-  adc1_raw_vld_d <= adc1_raw_vld;
 end if ;
 end process ; -- frameDeser
 
@@ -311,15 +285,15 @@ begin
 	for phys in 0 to 0 loop
 		-- write the phase increments
 		for demod in 0 to 1 loop
-			wb_write(8192 + phys*256 + 16 + demod, (2*phys+demod+1)* 10486);
+			wb_write(8192 + phys*256 + 16 + demod, (2*phys+demod+1) * 10486);
 		end loop;
 
 		-- write frame sizes and stream IDs
-		wb_write(8192 + phys*256, frame_size+8);
-		wb_write(8192 + phys*256 + 32, 256*(phys+1));
+		wb_write(8192 + phys*256, frame_size+8); -- frame size
+		wb_write(8192 + phys*256 + 32, 256*(phys+1)); -- stream ID
 		for demod in 1 to 2 loop
-			wb_write(8192 + phys*256 + demod, 2*frame_size/decimation_factor+8);
-			wb_write(8192 + phys*256 + 32 + demod, 256*(phys+1) + 16*demod);
+			wb_write(8192 + phys*256 + demod, 2*frame_size/decimation_factor+8); -- frame size
+			wb_write(8192 + phys*256 + 32 + demod, 256*(phys+1) + 16*demod); -- stream ID
 		end loop;
 
 		--write integration kernels

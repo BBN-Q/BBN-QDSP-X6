@@ -83,13 +83,15 @@ end process ; -- mult
 --Acumulator
 accum : process( clk )
 begin
-	if rising_edge(clk) and ce = '1' then
+	if rising_edge(clk) then
 		if rst = '1' then
 			accum_re <= (others => '0');
 			accum_im <= (others => '0');
 		else
-			accum_re <= accum_re + prod_re(31 downto 16);
-			accum_im <= accum_im + prod_im(31 downto 16);
+			if ce = '1' then
+				accum_re <= accum_re + prod_re(31 downto 16);
+				accum_im <= accum_im + prod_im(31 downto 16);
+			end if;
 
 			result_re <= std_logic_vector(accum_re);
 			result_im <= std_logic_vector(accum_im);
