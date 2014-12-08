@@ -2326,6 +2326,9 @@ inst_dsp0 : entity work.ii_dsp_top
     DATA(177) => adc0_frame_out,
     DATA(176) => adc0_raw_vld,
     DATA(175 downto 128) => adc0_raw_dout,
+    DATA(127 downto 0) => vfifo2_i_data,
+    TRIG0(1) => vfifo2_i_rdy,
+    TRIG0(0) => vfifo2_i_wren);
 
   inst_chipscope_dsp1 : entity work.chipscope_ila_vita
   port map (
@@ -2334,11 +2337,15 @@ inst_dsp0 : entity work.ii_dsp_top
     DATA(177) => adc1_frame_out,
     DATA(176) => adc1_raw_vld,
     DATA(175 downto 128) => adc1_raw_dout,
+    DATA(127 downto 0) => vfifo3_i_data,
+    TRIG0(1) => vfifo3_i_rdy,
+    TRIG0(0) => vfifo3_i_wren);
 
   inst_chipscope_adc0 : entity work.chipscope_ila_adc
   port map (
     CONTROL => control2,
     CLK => adc0_data_clk,
+    DATA(51 downto 48) => dac1_trig & dac0_trig & adc0_trig & adc1_trig,
     DATA(47 downto 0) => adc0_raw_data,
     TRIG0(3) => dac1_trig,
     TRIG0(2) => dac0_trig,
@@ -2349,6 +2356,7 @@ inst_dsp0 : entity work.ii_dsp_top
   port map (
     CONTROL => control3,
     CLK => adc1_data_clk,
+    DATA(51 downto 48) => dac1_trig & dac0_trig & adc0_trig & adc1_trig,
     DATA(47 downto 0) => adc1_raw_data,
     TRIG0(3) => dac1_trig,
     TRIG0(2) => dac0_trig,
