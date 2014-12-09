@@ -413,8 +413,7 @@ architecture arch of x6_1000m_top is
 -----------------------------------------------------------------------------
   constant rev_maj            : std_logic_vector(7 downto 0) := X"01";
   constant rev_min            : std_logic_vector(7 downto 0) := X"06";
-  constant sub_rev_int        : integer := 1;
-  signal sub_rev              : std_logic_vector(7 downto 0) := std_logic_vector(to_unsigned(sub_rev_int,8));
+  signal sub_rev              : std_logic_vector(7 downto 0) := X"b1";
   signal revision             : std_logic_vector(15 downto 0) := rev_maj & rev_min;
   constant hw_type            : std_logic_vector(3 downto 0) := X"5"; -- X6-1000M
   constant fpga_type          : std_logic_vector(1 downto 0) := dev_encode(DEVICE);
@@ -730,13 +729,13 @@ architecture arch of x6_1000m_top is
   signal adc_phy_init_d       : std_logic;
   signal adc_phy_init_re      : std_logic;
 
-	signal adc_phy_init         : std_logic;
-	signal skip_adc_phy_cal     : std_logic;
-	signal adc0_delay_ce, adc1_delay_ce        : std_logic_vector(11 downto 0) ;
-	signal adc1_eye_aligned     : std_logic_vector(12 downto 0);
-	signal adc1_prbs_locked     : std_logic;
-	signal adc1_prbs_aligned    : std_logic;
-	signal adc1_phy_rdy         : std_logic;
+    signal adc_phy_init         : std_logic;
+    signal skip_adc_phy_cal     : std_logic;
+    signal adc0_delay_ce, adc1_delay_ce        : std_logic_vector(11 downto 0) ;
+    signal adc0_eye_aligned, adc1_eye_aligned     : std_logic_vector(11 downto 0);
+    signal adc1_prbs_locked     : std_logic;
+    signal adc1_prbs_aligned    : std_logic;
+    signal adc1_phy_rdy         : std_logic;
 
   signal pll_spi_rdy          : std_logic;
   signal pll_spi_rdata_valid  : std_logic;
@@ -1842,11 +1841,14 @@ begin
     adc1_spi_rdata       => adc1_spi_rdata,
 
     adc0_delay_ce        => adc0_delay_ce,
-    adc0_eye_aligned     => (others => '0'),
+    adc0_eye_aligned(12) => '0',
+    adc0_eye_aligned(11 downto 0) => adc0_eye_aligned,
     adc0_prbs_locked     => '0',
     adc0_prbs_aligned    => '0',
     adc0_phy_rdy         => '0',
-    adc1_eye_aligned     => adc1_eye_aligned,
+    adc1_delay_ce        => adc1_delay_ce,
+    adc1_eye_aligned(12) => '0',
+    adc1_eye_aligned(11 downto 0) => adc1_eye_aligned,
     adc1_prbs_locked     => adc1_prbs_locked,
     adc1_prbs_aligned    => adc1_prbs_aligned,
     adc1_phy_rdy         => adc1_phy_rdy,
@@ -1979,8 +1981,11 @@ port map(
     data_clk => adc0_data_clk,
     data_out => adc0_raw_data,
 
-	  DELAY_DATA_CE => adc0_delay_ce,
-	  REF_CLOCK => ref_clk200,
+    eye_aligned => adc0_eye_aligned,
+
+    ref_clk => ref_clk200,
+    io_reset => idelayctrl_rst,
+    delay_data_ce => adc0_delay_ce,
 
     --SPI
     spi_access_strb => adc0_spi_access_strb,
@@ -1998,22 +2003,23 @@ port map(
 );
 
 
---   -- Detect a rising edge on clk200_locked and generate a synchronous
---   -- active high idelayctrl_rst for at least 50ns after ref_clk200 stabilizes
---   process (ref_clk200)
---   begin
---     if (rising_edge(ref_clk200)) then
---       clk200_locked_d  <= clks_locked;
---       clk200_locked_dd <= clk200_locked_d;
---       clk200_locked_re <= clk200_locked_d and not clk200_locked_dd;
---       if (clk200_locked_re = '1') then
---         idelayctrl_rst_sreg <= (others => '1');
---       else
---         idelayctrl_rst_sreg <= (idelayctrl_rst_sreg(8 downto 0) & '0');
---       end if;
---       idelayctrl_rst <= idelayctrl_rst_sreg(9);
---     end if;
---   end process;
+  -- Detect a rising edge on clk200_locked and generate a synchronous
+  -- active high idelayctrl_rst for at least 50ns after ref_clk200 stabilizes
+  -- this is per the T_IDELAYCTRL_RPW spec. in the Virtex 6 data sheet
+  process (ref_clk200)
+  begin
+    if (rising_edge(ref_clk200)) then
+      clk200_locked_d  <= clks_locked;
+      clk200_locked_dd <= clk200_locked_d;
+      clk200_locked_re <= clk200_locked_d and not clk200_locked_dd;
+      if (clk200_locked_re = '1') then
+        idelayctrl_rst_sreg <= (others => '1');
+      else
+        idelayctrl_rst_sreg <= (idelayctrl_rst_sreg(8 downto 0) & '0');
+      end if;
+      idelayctrl_rst <= idelayctrl_rst_sreg(9);
+    end if;
+  end process;
 
 --   -- Strobe the PHY to start its initialization procedure and
 --   -- calibration on rising edge of adc_phy_init
@@ -2097,8 +2103,11 @@ port map(
     data_clk => adc1_data_clk,
     data_out => adc1_raw_data,
 
-	  DELAY_DATA_CE => adc1_delay_ce,
-	  REF_CLOCK => ref_clk200,
+    eye_aligned => adc1_eye_aligned,
+
+    ref_clk => ref_clk200,
+    io_reset => idelayctrl_rst,
+    delay_data_ce => adc1_delay_ce,
 
     --SPI
     spi_access_strb => adc1_spi_access_strb,

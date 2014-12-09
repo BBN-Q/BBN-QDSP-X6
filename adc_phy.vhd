@@ -25,10 +25,14 @@ entity adc_phy is
 
   	--Data out to other modules
   	data_clk : buffer std_logic;
-  	data_out : out std_logic_vector(47 downto 0);
+  	data_out : buffer std_logic_vector(47 downto 0);
 
-    DELAY_DATA_CE        : in    std_logic_vector(11 downto 0);            -- Enable signal for delay for bit 
-    REF_CLOCK            : in    std_logic;                    -- Reference Clock for IDELAYCTRL. Has to come from BUFG.
+    --data capture eye
+    eye_aligned : out std_logic_vector(11 downto 0);
+
+    ref_clk            : in std_logic;      -- 200MHz Reference Clock for IDELAYCTRL. Has to come from BUFG.
+    io_reset           : in std_logic;      -- reset for io delay ctrl: needs to be 50ns long after ref_clk locked
+    delay_data_ce      : in    std_logic_vector(11 downto 0);   -- Enable signal for delay for bit 
 
 	--SPI wishbone
     spi_access_strb      : in  std_logic;
@@ -91,7 +95,7 @@ adc_gear_in : entity work.ADC_DESIN
   DELAY_DATA_CE => delay_ce_pulse,
   DELAY_DATA_INC => (others => '1'),
   DELAY_LOCKED => open,
-  REF_CLOCK => REF_CLOCK,
+  REF_CLOCK => ref_clk,
   BITSLIP =>   '0',    --product guide says hold to zero if unused
  
   -- Clock and reset signals
@@ -99,7 +103,22 @@ adc_gear_in : entity work.ADC_DESIN
   CLK_IN_N =>  clk_in_n,     -- Differential clock from IOB
   CLK_DIV_OUT => data_clk,     -- Slow clock output
   CLK_RESET => reset,         --clocking logic reset
-  IO_RESET =>  reset);          --system reset
+  IO_RESET =>  io_reset);          --system reset
+
+--Check eye pattern should be 1010 or 0101
+eye_aligned_proc : process( data_clk )
+begin
+  if rising_edge(data_clk) then
+    for ct in 0 to 11 loop
+      --demand 0101 to get all lanes aligned
+      if (data_out(ct) = '0') and (data_out(ct+12) = '1') and (data_out(ct+24) = '0') and (data_out(ct+36) = '1') then
+        eye_aligned(ct) <= '1';
+      else
+        eye_aligned(ct) <= '0';
+      end if;
+    end loop ;
+  end if;
+end process ; -- eye_aligned_proc
 
 --Connect the wishbone to spi interface
 wb2spi : entity work.wishbone2spi
