@@ -720,10 +720,10 @@ architecture arch of x6_1000m_top is
 ------------------------------------------------------------------------------
 -- Custom DSP stuff
 ------------------------------------------------------------------------------
-  signal state0               : std_logic_vector(1 downto 0);
-  signal state1               : std_logic_vector(1 downto 0);
-  signal state0_vld           : std_logic_vector(1 downto 0);
-  signal state1_vld           : std_logic_vector(1 downto 0);
+  signal state0               : std_logic_vector(3 downto 0);
+  signal state1               : std_logic_vector(3 downto 0);
+  signal state0_vld           : std_logic_vector(3 downto 0);
+  signal state1_vld           : std_logic_vector(3 downto 0);
   signal state_vld            : std_logic;
 
 ------------------------------------------------------------------------------
@@ -970,7 +970,7 @@ begin
   wb_ack_i(5) <= '0';
   dio_p(31 downto 17) <= (others => '0');
   dio_p(16) <= or_reduce(state1_vld & state0_vld);
-  dio_p(15 downto 12) <= state1 & state0;
+  dio_p(15 downto 12) <= state1(1 downto 0) & state0(1 downto 0);
   dio_p(11 downto 0) <= (others => '0');
   dio_n(31 downto 0) <= (others => '0');
 
