@@ -721,13 +721,15 @@ architecture arch of x6_1000m_top is
 
 -- AFE register connections
 
-  signal clk200_locked_d      : std_logic;
-  signal clk200_locked_dd     : std_logic;
-  signal clk200_locked_re     : std_logic;
-  signal idelayctrl_rst_sreg  : std_logic_vector(9 downto 0);
-  signal idelayctrl_rst       : std_logic;
   signal adc_phy_init_d       : std_logic;
   signal adc_phy_init_re      : std_logic;
+
+    signal clk200_locked_d      : std_logic;
+    signal clk200_locked_dd     : std_logic;
+    signal clk200_locked_re     : std_logic;
+    signal idelayctrl_rst_sreg  : std_logic_vector(9 downto 0);
+    signal idelayctrl_rst       : std_logic;
+
 
     signal adc_phy_init         : std_logic;
     signal skip_adc_phy_cal     : std_logic;
@@ -1962,6 +1964,27 @@ port map (
   O       => dac1_trig
 );
 
+
+-- Detect a rising edge on clk200_locked and generate a synchronous
+-- active high idelayctrl_rst for at least 50ns after ref_clk200 stabilizes
+-- this is per the T_IDELAYCTRL_RPW spec. in the Virtex 6 data sheet
+-- we do this here for both ADCs because they are part of the same IODELAY_GROUP
+
+process (ref_clk200)
+begin
+  if (rising_edge(ref_clk200)) then
+    clk200_locked_d  <= clks_locked;
+    clk200_locked_dd <= clk200_locked_d;
+    clk200_locked_re <= clk200_locked_d and not clk200_locked_dd;
+    if (clk200_locked_re = '1') then
+      idelayctrl_rst_sreg <= (others => '1');
+    else
+      idelayctrl_rst_sreg <= (idelayctrl_rst_sreg(8 downto 0) & '0');
+    end if;
+    idelayctrl_rst <= idelayctrl_rst_sreg(9);
+  end if;
+end process;
+
 --ADC PHY interfaces
 adc0_phy : entity work.adc_phy
 port map(
@@ -1984,7 +2007,7 @@ port map(
     eye_aligned => adc0_eye_aligned,
 
     ref_clk => ref_clk200,
-    io_reset => idelayctrl_rst,
+    idelayctrl_rst => idelayctrl_rst,
     delay_data_ce => adc0_delay_ce,
 
     --SPI
@@ -2003,23 +2026,7 @@ port map(
 );
 
 
-  -- Detect a rising edge on clk200_locked and generate a synchronous
-  -- active high idelayctrl_rst for at least 50ns after ref_clk200 stabilizes
-  -- this is per the T_IDELAYCTRL_RPW spec. in the Virtex 6 data sheet
-  process (ref_clk200)
-  begin
-    if (rising_edge(ref_clk200)) then
-      clk200_locked_d  <= clks_locked;
-      clk200_locked_dd <= clk200_locked_d;
-      clk200_locked_re <= clk200_locked_d and not clk200_locked_dd;
-      if (clk200_locked_re = '1') then
-        idelayctrl_rst_sreg <= (others => '1');
-      else
-        idelayctrl_rst_sreg <= (idelayctrl_rst_sreg(8 downto 0) & '0');
-      end if;
-      idelayctrl_rst <= idelayctrl_rst_sreg(9);
-    end if;
-  end process;
+
 
 --   -- Strobe the PHY to start its initialization procedure and
 --   -- calibration on rising edge of adc_phy_init
@@ -2106,7 +2113,7 @@ port map(
     eye_aligned => adc1_eye_aligned,
 
     ref_clk => ref_clk200,
-    io_reset => idelayctrl_rst,
+    idelayctrl_rst => idelayctrl_rst,
     delay_data_ce => adc1_delay_ce,
 
     --SPI

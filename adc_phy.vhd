@@ -31,7 +31,7 @@ entity adc_phy is
     eye_aligned : out std_logic_vector(11 downto 0);
 
     ref_clk            : in std_logic;      -- 200MHz Reference Clock for IDELAYCTRL. Has to come from BUFG.
-    io_reset           : in std_logic;      -- reset for io delay ctrl: needs to be 50ns long after ref_clk locked
+    idelayctrl_rst     : in std_logic;
     delay_data_ce      : in    std_logic_vector(11 downto 0);   -- Enable signal for delay for bit 
 
 	--SPI wishbone
@@ -54,6 +54,9 @@ architecture arch of adc_phy is
 
 signal delay_data_ce_sync, delay_data_ce_sync_d, delay_ce_pulse : std_logic_vector(11 downto 0) ;
 
+signal idelay_locked        : std_logic;
+signal io_reset             : std_logic;
+
 begin
 
 --Differential buffer for reset
@@ -64,9 +67,8 @@ generic map (
 port map (
   O       => adc_reset_p,
   OB      => adc_reset_n,
-  I       => reset
+  I       => '0'
 );
-
 
 --edge detector for delay_ce on div_clk
 sync_delay_ce : entity work.reg_synchronizer
@@ -94,7 +96,8 @@ adc_gear_in : entity work.ADC_DESIN
   DELAY_RESET => reset,
   DELAY_DATA_CE => delay_ce_pulse,
   DELAY_DATA_INC => (others => '1'),
-  DELAY_LOCKED => open,
+  DELAYCTRL_RESET => idelayctrl_rst,
+  DELAY_LOCKED => idelay_locked,
   REF_CLOCK => ref_clk,
   BITSLIP =>   '0',    --product guide says hold to zero if unused
  
@@ -103,7 +106,21 @@ adc_gear_in : entity work.ADC_DESIN
   CLK_IN_N =>  clk_in_n,     -- Differential clock from IOB
   CLK_DIV_OUT => data_clk,     -- Slow clock output
   CLK_RESET => reset,         --clocking logic reset
-  IO_RESET =>  io_reset);          --system reset
+  IO_RESET =>  io_reset);          --iserdes reset synchronous to clk_div_out
+
+iserdes_reset : process( reset, idelay_locked, data_clk )
+variable shiftReg : std_logic_vector(4 downto 0) ;
+begin
+  if reset = '1' or idelay_locked = '0' then
+    io_reset <= '1';
+    shiftReg := (others => '1');
+  else
+    if rising_edge(data_clk) then
+      shiftReg := shiftReg(shiftReg'high-1 downto 0) & '0';
+      io_reset <= shiftReg(shiftReg'high);
+    end if;
+  end if ;
+end process ; -- iserdes_reset
 
 --Check eye pattern should be 1010 or 0101
 eye_aligned_proc : process( data_clk )
