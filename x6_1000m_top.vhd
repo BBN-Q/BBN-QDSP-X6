@@ -1787,138 +1787,6 @@ begin
     wb_ack_i(11) <= '0';
   end generate;
 
------------------------------------------------------------------------------
--- Instantiate AFE registers
------------------------------------------------------------------------------
-  inst_afe_regs: entity work.ii_afe_intf_regs
-  generic map (
-    addr_bits            => 8,
-    offset               => MR_AFE
-  )
-  port map (
-    -- Wishbone interface signals
-    wb_rst_i             => wb_rst,
-    wb_clk_i             => sys_clk,
-    wb_adr_i             => wb_adr_o,
-    wb_dat_i             => wb_dat_o,
-    wb_we_i              => wb_we_o,
-    wb_stb_i             => wb_stb_o,
-    wb_ack_o             => wb_ack_i(8),
-    wb_dat_o             => wb_dat_i,
-
-    -- User registers
-    pll_pwr_down_n       => pll_pwr_down_n,
-    pll_reset_n          => pll_reset_n,
-    pll_lock             => pll_lock,
-    pll_spi_rdy          => pll_spi_rdy,
-    pll_spi_rdata_valid  => pll_spi_rdata_valid,
-    pll_spi_wr_strb      => pll_spi_wr_strb,
-    pll_spi_addr         => pll_spi_addr,
-    pll_spi_wdata        => pll_spi_wdata,
-    pll_spi_rdata        => pll_spi_rdata,
-    pll_vcxo_sdo         => pll_vcxo_sdo,
-    pll_vcxo_scl         => pll_vcxo_scl,
-    pll_vcxo_sdi         => pll_vcxo_sda,
-    pll_vcxo_en          => pll_vcxo_en,
-    pll_ext_clk_sel      => pll_ext_clk_sel,
-    adc_run              => adc_run_o,
-    dac_run              => dac_run_o,
-
-    ext_sync_sel         => ext_sync_sel,
-
-    adc0_spi_access_strb => adc0_spi_access_strb,
-    adc0_spi_wdata       => adc0_spi_wdata,
-    adc0_spi_addr        => adc0_spi_addr,
-    adc0_spi_rd_wrn      => adc0_spi_rd_wrn,
-    adc0_spi_rdy         => adc0_spi_rdy,
-    adc0_spi_rdata_valid => adc0_spi_rdata_valid,
-    adc0_spi_rdata       => adc0_spi_rdata,
-
-    adc1_spi_access_strb => adc1_spi_access_strb,
-    adc1_spi_wdata       => adc1_spi_wdata,
-    adc1_spi_addr        => adc1_spi_addr,
-    adc1_spi_rd_wrn      => adc1_spi_rd_wrn,
-    adc1_spi_rdy         => adc1_spi_rdy,
-    adc1_spi_rdata_valid => adc1_spi_rdata_valid,
-    adc1_spi_rdata       => adc1_spi_rdata,
-
-    adc0_delay_ce        => adc0_delay_ce,
-    adc0_eye_aligned(12) => '0',
-    adc0_eye_aligned(11 downto 0) => adc0_eye_aligned,
-    adc0_prbs_locked     => '0',
-    adc0_prbs_aligned    => '0',
-    adc0_phy_rdy         => '0',
-    adc1_delay_ce        => adc1_delay_ce,
-    adc1_eye_aligned(12) => '0',
-    adc1_eye_aligned(11 downto 0) => adc1_eye_aligned,
-    adc1_prbs_locked     => adc1_prbs_locked,
-    adc1_prbs_aligned    => adc1_prbs_aligned,
-    adc1_phy_rdy         => adc1_phy_rdy,
-
-    adc_phy_init         => adc_phy_init,
-    skip_adc_phy_cal     => skip_adc_phy_cal,
-
-    adc_pri_busy         => '0',
-    dac_pri_busy         => '0',
-
-    dac0_spi_access_strb => dac0_spi_access_strb,
-    dac0_spi_wdata       => dac0_spi_wdata,
-    dac0_spi_addr        => dac0_spi_addr,
-    dac0_spi_rd_wrn      => dac0_spi_rd_wrn,
-    dac0_spi_sdo         => dac0_spi_sdo_sysclk,
-    dac0_spi_rdy         => dac0_spi_rdy,
-    dac0_spi_rdata_valid => dac0_spi_rdata_valid,
-    dac0_spi_rdata       => dac0_spi_rdata,
-
-    dac1_spi_access_strb => dac1_spi_access_strb,
-    dac1_spi_wdata       => dac1_spi_wdata,
-    dac1_spi_addr        => dac1_spi_addr,
-    dac1_spi_rd_wrn      => dac1_spi_rd_wrn,
-    dac1_spi_sdo         => dac1_spi_sdo_sysclk,
-    dac1_spi_rdy         => dac1_spi_rdy,
-    dac1_spi_rdata_valid => dac1_spi_rdata_valid,
-    dac1_spi_rdata       => dac1_spi_rdata,
-
-    dac0_cal0_done       => '0',
-    dac0_cal1_done       => '0',
-    dac1_cal0_done       => '0',
-    dac1_cal1_done       => '0',
-    dac0_iodly_cnt       => (others => '0'),
-    dac1_iodly_cnt       => (others => '0'),
-    dac0_shift_cnt       => (others => '0'),
-    dac1_shift_cnt       => (others => '0')
-  );
-
---Syncrhonize dac0_spi_sdo onto system clock domain.  Not really sure what this signal is for...
-sync_dac0_sdo : entity work.synchronizer
-port map ( reset => frontend_rst, clk => sys_clk, i_data => dac0_spi_sdo, o_data => dac0_spi_sdo_sysclk);
-
-sync_dac1_sdo : entity work.synchronizer
-port map ( reset => frontend_rst, clk => sys_clk, i_data => dac1_spi_sdo, o_data => dac1_spi_sdo_sysclk);
-
------------------------------------------------------------------------------
--- Instantiate cdce72010 pll spi control interface
------------------------------------------------------------------------------
-  inst_pll : entity work.ii_cdce72010_spi
-  port map (
-    srst            => frontend_rst,
-    clk             => sys_clk,
-
-    -- User interface
-    spi_wr_strb     => pll_spi_wr_strb,
-    spi_wdata       => pll_spi_wdata,
-    spi_addr        => pll_spi_addr,
-    spi_rdy         => pll_spi_rdy,
-    spi_rdata_valid => pll_spi_rdata_valid,
-    spi_rdata       => pll_spi_rdata,
-
-    -- PLL spi interface
-    spi_sclk        => pll_spi_sclk,
-    spi_le          => pll_spi_le,
-    spi_mosi        => pll_spi_mosi,
-    spi_miso        => pll_spi_miso
-  );
-
 --Buffer the ADC/DAC triggers to single-ended
 adc0_trigbuf : IBUFDS
 generic map (
@@ -1965,250 +1833,161 @@ port map (
 );
 
 
--- Detect a rising edge on clk200_locked and generate a synchronous
--- active high idelayctrl_rst for at least 50ns after ref_clk200 stabilizes
--- this is per the T_IDELAYCTRL_RPW spec. in the Virtex 6 data sheet
--- we do this here for both ADCs because they are part of the same IODELAY_GROUP
+------------------------------------------------------------------------------
+-- Analog Frontend Interface
+------------------------------------------------------------------------------
+  inst_afe_top : ii_afe_intf_top
+  generic map (
+    G_SIM                => false,
+    SYS_CLK_FREQ         => SYS_CLK_FREQ,
+    offset               => MR_AFE
+  )
+  port map (
+    srst                 => frontend_rst,
+    sys_clk              => sys_clk,
 
-process (ref_clk200)
-begin
-  if (rising_edge(ref_clk200)) then
-    clk200_locked_d  <= clks_locked;
-    clk200_locked_dd <= clk200_locked_d;
-    clk200_locked_re <= clk200_locked_d and not clk200_locked_dd;
-    if (clk200_locked_re = '1') then
-      idelayctrl_rst_sreg <= (others => '1');
-    else
-      idelayctrl_rst_sreg <= (idelayctrl_rst_sreg(8 downto 0) & '0');
-    end if;
-    idelayctrl_rst <= idelayctrl_rst_sreg(9);
-  end if;
-end process;
+    -- reference clock
+    ref_clk200           => ref_clk200,
+    clk200_locked        => clks_locked,
 
---ADC PHY interfaces
-adc0_phy : entity work.adc_phy
-port map(
-    reset => frontend_rst,
-    sys_clk => sys_clk,
+    -- Slave Wishbone interface
+    wb_rst_i             => wb_rst,
+    wb_clk_i             => sys_clk,
+    wb_adr_i             => wb_adr_o,
+    wb_dat_i             => wb_dat_o,
+    wb_we_i              => wb_we_o,
+    wb_stb_i             => wb_stb_o,
+    wb_ack_o             => wb_ack_i(8),
+    wb_dat_o             => wb_dat_i,
 
-    adc_reset_p => adc0_reset_p,
-    adc_reset_n => adc0_reset_n,
+    -- Alerts
+    adc_trigger_o        => adc_trigger_o,
+    dac_trigger_o        => dac_trigger_o,
+    adc0_overrange       => adc0_overrange,
+    adc1_overrange       => adc1_overrange,
+    adc0_overflow        => adc0_overflow,
+    adc1_overflow        => adc1_overflow,
+    dac0_underflow       => dac0_underflow,
+    dac1_underflow       => dac1_underflow,
+    ovr_alrt_clr         => alert_clr(20),
+    ovf_alrt_clr         => alert_clr(21),
+    trig_alrt_clr        => alert_clr(24),
+    udf_alrt_clr         => alert_clr(26),
 
-    --clock and data lines from ADC chip
-    clk_in_p => adc0_da_dclk_p,
-    clk_in_n => adc0_da_dclk_n,
-    data_in_p => adc0_da_p,
-    data_in_n => adc0_da_n,
+    -- System interface
+    ref_adc_clk          => ref_adc_clk,
+    ref_dac_clk          => ref_dac_clk,
+    adc_run_o            => adc_run_o,
+    dac_run_o            => dac_run_o,
 
-    --Data out to other modules
-    data_clk => adc0_data_clk,
-    data_out => adc0_raw_data,
+    -- ADC0 raw interface
+    adc0_raw_data        => adc0_raw_data,
+    adc0_raw_clk         => adc0_data_clk,
 
-    eye_aligned => adc0_eye_aligned,
+    -- ADC1 raw interface
+    adc1_raw_data        => adc1_raw_data,
+    adc1_raw_clk         => adc1_data_clk,
 
-    ref_clk => ref_clk200,
-    idelayctrl_rst => idelayctrl_rst,
-    delay_data_ce => adc0_delay_ce,
+    -- DAC0 data source fifo interface
+    dac0_src_aempty      => vfifo0_o_aempty,
+    dac0_src_empty       => vfifo0_o_empty,
+    dac0_src_rden        => vfifo0_o_rden,
+    dac0_src_vld         => vfifo0_o_vld,
+    dac0_src_din         => vfifo0_o_data,
 
-    --SPI
-    spi_access_strb => adc0_spi_access_strb,
-    spi_wdata => adc0_spi_wdata,
-    spi_addr => adc0_spi_addr,
-    spi_rd_wrn => adc0_spi_rd_wrn,
-    spi_rdy => adc0_spi_rdy,
-    spi_rdata_valid => adc0_spi_rdata_valid,
-    spi_rdata => adc0_spi_rdata,
+    -- DAC1 data source fifo interface
+    dac1_src_aempty      => vfifo1_o_aempty,
+    dac1_src_empty       => vfifo1_o_empty,
+    dac1_src_rden        => vfifo1_o_rden,
+    dac1_src_vld         => vfifo1_o_vld,
+    dac1_src_din         => vfifo1_o_data,
 
-    -- dac spi interface
-    spi_sclk => adc0_spi_sclk,
-    spi_sdenb => adc0_spi_sdenb,
-    spi_sdio => adc0_spi_sdio
-);
+    -- PLL interface
+    pll_vcxo_en          => pll_vcxo_en,
+    pll_vcxo_scl         => pll_vcxo_scl,
+    pll_vcxo_sda         => pll_vcxo_sda,
+    pll_pwr_down_n       => pll_pwr_down_n,
+    pll_reset_n          => pll_reset_n,
+    pll_spi_sclk         => pll_spi_sclk,
+    pll_spi_le           => pll_spi_le,
+    pll_spi_mosi         => pll_spi_mosi,
+    pll_spi_miso         => pll_spi_miso,
+    pll_ext_clk_sel      => pll_ext_clk_sel,
+    pll_lock             => pll_lock,
+    ref_adc_clk_p        => ref_adc_clk_p,
+    ref_adc_clk_n        => ref_adc_clk_n,
+    ref_dac_clk_p        => ref_dac_clk_p,
+    ref_dac_clk_n        => ref_dac_clk_n,
+
+    -- ADC0 and ADC1 interface
+    adc0_spi_sclk        => adc0_spi_sclk,
+    adc0_spi_sdenb       => adc0_spi_sdenb,
+    adc0_spi_sdio        => adc0_spi_sdio,
+    adc0_reset_p         => adc0_reset_p,
+    adc0_reset_n         => adc0_reset_n,
+    adc0_da_dclk_p       => adc0_da_dclk_p,
+    adc0_da_dclk_n       => adc0_da_dclk_n,
+    adc0_da_p            => adc0_da_p,
+    adc0_da_n            => adc0_da_n,
+    adc0_ovra_p          => adc0_ovra_p,
+    adc0_ovra_n          => adc0_ovra_n,
+    adc1_spi_sclk        => adc1_spi_sclk,
+    adc1_spi_sdenb       => adc1_spi_sdenb,
+    adc1_spi_sdio        => adc1_spi_sdio,
+    adc1_reset_p         => adc1_reset_p,
+    adc1_reset_n         => adc1_reset_n,
+    adc1_da_dclk_p       => adc1_da_dclk_p,
+    adc1_da_dclk_n       => adc1_da_dclk_n,
+    adc1_da_p            => adc1_da_p,
+    adc1_da_n            => adc1_da_n,
+    adc1_ovra_p          => adc1_ovra_p,
+    adc1_ovra_n          => adc1_ovra_n,
+
+    -- DAC0 and DAC1 interface signals
+    dac0_resetb          => dac0_resetb,
+    dac0_spi_sclk        => dac0_spi_sclk,
+    dac0_spi_sdenb       => dac0_spi_sdenb,
+    dac0_spi_sdio        => dac0_spi_sdio,
+    dac0_spi_sdo         => dac0_spi_sdo,
+    dac0_clk_in_p        => dac0_clk_in_p,
+    dac0_clk_in_n        => dac0_clk_in_n,
+    dac0_dclk_p          => dac0_dclk_p,
+    dac0_dclk_n          => dac0_dclk_n,
+    dac0_sync_p          => dac0_sync_p,
+    dac0_sync_n          => dac0_sync_n,
+    dac0_sync2_p         => dac0_sync2_p,
+    dac0_sync2_n         => dac0_sync2_n,
+    dac0_data_p          => dac0_data_p,
+    dac0_data_n          => dac0_data_n,
+    dac1_resetb          => dac1_resetb,
+    dac1_spi_sclk        => dac1_spi_sclk,
+    dac1_spi_sdenb       => dac1_spi_sdenb,
+    dac1_spi_sdio        => dac1_spi_sdio,
+    dac1_spi_sdo         => dac1_spi_sdo,
+    dac1_clk_in_p        => dac1_clk_in_p,
+    dac1_clk_in_n        => dac1_clk_in_n,
+    dac1_dclk_p          => dac1_dclk_p,
+    dac1_dclk_n          => dac1_dclk_n,
+    dac1_sync_p          => dac1_sync_p,
+    dac1_sync_n          => dac1_sync_n,
+    dac1_sync2_p         => dac1_sync2_p,
+    dac1_sync2_n         => dac1_sync2_n,
+    dac1_data_p          => dac1_data_p,
+    dac1_data_n          => dac1_data_n,
+
+    -- DAC output digitizer interface
+    dac_dig_en           => dac_dig_en,
+    dac0_dig_p           => dac0_dig_p,
+    dac0_dig_n           => dac0_dig_n,
+    dac1_dig_p           => dac1_dig_p,
+    dac1_dig_n           => dac1_dig_n,
+
+    -- PPS pulse input (ie. GPS)
+    ts_pps_pls           => h_pps_demet_re
+  );
 
 
 
-
---   -- Strobe the PHY to start its initialization procedure and
---   -- calibration on rising edge of adc_phy_init
---   process (sys_clk)
---   begin
---     if (rising_edge(sys_clk)) then
---       adc_phy_init_d  <= adc_phy_init;
---       adc_phy_init_re <= adc_phy_init and not adc_phy_init_d;
---     end if;
---   end process;
-
-
--- adc1_phy : ii_ads5400_phy_top
---   port map (
---     -- Reset and clocks
---     srst                 => backend_rst,
---     sys_clk              => sys_clk,
---     ref_clk200           => ref_clk200,
-
---     -- Controls
---     idelayctrl_rst       => idelayctrl_rst,
---     phy_init_strb        => adc_phy_init_re,
---     skip_adc_phy_cal     => skip_adc_phy_cal,
---     ch_en                => '1',
---     gain                 => (others => '1'),
---     offset               => (others => '0'),
-
---     -- Status
---     adc_eye_aligned      => adc1_eye_aligned,
---     adc_prbs_locked      => adc1_prbs_locked,
---     adc_prbs_aligned     => adc1_prbs_aligned,
---     adc_phy_rdy          => adc1_phy_rdy,
---     adc_sync_phase       => open,
-
---     -- ADC SPI user interface
---     usr_spi_access_strb  => adc1_spi_access_strb,
---     usr_spi_wdata        => adc1_spi_wdata,
---     usr_spi_addr         => adc1_spi_addr,
---     usr_spi_rd_wrn       => adc1_spi_rd_wrn,
---     usr_spi_rdy          => adc1_spi_rdy,
---     usr_spi_rdata_valid  => adc1_spi_rdata_valid,
---     usr_spi_rdata        => adc1_spi_rdata,
-
---     -- ADC interface
---     adc_spi_sclk         => adc1_spi_sclk,
---     adc_spi_sdenb        => adc1_spi_sdenb,
---     adc_spi_sdio         => adc1_spi_sdio,
---     adc_reset_p          => adc1_reset_p,
---     adc_reset_n          => adc1_reset_n,
---     adc_da_dclk_p        => adc1_da_dclk_p,
---     adc_da_dclk_n        => adc1_da_dclk_n,
---     adc_da_p             => adc1_da_p,
---     adc_da_n             => adc1_da_n,
---     adc_ovra_p           => '0',
---     adc_ovra_n           => '0',
-
---     -- PHY clock and data output
---     adc_dclk             => open,
---     adc_dclk_180         => open,
---     adc_dclk_div2        => adc1_data_clk,
---     adc_dout             => adc1_raw_data,
---     adc_ovr_out          => open
---   );
-
-
-adc1_phy : entity work.adc_phy
-port map(
-    reset => frontend_rst,
-    sys_clk => sys_clk,
-
-    adc_reset_p => adc1_reset_p,
-    adc_reset_n => adc1_reset_n,
-
-    --clock and data lines from ADC chip
-    clk_in_p => adc1_da_dclk_p,
-    clk_in_n => adc1_da_dclk_n,
-    data_in_p => adc1_da_p,
-    data_in_n => adc1_da_n,
-
-    --Data out to other modules
-    data_clk => adc1_data_clk,
-    data_out => adc1_raw_data,
-
-    eye_aligned => adc1_eye_aligned,
-
-    ref_clk => ref_clk200,
-    idelayctrl_rst => idelayctrl_rst,
-    delay_data_ce => adc1_delay_ce,
-
-    --SPI
-    spi_access_strb => adc1_spi_access_strb,
-    spi_wdata => adc1_spi_wdata,
-    spi_addr => adc1_spi_addr,
-    spi_rd_wrn => adc1_spi_rd_wrn,
-    spi_rdy => adc1_spi_rdy,
-    spi_rdata_valid => adc1_spi_rdata_valid,
-    spi_rdata => adc1_spi_rdata,
-
-    -- dac spi interface
-    spi_sclk => adc1_spi_sclk,
-    spi_sdenb => adc1_spi_sdenb,
-    spi_sdio => adc1_spi_sdio
-);
-
---DAC PHY interfaces
-dac0_phy : entity work.dac_phy
-port map(
-    reset => frontend_rst,
-    sys_clk => sys_clk,
-
-    dac_resetb => dac0_resetb,
-
-    --clock from DAC
-    clk_in_p => dac0_clk_in_p,
-    clk_in_n => dac0_clk_in_n,
-
-    --clock and data out to DAC
-    data_out_p => dac0_data_p,
-    data_out_n => dac0_data_n,
-    clk_out_p => dac0_dclk_p,
-    clk_out_n => dac0_dclk_n,
-
-    sync_out_p => dac0_sync_p,
-    sync_out_n => dac0_sync_n,
-
-    --Wide data interface at divided clock
-    data_clk => dac0_div_clk,
-    data => dac0_data,
-
-    --SPI
-    spi_access_strb => dac0_spi_access_strb,
-    spi_wdata => dac0_spi_wdata,
-    spi_addr => dac0_spi_addr,
-    spi_rd_wrn => dac0_spi_rd_wrn,
-    spi_rdy => dac0_spi_rdy,
-    spi_rdata_valid => dac0_spi_rdata_valid,
-    spi_rdata => dac0_spi_rdata,
-
-    -- dac spi interface
-    spi_sclk => dac0_spi_sclk,
-    spi_sdenb => dac0_spi_sdenb,
-    spi_sdio => dac0_spi_sdio
-);
-
-dac1_phy : entity work.dac_phy
-port map(
-    reset => frontend_rst,
-    sys_clk => sys_clk,
-
-    dac_resetb => dac1_resetb,
-
-    --clock from DAC
-    clk_in_p => dac1_clk_in_p,
-    clk_in_n => dac1_clk_in_n,
-
-    --clock and data out to DAC
-    data_out_p => dac1_data_p,
-    data_out_n => dac1_data_n,
-    clk_out_p => dac1_dclk_p,
-    clk_out_n => dac1_dclk_n,
-
-    sync_out_p => dac1_sync_p,
-    sync_out_n => dac1_sync_n,
-
-    --Wide data interface at divided clock
-    data_clk => dac1_div_clk,
-    data => dac1_data,
-
-    --SPI
-    spi_access_strb => dac1_spi_access_strb,
-    spi_wdata => dac1_spi_wdata,
-    spi_addr => dac1_spi_addr,
-    spi_rd_wrn => dac1_spi_rd_wrn,
-    spi_rdy => dac1_spi_rdy,
-    spi_rdata_valid => dac1_spi_rdata_valid,
-    spi_rdata => dac1_spi_rdata,
-
-    -- dac spi interface
-    spi_sclk => dac1_spi_sclk,
-    spi_sdenb => dac1_spi_sdenb,
-    spi_sdio => dac1_spi_sdio
-);
 
 
 --Pulse generators
