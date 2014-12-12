@@ -276,6 +276,11 @@ entity x6_1000m_top is
     pll_spi_miso         : in    std_logic;
     pll_ext_clk_sel      : out   std_logic;
     pll_lock             : in    std_logic;
+    ref_adc_clk_p        : in    std_logic;
+    ref_adc_clk_n        : in    std_logic;
+    ref_dac_clk_p        : in    std_logic;
+    ref_dac_clk_n        : in    std_logic;
+
 
     -- External sync
     ext_sync_sel         : out   std_logic;
@@ -1931,6 +1936,10 @@ port map (
     pll_spi_miso         => pll_spi_miso,
     pll_ext_clk_sel      => pll_ext_clk_sel,
     pll_lock             => pll_lock,
+    ref_adc_clk_p        => ref_adc_clk_p,
+    ref_adc_clk_n        => ref_adc_clk_n,
+    ref_dac_clk_p        => ref_dac_clk_p,
+    ref_dac_clk_n        => ref_dac_clk_n,
 
     -- ADC0 and ADC1 interface
     adc0_spi_sclk        => adc0_spi_sclk,
@@ -1955,6 +1964,9 @@ port map (
     adc1_da_n            => adc1_da_n,
     adc1_ovra_p          => adc1_ovra_p,
     adc1_ovra_n          => adc1_ovra_n,
+
+    --External trigger select
+    ext_sync_sel         => ext_sync_sel,
 
     -- DAC0 and DAC1 interface signals
     dac0_resetb          => dac0_resetb,
@@ -1998,9 +2010,6 @@ port map (
     -- PPS pulse input (ie. GPS)
     ts_pps_pls           => h_pps_demet_re
   );
-
-
-
 
 
 --Pulse generators
