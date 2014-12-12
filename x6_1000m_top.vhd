@@ -584,14 +584,6 @@ architecture arch of x6_1000m_top is
   signal adc1_fifo_aempty     : std_logic;
   signal adc1_fifo_valid      : std_logic;
   signal adc1_fifo_dout       : std_logic_vector(127 downto 0);
-  signal adc0_raw_rden        : std_logic;
-  signal adc0_raw_vld         : std_logic;
-  signal adc0_raw_dout        : std_logic_vector(47 downto 0);
-  signal adc0_frame_out       : std_logic;
-  signal adc1_raw_rden        : std_logic;
-  signal adc1_raw_vld         : std_logic;
-  signal adc1_raw_dout        : std_logic_vector(47 downto 0);
-  signal adc1_frame_out       : std_logic;
 ------------------------------------------------------------------------------
 -- DAC interface
 ------------------------------------------------------------------------------
@@ -732,7 +724,7 @@ architecture arch of x6_1000m_top is
   signal control0, control1, control2, control3 : std_logic_vector(35 downto 0) ;
 
 -----------------------------------------------------------------------------
- signal dac0_trig, dac1_trig, adc0_trig, adc1_trig : std_logic;
+ signal dac0_ext_sync, dac1_ext_sync, adc0_ext_sync, adc1_ext_sync : std_logic;
  signal dac0_data, dac1_data : std_logic_vector(63 downto 0) ;
  signal dac0_div_clk, dac1_div_clk : std_logic;
 
@@ -1809,52 +1801,6 @@ begin
     wb_ack_i(11) <= '0';
   end generate;
 
---Buffer the ADC/DAC triggers to single-ended
-adc0_trigbuf : IBUFDS
-generic map (
-  DIFF_TERM     => true,
-  IOSTANDARD    => "LVPECL_25"
-)
-port map (
-  I       => adc0_ext_sync_p,
-  IB      => adc0_ext_sync_n,
-  O       => adc0_trig
-);
-
-adc1_trigbuf : IBUFDS
-generic map (
-  DIFF_TERM     => true,
-  IOSTANDARD    => "LVPECL_25"
-)
-port map (
-  I       => adc1_ext_sync_p,
-  IB      => adc1_ext_sync_n,
-  O       => adc1_trig
-);
-
-dac0_trigbuf : IBUFDS
-generic map (
-  DIFF_TERM     => true,
-  IOSTANDARD    => "LVPECL_25"
-)
-port map (
-  I       => dac0_ext_sync_p,
-  IB      => dac0_ext_sync_n,
-  O       => dac0_trig
-);
-
-dac1_trigbuf : IBUFDS
-generic map (
-  DIFF_TERM     => true,
-  IOSTANDARD    => "LVPECL_25"
-)
-port map (
-  I       => dac1_ext_sync_p,
-  IB      => dac1_ext_sync_n,
-  O       => dac1_trig
-);
-
-
 ------------------------------------------------------------------------------
 -- Analog Frontend Interface
 ------------------------------------------------------------------------------
@@ -1902,13 +1848,31 @@ port map (
     adc_run_o            => adc_run_o,
     dac_run_o            => dac_run_o,
 
+    -- DAC stream ID
+    dac0_stream_id       => dac0_stream_id,
+    dac1_stream_id       => dac1_stream_id,
+
+    -- ADC0 fifo interface
+    adc0_fifo_empty      => adc0_fifo_empty,
+    adc0_fifo_aempty     => adc0_fifo_aempty,
+    adc0_fifo_rd         => adc0_fifo_rd,
+    adc0_fifo_vld        => adc0_fifo_valid,
+    adc0_fifo_dout       => adc0_fifo_dout,
+
+    -- ADC1 fifo interface
+    adc1_fifo_empty      => adc1_fifo_empty,
+    adc1_fifo_aempty     => adc1_fifo_aempty,
+    adc1_fifo_rd         => adc1_fifo_rd,
+    adc1_fifo_vld        => adc1_fifo_valid,
+    adc1_fifo_dout       => adc1_fifo_dout,
+
     -- ADC0 raw interface
     adc0_raw_data        => adc0_raw_data,
-    adc0_data_clk         => adc0_data_clk,
+    adc0_data_clk        => adc0_data_clk,
 
     -- ADC1 raw interface
     adc1_raw_data        => adc1_raw_data,
-    adc1_data_clk         => adc1_data_clk,
+    adc1_data_clk        => adc1_data_clk,
 
     -- DAC0 data source fifo interface
     dac0_src_aempty      => vfifo0_o_aempty,
@@ -1941,6 +1905,19 @@ port map (
     ref_dac_clk_p        => ref_dac_clk_p,
     ref_dac_clk_n        => ref_dac_clk_n,
 
+    -- ADC external sync
+    ext_sync_sel         => ext_sync_sel,
+    adc0_ext_sync_p      => adc0_ext_sync_p,
+    adc0_ext_sync_n      => adc0_ext_sync_n,
+    adc0_ext_sync        => adc0_ext_sync,
+    adc1_ext_sync_p      => adc1_ext_sync_p,
+    adc1_ext_sync_n      => adc1_ext_sync_n,
+    adc1_ext_sync        => adc1_ext_sync,
+    dac0_ext_sync_p      => dac0_ext_sync_p,
+    dac0_ext_sync_n      => dac0_ext_sync_n,
+    dac1_ext_sync_p      => dac1_ext_sync_p,
+    dac1_ext_sync_n      => dac1_ext_sync_n,
+
     -- ADC0 and ADC1 interface
     adc0_spi_sclk        => adc0_spi_sclk,
     adc0_spi_sdenb       => adc0_spi_sdenb,
@@ -1964,9 +1941,6 @@ port map (
     adc1_da_n            => adc1_da_n,
     adc1_ovra_p          => adc1_ovra_p,
     adc1_ovra_n          => adc1_ovra_n,
-
-    --External trigger select
-    ext_sync_sel         => ext_sync_sel,
 
     -- DAC0 and DAC1 interface signals
     dac0_resetb          => dac0_resetb,
@@ -2011,7 +1985,12 @@ port map (
     ts_pps_pls           => h_pps_demet_re
   );
 
+  adc0_fifo_rd <= '1';
+  adc1_fifo_rd <= '1';
 
+  dac0_ext_sync <= adc0_ext_sync;
+  dac1_ext_sync <= adc1_ext_sync;
+  
 --Pulse generators
 
 pg0 : entity work.PulseGenerator
@@ -2021,7 +2000,7 @@ pg0 : entity work.PulseGenerator
   port map (
     sys_clk => sys_clk,
     reset => backend_rst,
-    trigger => dac0_trig,
+    trigger => dac0_ext_sync,
 
     --DAC PHY interface
     dac_data_clk => dac0_div_clk,
@@ -2045,7 +2024,7 @@ pg1 : entity work.PulseGenerator
     port map (
     sys_clk => sys_clk,
     reset => backend_rst,
-    trigger => dac1_trig,
+    trigger => dac1_ext_sync,
 
     --DAC PHY interface
     dac_data_clk => dac1_div_clk,
@@ -2070,7 +2049,7 @@ inst_dsp0 : entity work.ii_dsp_top
   port map (
     srst => backend_rst,
     sys_clk => sys_clk,
-    trigger => dac0_trig,
+    trigger => dac0_ext_sync,
 
     -- Slave Wishbone Interface
     wb_rst_i => wb_rst,
@@ -2103,7 +2082,7 @@ inst_dsp0 : entity work.ii_dsp_top
   port map (
     srst => backend_rst,
     sys_clk => sys_clk,
-    trigger => dac1_trig,
+    trigger => dac1_ext_sync,
 
     -- Slave Wishbone Interface
     wb_rst_i => wb_rst,
@@ -2140,9 +2119,9 @@ inst_dsp0 : entity work.ii_dsp_top
   port map (
     CONTROL => control0,
     CLK => sys_clk,
-    DATA(177) => adc0_frame_out,
-    DATA(176) => adc0_raw_vld,
-    DATA(175 downto 128) => adc0_raw_dout,
+    DATA(177) => '0',
+    DATA(176) => '0',
+    DATA(175 downto 128) => adc0_raw_data,
     DATA(127 downto 0) => vfifo2_i_data,
     TRIG0(1) => vfifo2_i_rdy,
     TRIG0(0) => vfifo2_i_wren);
@@ -2151,9 +2130,9 @@ inst_dsp0 : entity work.ii_dsp_top
   port map (
     CONTROL => control1,
     CLK => sys_clk,
-    DATA(177) => adc1_frame_out,
-    DATA(176) => adc1_raw_vld,
-    DATA(175 downto 128) => adc1_raw_dout,
+    DATA(177) => '0',
+    DATA(176) => '0',
+    DATA(175 downto 128) => adc1_raw_data,
     DATA(127 downto 0) => vfifo3_i_data,
     TRIG0(1) => vfifo3_i_rdy,
     TRIG0(0) => vfifo3_i_wren);
@@ -2162,23 +2141,23 @@ inst_dsp0 : entity work.ii_dsp_top
   port map (
     CONTROL => control2,
     CLK => adc0_data_clk,
-    DATA(51 downto 48) => dac1_trig & dac0_trig & adc0_trig & adc1_trig,
+    DATA(51 downto 48) => dac1_ext_sync & dac0_ext_sync & adc0_ext_sync & adc1_ext_sync,
     DATA(47 downto 0) => adc0_raw_data,
-    TRIG0(3) => dac1_trig,
-    TRIG0(2) => dac0_trig,
-    TRIG0(1) => adc1_trig,
-    TRIG0(0) => adc0_trig);
+    TRIG0(3) => dac1_ext_sync,
+    TRIG0(2) => dac0_ext_sync,
+    TRIG0(1) => adc1_ext_sync,
+    TRIG0(0) => adc0_ext_sync);
 
   inst_chipscope_adc1 : entity work.chipscope_ila_adc
   port map (
     CONTROL => control3,
     CLK => adc1_data_clk,
-    DATA(51 downto 48) => dac1_trig & dac0_trig & adc0_trig & adc1_trig,
+    DATA(51 downto 48) => dac1_ext_sync & dac0_ext_sync & adc0_ext_sync & adc1_ext_sync,
     DATA(47 downto 0) => adc1_raw_data,
-    TRIG0(3) => dac1_trig,
-    TRIG0(2) => dac0_trig,
-    TRIG0(1) => adc1_trig,
-    TRIG0(0) => adc0_trig);
+    TRIG0(3) => dac1_ext_sync,
+    TRIG0(2) => dac0_ext_sync,
+    TRIG0(1) => adc1_ext_sync,
+    TRIG0(0) => adc0_ext_sync);
 
 ------------------------------------------------------------------------------
 -- DSP VITA mover
