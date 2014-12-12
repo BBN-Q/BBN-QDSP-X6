@@ -382,6 +382,8 @@ NET "dac0_data_p[15]" LOC = J30;  #Bank 16
 NET "dac0_data_n[15]" LOC = K29;  #Bank 16
 NET "dac0_sync_p"     LOC = L25;  #Bank 16
 NET "dac0_sync_n"     LOC = L26;  #Bank 16
+NET "dac0_sync2_p"    LOC = J31;  #Bank 16
+NET "dac0_sync2_n"    LOC = J32;  #Bank 16
 NET "dac0_dig_p"      LOC = H34;  #Bank 16
 NET "dac0_dig_n"      LOC = H33;  #Bank 16
 
@@ -425,6 +427,8 @@ NET "dac1_data_p[15]" LOC = R26;  #Bank 15
 NET "dac1_data_n[15]" LOC = T26;  #Bank 15
 NET "dac1_sync_p"     LOC = N25;  #Bank 15
 NET "dac1_sync_n"     LOC = M25;  #Bank 15
+NET "dac1_sync2_p"    LOC = M26;  #Bank 15
+NET "dac1_sync2_n"    LOC = M27;  #Bank 15
 NET "dac1_dig_p"      LOC = K32;  #Bank 15
 NET "dac1_dig_n"      LOC = K31;  #Bank 15
 

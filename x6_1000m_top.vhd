@@ -324,6 +324,8 @@ entity x6_1000m_top is
     dac0_dclk_n          : out   std_logic;
     dac0_sync_p          : out   std_logic;
     dac0_sync_n          : out   std_logic;
+    dac0_sync2_p         : out   std_logic;
+    dac0_sync2_n         : out   std_logic;
     dac0_data_p          : out   std_logic_vector(15 downto 0);
     dac0_data_n          : out   std_logic_vector(15 downto 0);
     dac1_resetb          : out   std_logic;
@@ -337,6 +339,8 @@ entity x6_1000m_top is
     dac1_dclk_n          : out   std_logic;
     dac1_sync_p          : out   std_logic;
     dac1_sync_n          : out   std_logic;
+    dac1_sync2_p         : out   std_logic;
+    dac1_sync2_n         : out   std_logic;
     dac1_data_p          : out   std_logic_vector(15 downto 0);
     dac1_data_n          : out   std_logic_vector(15 downto 0);
 
@@ -1024,14 +1028,16 @@ begin
   --   dio_n                => dio_n
   -- );
   wb_ack_i(5) <= '0';
-  dio_p(31 downto 17) <= (others => '0');
+  dio_p(26 downto 17) <= (others => frontend_rst);
+
+  
   dio_p(16) <= or_reduce(state1_vld & state0_vld);
   dio_p(15 downto 12) <= state1 & state0;
-  dio_p(11 downto 0) <= (others => '0');
+  dio_p(11 downto 0) <= (others => frontend_rst);
   -- dio_n(31 downto 0) <= (others => '0');
 
 -----------------------------------------------------------------------------
--- Temperature controller
+-- Temperature controllers
 -----------------------------------------------------------------------------
   inst_temp_control_top : ii_temp_control_top
   generic map (
@@ -1962,8 +1968,8 @@ port map (
     dac0_dclk_n          => dac0_dclk_n,
     dac0_sync_p          => dac0_sync_p,
     dac0_sync_n          => dac0_sync_n,
-    dac0_sync2_p         => open,
-    dac0_sync2_n         => open,
+    dac0_sync2_p         => dac0_sync2_p,
+    dac0_sync2_n         => dac0_sync2_n,
     dac0_data_p          => dac0_data_p,
     dac0_data_n          => dac0_data_n,
     dac1_resetb          => dac1_resetb,
@@ -1977,8 +1983,8 @@ port map (
     dac1_dclk_n          => dac1_dclk_n,
     dac1_sync_p          => dac1_sync_p,
     dac1_sync_n          => dac1_sync_n,
-    dac1_sync2_p         => open,
-    dac1_sync2_n         => open,
+    dac1_sync2_p         => dac1_sync2_p,
+    dac1_sync2_n         => dac1_sync2_n,
     dac1_data_p          => dac1_data_p,
     dac1_data_n          => dac1_data_n,
 
