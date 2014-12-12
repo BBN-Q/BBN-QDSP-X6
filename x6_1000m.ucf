@@ -223,10 +223,6 @@ NET "pll_spi_le"     LOC = C34 | IOSTANDARD = LVCMOS25;  #Bank 16
 NET "pll_spi_miso"   LOC = B34 | IOSTANDARD = LVCMOS25;  #Bank 16
 NET "pll_spi_mosi"   LOC = K28 | IOSTANDARD = LVCMOS25;  #Bank 16
 NET "pll_spi_sclk"   LOC = E32 | IOSTANDARD = LVCMOS25;  #Bank 16
-## NET "ref_adc_clk_p"  LOC = L23 | IOSTANDARD = DIFF_SSTL18_I;  #Bank 24
-## NET "ref_adc_clk_n"  LOC = M22 | IOSTANDARD = DIFF_SSTL18_I;  #Bank 24
-## NET "ref_dac_clk_p"  LOC = J9  | IOSTANDARD = LVDS_25;  #Bank 34
-## NET "ref_dac_clk_n"  LOC = H9  | IOSTANDARD = LVDS_25;  #Bank 34
 
 
 # External Sync
@@ -254,14 +250,14 @@ NET "adc1_spi_sdio"  LOC = AE22;  #Bank 24
 # ADC interface (data) constraints
 NET "adc?_da_dclk_?" IOSTANDARD = "LVDS_25";
 NET "adc?_da_?[*]"   IOSTANDARD = "LVDS_25";
-## NET "adc?_ovra_?"    IOSTANDARD = "LVDS_25";
+NET "adc?_ovra_?"    IOSTANDARD = "LVDS_25";
 NET "adc?_reset_?"   IOSTANDARD = "LVDS_25";
 
 # ADC0 interface
 NET "adc0_da_dclk_p" LOC = AE33;  #Bank 13
 NET "adc0_da_dclk_n" LOC = AF33;  #Bank 13
-## NET "adc0_ovra_p"    LOC = Y32 ;  #Bank 14
-## NET "adc0_ovra_n"    LOC = Y31 ;  #Bank 14
+NET "adc0_ovra_p"    LOC = Y32 ;  #Bank 14
+NET "adc0_ovra_n"    LOC = Y31 ;  #Bank 14
 NET "adc0_reset_p"   LOC = Y33 ;  #Bank 14
 NET "adc0_reset_n"   LOC = Y34 ;  #Bank 14
 NET "adc0_da_p[0]"   LOC = W31 ;  #Bank 14
@@ -293,8 +289,8 @@ NET "adc0_da_n[11]"  LOC = AC34;  #Bank 13
 # ADC1 interface
 NET "adc1_da_dclk_p" LOC = AD30;  #Bank 13
 NET "adc1_da_dclk_n" LOC = AC30;  #Bank 13
-## NET "adc1_ovra_p"    LOC = AG33;  #Bank 13
-## NET "adc1_ovra_n"    LOC = AG32;  #Bank 13
+NET "adc1_ovra_p"    LOC = AG33;  #Bank 13
+NET "adc1_ovra_n"    LOC = AG32;  #Bank 13
 NET "adc1_reset_p"   LOC = AE34;  #Bank 13
 NET "adc1_reset_n"   LOC = AF34;  #Bank 13
 NET "adc1_da_p[0]"   LOC = AD32;  #Bank 13
@@ -325,7 +321,7 @@ NET "adc1_da_n[11]"  LOC = AD26;  #Bank 12
 
 
 # DAC SPI interface and control
-## NET "dac_dig_en"     LOC = K26 | IOSTANDARD = LVCMOS25;  #Bank 16
+NET "dac_dig_en"     LOC = K26 | IOSTANDARD = LVCMOS25;  #Bank 16
 NET "dac?_resetb"    IOSTANDARD = "LVCMOS15";
 NET "dac?_spi_*"     IOSTANDARD = "LVCMOS18";
 NET "dac0_resetb"    LOC = E16 ;  #Bank 36
@@ -345,7 +341,7 @@ NET "dac?_clk_in_?"  IOSTANDARD = "LVDS_25";
 NET "dac?_dclk_?"    IOSTANDARD = "LVDS_25";
 NET "dac?_data_?[*]" IOSTANDARD = "LVDS_25";
 NET "dac?_sync*"     IOSTANDARD = "LVDS_25";
-## NET "dac?_dig_?"     IOSTANDARD = "LVDS_25";
+NET "dac?_dig_?"     IOSTANDARD = "LVDS_25";
 
 # DAC0 interface
 NET "dac0_clk_in_p"   LOC = N33;  #Bank 15
@@ -386,10 +382,8 @@ NET "dac0_data_p[15]" LOC = J30;  #Bank 16
 NET "dac0_data_n[15]" LOC = K29;  #Bank 16
 NET "dac0_sync_p"     LOC = L25;  #Bank 16
 NET "dac0_sync_n"     LOC = L26;  #Bank 16
-## NET "dac0_sync2_p"    LOC = J31;  #Bank 16
-## NET "dac0_sync2_n"    LOC = J32;  #Bank 16
-## NET "dac0_dig_p"      LOC = H34;  #Bank 16
-## NET "dac0_dig_n"      LOC = H33;  #Bank 16
+NET "dac0_dig_p"      LOC = H34;  #Bank 16
+NET "dac0_dig_n"      LOC = H33;  #Bank 16
 
 
 # DAC1 interface
@@ -431,10 +425,8 @@ NET "dac1_data_p[15]" LOC = R26;  #Bank 15
 NET "dac1_data_n[15]" LOC = T26;  #Bank 15
 NET "dac1_sync_p"     LOC = N25;  #Bank 15
 NET "dac1_sync_n"     LOC = M25;  #Bank 15
-## NET "dac1_sync2_p"    LOC = M26;  #Bank 15
-## NET "dac1_sync2_n"    LOC = M27;  #Bank 15
-## NET "dac1_dig_p"      LOC = K32;  #Bank 15
-## NET "dac1_dig_n"      LOC = K31;  #Bank 15
+NET "dac1_dig_p"      LOC = K32;  #Bank 15
+NET "dac1_dig_n"      LOC = K31;  #Bank 15
 
 
 ################################################################################
@@ -442,49 +434,39 @@ NET "dac1_sync_n"     LOC = M25;  #Bank 15
 ################################################################################
 NET "dac?_clk_in_?" TNM_NET = "TNM_DAC_CLK_IN";
 TIMESPEC "TS_DAC_CLK_IN" = PERIOD "TNM_DAC_CLK_IN" 2 ns;   #500MHz
-
-## NET "ref_dac_clk_?" TNM_NET = "TNM_REF_DAC_CLK";
-## TIMESPEC "TS_REF_DAC_CLK" = PERIOD "TNM_REF_DAC_CLK" 4 ns; #250MHz
+NET "inst_afe_top/inst_dac?_intf/dac_clk_bufr" TNM_NET = "TNM_DAC_CLK";
 
 NET "adc?_da_dclk_?" TNM_NET = "TNM_ADC_DCLK";
 TIMESPEC "TS_ADC_DCLK" = PERIOD "TNM_ADC_DCLK" 2 ns;  #500MHz
-
-## NET "ref_adc_clk_?" TNM_NET = "TNM_REF_ADC_CLK";
-## TIMESPEC "TS_REF_ADC_CLK" = PERIOD "TNM_REF_ADC_CLK" 4 ns; #250MHz
+NET "inst_afe_top/inst_adc?/adc_dclk_div2" TNM_NET = "TNM_ADC_CLK";
 
 
 ################################################################################
 # FPGA part dependent area constraints                                         #
 # SX315T                                                                       #
 ################################################################################
-## INST "inst_afe_top/inst_adc0/inst_adc_intf/inst_adc_phy_top/inst_ads5400_phy/inst_idelayctrl" LOC = "IDELAYCTRL_X0Y1";
-## INST "inst_afe_top/inst_adc1/inst_adc_intf/inst_adc_phy_top/inst_ads5400_phy/inst_idelayctrl" LOC = "IDELAYCTRL_X0Y0";
-## INST "inst_afe_top/inst_dac0_intf/inst_dac_intf/dac5682z_phy_inst/idelayctrl_inst" LOC = "IDELAYCTRL_X0Y3";
-## INST "inst_afe_top/inst_dac1_intf/inst_dac_intf/dac5682z_phy_inst/idelayctrl_inst" LOC = "IDELAYCTRL_X0Y2";
-## INST "inst_afe_top/inst_idelayctrl" LOC = "IDELAYCTRL_X0Y4";
-## 
+INST "inst_afe_top/inst_adc0/inst_adc_intf/inst_adc_phy_top/inst_ads5400_phy/inst_idelayctrl" LOC = "IDELAYCTRL_X0Y1";
+INST "inst_afe_top/inst_adc1/inst_adc_intf/inst_adc_phy_top/inst_ads5400_phy/inst_idelayctrl" LOC = "IDELAYCTRL_X0Y0";
+INST "inst_afe_top/inst_dac0_intf/inst_dac_intf/dac5682z_phy_inst/idelayctrl_inst" LOC = "IDELAYCTRL_X0Y3";
+INST "inst_afe_top/inst_dac1_intf/inst_dac_intf/dac5682z_phy_inst/idelayctrl_inst" LOC = "IDELAYCTRL_X0Y2";
+INST "inst_afe_top/inst_idelayctrl" LOC = "IDELAYCTRL_X0Y4";
 
-## Not sure why we need this but.... 
-## see http://forums.xilinx.com/t5/Implementation/PhysDesignRules-2506-error-when-porting-to-14-7/td-p/402435/page/3
-INST "adc0_phy/adc_gear_in/clkout_buf_inst" LOC=BUFR_X0Y3;
-
-
-INST "adc0_phy" AREA_GROUP = "AG_adc0_intf";
+INST "inst_afe_top/inst_adc0" AREA_GROUP = "AG_adc0_intf";
 AREA_GROUP "AG_adc0_intf" RANGE = SLICE_X0Y60:SLICE_X23Y99;
 AREA_GROUP "AG_adc0_intf" RANGE = RAMB18_X0Y24:RAMB18_X1Y39;
 AREA_GROUP "AG_adc0_intf" RANGE = RAMB36_X0Y12:RAMB36_X1Y19;
 
-INST "adc1_phy" AREA_GROUP = "AG_adc1_intf";
+INST "inst_afe_top/inst_adc1" AREA_GROUP = "AG_adc1_intf";
 AREA_GROUP "AG_adc1_intf" RANGE = SLICE_X0Y20:SLICE_X23Y59;
 AREA_GROUP "AG_adc1_intf" RANGE = RAMB18_X0Y8:RAMB18_X1Y23;
 AREA_GROUP "AG_adc1_intf" RANGE = RAMB36_X0Y4:RAMB36_X1Y11;
 
-INST "dac0_phy" AREA_GROUP = "AG_dac0_intf";
+INST "inst_afe_top/inst_dac0_intf" AREA_GROUP = "AG_dac0_intf";
 AREA_GROUP "AG_dac0_intf" RANGE = SLICE_X0Y140:SLICE_X23Y179;
 AREA_GROUP "AG_dac0_intf" RANGE = RAMB36_X0Y28:RAMB36_X1Y35;
 AREA_GROUP "AG_dac0_intf" RANGE = DSP48_X0Y56:DSP48_X1Y71;
 
-INST "dac1_phy" AREA_GROUP = "AG_dac1_intf";
+INST "inst_afe_top/inst_dac1_intf" AREA_GROUP = "AG_dac1_intf";
 AREA_GROUP "AG_dac1_intf" RANGE = SLICE_X0Y100:SLICE_X23Y139;
 AREA_GROUP "AG_dac1_intf" RANGE = RAMB36_X0Y20:RAMB36_X1Y27;
 AREA_GROUP "AG_dac1_intf" RANGE = DSP48_X0Y40:DSP48_X1Y55;

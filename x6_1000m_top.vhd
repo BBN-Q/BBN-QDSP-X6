@@ -298,6 +298,8 @@ entity x6_1000m_top is
     adc0_da_dclk_n       : in    std_logic;
     adc0_da_p            : in    std_logic_vector(11 downto 0);
     adc0_da_n            : in    std_logic_vector(11 downto 0);
+    adc0_ovra_p          : in    std_logic;
+    adc0_ovra_n          : in    std_logic;
     adc1_spi_sclk        : out   std_logic;
     adc1_spi_sdenb       : out   std_logic;
     adc1_spi_sdio        : inout std_logic;
@@ -307,6 +309,8 @@ entity x6_1000m_top is
     adc1_da_dclk_n       : in    std_logic;
     adc1_da_p            : in    std_logic_vector(11 downto 0);
     adc1_da_n            : in    std_logic_vector(11 downto 0);
+    adc1_ovra_p          : in    std_logic;
+    adc1_ovra_n          : in    std_logic;
 
     -- DAC0 and DAC1 interface signals
     dac0_resetb          : out   std_logic;
@@ -335,6 +339,13 @@ entity x6_1000m_top is
     dac1_sync_n          : out   std_logic;
     dac1_data_p          : out   std_logic_vector(15 downto 0);
     dac1_data_n          : out   std_logic_vector(15 downto 0);
+
+    -- DAC output digitizer interface
+    dac_dig_en           : out   std_logic;
+    dac0_dig_p           : in    std_logic;
+    dac0_dig_n           : in    std_logic;
+    dac1_dig_p           : in    std_logic;
+    dac1_dig_n           : in    std_logic;
 
     -- Serial RapidIO clock control
     sio_xo_scl           : out   std_logic;
@@ -1836,7 +1847,7 @@ port map (
 ------------------------------------------------------------------------------
 -- Analog Frontend Interface
 ------------------------------------------------------------------------------
-  inst_afe_top : ii_afe_intf_top
+  inst_afe_top : entity work.ii_afe_intf_top
   generic map (
     G_SIM                => false,
     SYS_CLK_FREQ         => SYS_CLK_FREQ,
@@ -1882,11 +1893,11 @@ port map (
 
     -- ADC0 raw interface
     adc0_raw_data        => adc0_raw_data,
-    adc0_raw_clk         => adc0_data_clk,
+    adc0_data_clk         => adc0_data_clk,
 
     -- ADC1 raw interface
     adc1_raw_data        => adc1_raw_data,
-    adc1_raw_clk         => adc1_data_clk,
+    adc1_data_clk         => adc1_data_clk,
 
     -- DAC0 data source fifo interface
     dac0_src_aempty      => vfifo0_o_aempty,
@@ -1914,10 +1925,6 @@ port map (
     pll_spi_miso         => pll_spi_miso,
     pll_ext_clk_sel      => pll_ext_clk_sel,
     pll_lock             => pll_lock,
-    ref_adc_clk_p        => ref_adc_clk_p,
-    ref_adc_clk_n        => ref_adc_clk_n,
-    ref_dac_clk_p        => ref_dac_clk_p,
-    ref_dac_clk_n        => ref_dac_clk_n,
 
     -- ADC0 and ADC1 interface
     adc0_spi_sclk        => adc0_spi_sclk,
@@ -1955,8 +1962,8 @@ port map (
     dac0_dclk_n          => dac0_dclk_n,
     dac0_sync_p          => dac0_sync_p,
     dac0_sync_n          => dac0_sync_n,
-    dac0_sync2_p         => dac0_sync2_p,
-    dac0_sync2_n         => dac0_sync2_n,
+    dac0_sync2_p         => open,
+    dac0_sync2_n         => open,
     dac0_data_p          => dac0_data_p,
     dac0_data_n          => dac0_data_n,
     dac1_resetb          => dac1_resetb,
@@ -1970,8 +1977,8 @@ port map (
     dac1_dclk_n          => dac1_dclk_n,
     dac1_sync_p          => dac1_sync_p,
     dac1_sync_n          => dac1_sync_n,
-    dac1_sync2_p         => dac1_sync2_p,
-    dac1_sync2_n         => dac1_sync2_n,
+    dac1_sync2_p         => open,
+    dac1_sync2_n         => open,
     dac1_data_p          => dac1_data_p,
     dac1_data_n          => dac1_data_n,
 
