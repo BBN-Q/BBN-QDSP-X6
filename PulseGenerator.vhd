@@ -9,9 +9,10 @@ entity PulseGenerator is
 	reset : in std_logic;
 	trigger : in std_logic;
 
-	-- DAC PHY interface
-	dac_data_clk : in std_logic;
-	dac_data     : out std_logic_vector(63 downto 0) ;
+	-- DAC sample interface
+	dac_data       : out std_logic_vector(63 downto 0) ;
+	dac_data_wr_en : out std_logic;
+	dac_data_rdy   : in std_logic;
 
 	--wishbone interface
 	wb_rst_i       : in  std_logic;
@@ -71,36 +72,29 @@ my_wf_bram : entity work.WF_BRAM
     wea(0) => wf_wr_we,
     addra => wf_wr_addr(12 downto 0),
     dina => wf_wr_data,
-    clkb => dac_data_clk,
+    clkb => sys_clk,
     addrb => std_logic_vector(wf_rd_addr),
     doutb => dac_data
   );
 
---Playback logic SM
-playback : process( dac_data_clk )
-type state_t is (IDLE, PLAYING);
-variable state : state_t;
+--Playback logic
+-- since the data is FIFO'd in the DAC_PHY just push it on pulses when possible
+playback : process( sys_clk )
 begin
-	if rising_edge(dac_data_clk) then
-		case( state ) is
+	if rising_edge(sys_clk) then
+		if reset = '1' then
+			wf_rd_addr <= (others => '1');
+			dac_data_wr_en <= '0';
+		else
+			if dac_data_rdy = '1' then
+				wf_rd_addr <= wf_rd_addr + 1;
+				dac_data_wr_en <= '1';
 				
-					when IDLE =>
-						--wait for trigger
-						wf_rd_addr <= (others => '0');
-						if trigger = '1' then
-							state := PLAYING;
-						end if;
-
-					when PLAYING =>
-						wf_rd_addr <= wf_rd_addr + 1;
-						if wf_rd_addr = unsigned(wf_length(12 downto 0)) then
-							state := IDLE;
-						end if;
-
-					when others =>
-						null;
-				
-				end case ;		
+				if wf_rd_addr = unsigned(wf_length(12 downto 0)) then
+					wf_rd_addr <= (others => '0');
+				end if;
+			end if;
+		end if;
 	end if ;
 end process ; -- playback
 

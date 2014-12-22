@@ -724,12 +724,13 @@ architecture arch of x6_1000m_top is
   signal control0, control1, control2, control3 : std_logic_vector(35 downto 0) ;
 
 -----------------------------------------------------------------------------
- signal dac0_ext_sync, dac1_ext_sync, adc0_ext_sync, adc1_ext_sync : std_logic;
- signal dac0_data, dac1_data : std_logic_vector(63 downto 0) ;
- signal dac0_div_clk, dac1_div_clk : std_logic;
-
- signal adc0_data_clk, adc1_data_clk : std_logic;
- signal adc0_raw_data, adc1_raw_data : std_logic_vector(47 downto 0) ;
+signal dac0_ext_sync, dac1_ext_sync, adc0_ext_sync, adc1_ext_sync : std_logic;
+signal dac0_data, dac1_data : std_logic_vector(63 downto 0) ;
+signal dac0_data_wr_en, dac1_data_wr_en : std_logic;
+signal dac0_data_rdy, dac1_data_rdy : std_logic;
+ 
+signal adc0_data_clk, adc1_data_clk : std_logic;
+signal adc0_raw_data, adc1_raw_data : std_logic_vector(47 downto 0) ;
 
 -- AFE register connections
 
@@ -1881,12 +1882,22 @@ begin
     dac0_src_vld         => vfifo0_o_vld,
     dac0_src_din         => vfifo0_o_data,
 
+    -- DAC0 raw sample interface
+    dac0_data            => dac0_data,
+    dac0_data_wr_en      => dac0_data_wr_en,
+    dac0_data_rdy        => dac0_data_rdy,
+
     -- DAC1 data source fifo interface
     dac1_src_aempty      => vfifo1_o_aempty,
     dac1_src_empty       => vfifo1_o_empty,
     dac1_src_rden        => vfifo1_o_rden,
     dac1_src_vld         => vfifo1_o_vld,
     dac1_src_din         => vfifo1_o_data,
+
+    -- DAC1 raw sample interface
+    dac1_data            => dac1_data,
+    dac1_data_wr_en      => dac1_data_wr_en,
+    dac1_data_rdy        => dac1_data_rdy,
 
     -- PLL interface
     pll_vcxo_en          => pll_vcxo_en,
@@ -2002,9 +2013,10 @@ pg0 : entity work.PulseGenerator
     reset => backend_rst,
     trigger => dac0_ext_sync,
 
-    --DAC PHY interface
-    dac_data_clk => dac0_div_clk,
+    --DAC data interface
     dac_data => dac0_data,
+    dac_data_wr_en => dac0_data_wr_en,
+    dac_data_rdy   => dac0_data_rdy,
 
     --wishbone interface
     wb_rst_i => wb_rst,
@@ -2026,9 +2038,10 @@ pg1 : entity work.PulseGenerator
     reset => backend_rst,
     trigger => dac1_ext_sync,
 
-    --DAC PHY interface
-    dac_data_clk => dac1_div_clk,
+    --DAC data interface
     dac_data => dac1_data,
+    dac_data_wr_en => dac1_data_wr_en,
+    dac_data_rdy   => dac1_data_rdy,
 
     --wishbone interface
     wb_rst_i => wb_rst,
@@ -2049,7 +2062,7 @@ inst_dsp0 : entity work.ii_dsp_top
   port map (
     srst => backend_rst,
     sys_clk => sys_clk,
-    trigger => dac0_ext_sync,
+    trigger => adc0_ext_sync,
 
     -- Slave Wishbone Interface
     wb_rst_i => wb_rst,
@@ -2082,7 +2095,7 @@ inst_dsp0 : entity work.ii_dsp_top
   port map (
     srst => backend_rst,
     sys_clk => sys_clk,
-    trigger => dac1_ext_sync,
+    trigger => adc1_ext_sync,
 
     -- Slave Wishbone Interface
     wb_rst_i => wb_rst,
