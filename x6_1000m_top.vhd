@@ -1031,8 +1031,8 @@ begin
   
   dio_p(16) <= or_reduce(state1_vld & state0_vld);
   dio_p(15 downto 12) <= state1 & state0;
-  dio_p(11 downto 0) <= (others => frontend_rst);
-  -- dio_n(31 downto 0) <= (others => '0');
+  dio_p(11 downto 0) <= (others => '0');
+  dio_n(31 downto 0) <= (others => '0');
 
 -----------------------------------------------------------------------------
 -- Temperature controllers
