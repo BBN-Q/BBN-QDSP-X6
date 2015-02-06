@@ -22,8 +22,9 @@ entity PulseGenerator is
 	wb_we_i        : in  std_logic;
 	wb_stb_i       : in  std_logic;
 	wb_ack_o       : out std_logic;
-	wb_dat_o       : out std_logic_vector(31 downto 0)
+	wb_dat_o       : out std_logic_vector(31 downto 0);
 
+	wf_rd_addr_copy    : out std_logic_vector(15 downto 0)
 	) ;
 end entity ; -- PulseGenerator
 
@@ -37,6 +38,9 @@ signal wf_wr_we : std_logic;
 signal wf_rd_addr : unsigned(11 downto 0) ;
 
 begin
+
+wf_rd_addr_copy(15 downto 12) <= (others => '0');
+wf_rd_addr_copy(11 downto 0) <= std_logic_vector(wf_rd_addr);
 
 --Wishbone registers
 
@@ -78,12 +82,12 @@ my_wf_bram : entity work.WF_BRAM
   );
 
 --Playback logic
--- since the data is FIFO'd in the DAC_PHY just push it on pulses when possible
+-- since the data is FIFO'd in the DAC_PHY just push it on when possible
 playback : process( sys_clk )
 begin
 	if rising_edge(sys_clk) then
 		if reset = '1' then
-			wf_rd_addr <= (others => '1');
+			wf_rd_addr <= (others => '0');
 			dac_data_wr_en <= '0';
 		else
 			if dac_data_rdy = '1' then

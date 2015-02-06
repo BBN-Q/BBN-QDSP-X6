@@ -789,6 +789,10 @@ signal adc0_raw_data, adc1_raw_data : std_logic_vector(47 downto 0) ;
   signal dac1_spi_rdata       : std_logic_vector(7 downto 0);
   signal dac0_spi_sdo_sysclk, dac1_spi_sdo_sysclk : std_logic;
 
+  signal wf_rd_addr_copy_dac0, wf_rd_addr_copy_dac1 : std_logic_vector(15 downto 0) ;
+  signal dac_ch_en : std_logic_vector(3 downto 0) ;
+  signal dac0_trigger, dac0_trigger_en, dac1_trigger, dac1_trigger_en : std_logic;
+
 begin
 
 -----------------------------------------------------------------------------
@@ -1985,6 +1989,12 @@ begin
     dac1_data_p          => dac1_data_p,
     dac1_data_n          => dac1_data_n,
 
+    dac_ch_en            => dac_ch_en,
+    dac0_trigger         => dac0_trigger,
+    dac0_trigger_en      => dac0_trigger_en,
+    dac1_trigger         => dac1_trigger,
+    dac1_trigger_en      => dac1_trigger_en,
+
     -- DAC output digitizer interface
     dac_dig_en           => dac_dig_en,
     dac0_dig_p           => dac0_dig_p,
@@ -2026,7 +2036,9 @@ pg0 : entity work.PulseGenerator
     wb_we_i  => wb_we_o,
     wb_stb_i => wb_stb_o,
     wb_ack_o => wb_ack_i(14),
-    wb_dat_o => wb_dat_i
+    wb_dat_o => wb_dat_i,
+
+    wf_rd_addr_copy => wf_rd_addr_copy_dac0
   ) ;
 
 pg1 : entity work.PulseGenerator
@@ -2051,7 +2063,9 @@ pg1 : entity work.PulseGenerator
     wb_we_i  => wb_we_o,
     wb_stb_i => wb_stb_o,
     wb_ack_o => wb_ack_i(15),
-    wb_dat_o => wb_dat_i
+    wb_dat_o => wb_dat_i,
+
+    wf_rd_addr_copy => wf_rd_addr_copy_dac1
     ) ;
 
 
@@ -2128,49 +2142,51 @@ inst_dsp0 : entity work.ii_dsp_top
     CONTROL2 => control2,
     CONTROL3 => control3);
 
-  inst_chipscope_dsp0 : entity work.chipscope_ila_vita
+  inst_chipscope_dac0 : entity work.chipscope_ila_dac
   port map (
     CONTROL => control0,
     CLK => sys_clk,
-    DATA(177) => '0',
-    DATA(176) => '0',
-    DATA(175 downto 128) => adc0_raw_data,
-    DATA(127 downto 0) => vfifo2_i_data,
-    TRIG0(1) => vfifo2_i_rdy,
-    TRIG0(0) => vfifo2_i_wren);
+    DATA(111 downto 87) => (others => '0'),
+    DATA(86) => dac0_trigger_en,
+    DATA(85) => dac0_trigger,
+    DATA(84 downto 83) => dac_ch_en(1 downto 0),
+    DATA(82) => dac_run_o,
+    DATA(81) => dac0_data_rdy,
+    DATA(80) => dac0_data_wr_en,
+    DATA(79 downto 16) => dac0_data,
+    DATA(15 downto 0) => wf_rd_addr_copy_dac0,
+    TRIG0(0) => dac0_ext_sync);
 
-  inst_chipscope_dsp1 : entity work.chipscope_ila_vita
+  inst_chipscope_dac1 : entity work.chipscope_ila_dac
   port map (
     CONTROL => control1,
     CLK => sys_clk,
-    DATA(177) => '0',
-    DATA(176) => '0',
-    DATA(175 downto 128) => adc1_raw_data,
-    DATA(127 downto 0) => vfifo3_i_data,
-    TRIG0(1) => vfifo3_i_rdy,
-    TRIG0(0) => vfifo3_i_wren);
+    DATA(111 downto 87) => (others => '0'),
+    DATA(86) => dac1_trigger_en,
+    DATA(85) => dac1_trigger,
+    DATA(84 downto 83) => dac_ch_en(3 downto 2),
+    DATA(82) => dac_run_o,
+    DATA(81) => dac1_data_rdy,
+    DATA(80) => dac1_data_wr_en,
+    DATA(79 downto 16) => dac1_data,
+    DATA(15 downto 0) => wf_rd_addr_copy_dac1,
+    TRIG0(0) => dac1_ext_sync);
 
   inst_chipscope_adc0 : entity work.chipscope_ila_adc
   port map (
     CONTROL => control2,
     CLK => adc0_data_clk,
-    DATA(51 downto 48) => dac1_ext_sync & dac0_ext_sync & adc0_ext_sync & adc1_ext_sync,
+    DATA(48) => adc0_ext_sync,
     DATA(47 downto 0) => adc0_raw_data,
-    TRIG0(3) => dac1_ext_sync,
-    TRIG0(2) => dac0_ext_sync,
-    TRIG0(1) => adc1_ext_sync,
     TRIG0(0) => adc0_ext_sync);
 
   inst_chipscope_adc1 : entity work.chipscope_ila_adc
   port map (
     CONTROL => control3,
     CLK => adc1_data_clk,
-    DATA(51 downto 48) => dac1_ext_sync & dac0_ext_sync & adc0_ext_sync & adc1_ext_sync,
+    DATA(48) => adc1_ext_sync,
     DATA(47 downto 0) => adc1_raw_data,
-    TRIG0(3) => dac1_ext_sync,
-    TRIG0(2) => dac0_ext_sync,
-    TRIG0(1) => adc1_ext_sync,
-    TRIG0(0) => adc0_ext_sync);
+    TRIG0(0) => adc1_ext_sync);
 
 ------------------------------------------------------------------------------
 -- DSP VITA mover
