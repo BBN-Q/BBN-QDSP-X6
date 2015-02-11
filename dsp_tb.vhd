@@ -33,13 +33,7 @@ signal wb_stb_i : std_logic := '0';
 signal wb_ack_o : std_logic := '0';
 
 -- ADC raw interface
-signal adc0_raw_rden : std_logic := '0';
-signal adc0_raw_dvld : std_logic := '0';
-signal adc0_raw_vld  : std_logic := '0';
-signal adc0_raw_vld_d: std_logic := '0';
 signal adc0_raw_data : std_logic_vector(47 downto 0) := (others => '0');
-signal adc0_raw_dout : std_logic_vector(47 downto 0) := (others => '0');
-signal adc0_frame    : std_logic := '0';
 
 -- DSP VITA interface
 signal vita_rden   : std_logic := '0';
@@ -61,21 +55,6 @@ constant decimation_factor : integer := 16;
 
 type KernelArray_t is array(natural range <>) of std_logic_vector(31 downto 0);
 constant allOnes : KernelArray_t(0 to 2*frame_size/decimation_factor - 1) := (others => (31 => '0', 15 => '0', others => '1'));
-
-component afifo_1k48x48
-  port (
-    rst : IN STD_LOGIC;
-    wr_clk : IN STD_LOGIC;
-    rd_clk : IN STD_LOGIC;
-    din : IN STD_LOGIC_VECTOR(47 DOWNTO 0);
-    wr_en : IN STD_LOGIC;
-    rd_en : IN STD_LOGIC;
-    dout : OUT STD_LOGIC_VECTOR(47 DOWNTO 0);
-    full : OUT STD_LOGIC;
-    empty : OUT STD_LOGIC;
-    valid : OUT STD_LOGIC
-  );
-end component;
 
 begin
 
@@ -106,7 +85,6 @@ begin
 	if rising_edge(fs_clk) then
 		if (rst = '1') or (testbench_state /= RUNNING) then
 			adc0_raw_data <= (others => '0');
-			adc0_raw_dvld <= '0';
 			playState := WAITING;
 			wfct := 0;
 			cnt := 0;
@@ -117,14 +95,12 @@ begin
 				when WAITING =>
 					cnt := 0;
 					adc0_raw_data <= (others => '0');
-					adc0_raw_dvld <= '0';
 					if trigger = '1' then
 						playState := PLAYING;
 					end if;
 
 				when PLAYING =>
 					adc0_raw_data <= testData0(wfct)(cnt+3) & testData0(wfct)(cnt+2) & testData0(wfct)(cnt+1) & testData0(wfct)(cnt);
-					adc0_raw_dvld <= '1';
 					cnt := cnt + 4;
 					if cnt >= testData0(0)'length then
 						playState := WAITING;
@@ -156,27 +132,6 @@ begin
 	end if ;
 end process ; -- vita2stream
 
-adc0_buffer : afifo_1k48x48
-port map (
-	rst => rst,
-	wr_clk => fs_clk,
-	rd_clk => clk,
-	din => adc0_raw_data,
-	wr_en => adc0_raw_dvld,
-	rd_en => adc0_raw_rden,
-	dout => adc0_raw_dout,
-	valid => adc0_raw_vld
-);
-
---Deserialized frame creator
-adc0_frame <= adc0_raw_vld and adc0_raw_vld_d;
-frameDeser : process( clk )
-begin
-if rising_edge(clk) then
-  adc0_raw_vld_d <= adc0_raw_vld;
-end if ;
-end process ; -- frameDeser
-
 inst_dsp : entity work.ii_dsp_top
 generic map (
 	dsp_app_offset => x"2000"
@@ -184,6 +139,7 @@ generic map (
 port map (
 	srst => rst,
 	sys_clk => clk,
+	trigger => trigger,
 
 	-- Slave Wishbone Interface
 	wb_rst_i => rst,
@@ -195,10 +151,8 @@ port map (
 	wb_ack_o => wb_ack_o,
 
 	-- Input serialized raw data interface
-	rden    => adc0_raw_rden,
-	din_vld => adc0_raw_vld,
-	din     => adc0_raw_dout,
-	frame_in   => adc0_frame,
+	raw_data_clk => fs_clk,
+	raw_data     => adc0_raw_data,
 
 	-- VITA-49 Output FIFO Interface
 	muxed_vita_rden => vita_rden,
@@ -296,6 +250,7 @@ begin
 			wb_write(8192 + phys*256 + 32 + demod, 256*(phys+1) + 16*demod); -- stream ID
 		end loop;
 
+		wb_write(8192 + phys*256 + 63, 2*frame_size); -- recordLength
 		--write integration kernels
 		for demod in 0 to 1 loop
 			write_kernel(phys, demod, allOnes);
