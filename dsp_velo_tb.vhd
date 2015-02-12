@@ -21,8 +21,9 @@ architecture behavior of dsp_velo_testbench is
 constant clk_period : time := 5 ns;
 constant fs_period : time := 4 ns;
 
-constant FRAME_SIZE : integer := 512;
-constant DECIMATION_FACTOR : integer := 4;
+constant RECORD_LENGTH : natural := 1024;
+constant FRAME_SIZE : integer := RECORD_LENGTH/2; --two samples per 32 bit word
+constant DECIMATION_FACTOR : integer := 16;
 
 signal clk : std_logic := '0';
 signal fs_clk : std_logic := '0';
@@ -37,7 +38,6 @@ signal wb_ack_o : std_logic := '0';
 
 -- ADC raw interface
 signal adc0_raw_data : std_logic_vector(47 downto 0) := (others => '0');
-
 signal adc1_raw_data : std_logic_vector(47 downto 0) := (others => '0');
 
 -- DSP VITA interface
@@ -275,8 +275,6 @@ begin
 
 	testbench_state <= WB_WRITE;
 	for phys in 0 to 0 loop
-		--record length
-		wb_write(8192 + phys*256 + 15, 2*FRAME_SIZE);
 		-- write the phase increments
 		for demod in 0 to 1 loop
 			wb_write(8192 + phys*256 + 16 + demod, (2*phys+demod+1)* 10486);
@@ -289,6 +287,8 @@ begin
 			wb_write(8192 + phys*256 + demod, 2*FRAME_SIZE/DECIMATION_FACTOR+8);
 			wb_write(8192 + phys*256 + 32 + demod, 65536 + 256*(phys+1) + 16*demod);
 		end loop;
+
+		wb_write(8192 + phys*256 + 63, 2*frame_size); -- recordLength
 
 		--write integration kernels
 		for demod in 0 to 1 loop
