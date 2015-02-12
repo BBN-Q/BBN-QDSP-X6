@@ -721,7 +721,7 @@ architecture arch of x6_1000m_top is
 ------------------------------------------------------------------------------
 -- Chipscope debug
 ------------------------------------------------------------------------------
-  signal control0, control1 : std_logic_vector(35 downto 0) ;
+  signal control0, control1, control2, control3, control4, control5 : std_logic_vector(35 downto 0) ;
 
 -----------------------------------------------------------------------------
 signal dac0_ext_sync, dac1_ext_sync, adc0_ext_sync, adc1_ext_sync : std_logic;
@@ -2138,7 +2138,12 @@ inst_dsp0 : entity work.ii_dsp_top
   inst_chipscope_icon : entity work.chipscope_icon
   port map (
     CONTROL0 => control0,
-    CONTROL1 => control1);
+    CONTROL1 => control1,
+    CONTROL2 => control2,
+    CONTROL3 => control3,
+    CONTROL4 => control4,
+    CONTROL5 => control5
+    );
 
   inst_chipscope_dac0 : entity work.chipscope_ila_dac
   port map (
@@ -2170,21 +2175,39 @@ inst_dsp0 : entity work.ii_dsp_top
     DATA(15 downto 0) => wf_rd_addr_copy_dac1,
     TRIG0(0) => dac1_ext_sync);
 
-  -- inst_chipscope_adc0 : entity work.chipscope_ila_adc
-  -- port map (
-  --   CONTROL => control2,
-  --   CLK => adc0_data_clk,
-  --   DATA(48) => adc0_ext_sync,
-  --   DATA(47 downto 0) => adc0_raw_data,
-  --   TRIG0(0) => adc0_ext_sync);
+  inst_chipscope_adc0 : entity work.chipscope_ila_adc
+  port map (
+    CONTROL => control2,
+    CLK => adc0_data_clk,
+    DATA(48) => adc0_ext_sync,
+    DATA(47 downto 0) => adc0_raw_data,
+    TRIG0(0) => adc0_ext_sync);
 
-  -- inst_chipscope_adc1 : entity work.chipscope_ila_adc
-  -- port map (
-  --   CONTROL => control3,
-  --   CLK => adc1_data_clk,
-  --   DATA(48) => adc1_ext_sync,
-  --   DATA(47 downto 0) => adc1_raw_data,
-  --   TRIG0(0) => adc1_ext_sync);
+  inst_chipscope_adc1 : entity work.chipscope_ila_adc
+  port map (
+    CONTROL => control3,
+    CLK => adc1_data_clk,
+    DATA(48) => adc1_ext_sync,
+    DATA(47 downto 0) => adc1_raw_data,
+    TRIG0(0) => adc1_ext_sync);
+
+    inst_chipscope_vita0 : entity work.chipscope_ila_vita
+    port map (
+        CONTROL => control4,
+        CLK => sys_clk,
+        DATA(129) => vfifo2_i_rdy,
+        DATA(128) => vfifo2_i_wren,
+        DATA(127 downto 0) => vfifo2_i_data,
+        TRIG0(0) => vfifo2_i_wren);
+
+    inst_chipscope_vita1 : entity work.chipscope_ila_vita
+    port map (
+        CONTROL => control5,
+        CLK => sys_clk,
+        DATA(129) => vfifo3_i_rdy,
+        DATA(128) => vfifo3_i_wren,
+        DATA(127 downto 0) => vfifo3_i_data,
+        TRIG0(0) => vfifo3_i_wren);
 
 ------------------------------------------------------------------------------
 -- DSP VITA mover
