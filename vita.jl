@@ -4,38 +4,25 @@ typealias VitaStreamDict Dict{Uint16, Vector{VitaPacket}}
 import Base.convert, Base.size
 
 #Stream ID lives in the bottom 16 bits of the second word
-streamID(packet::VitaPacket) = uint16(packet[2] & 0xffff)
+streamID(packet::VitaPacket) = packet[2] % UInt16
 
 #total packet size including header from the header - should equal length(packet)
-size(packet::VitaPacket) = uint16(packet[1] & 0xffff)
+size(packet::VitaPacket) = packet[1] % UInt16
 
-padding_bytes(packet::VitaPacket) = uint8((packet[end] & 0x0f00) >> 8)
+padding_bytes(packet::VitaPacket) = ((packet[end] & 0x0f00) >> 8) % UInt8
 
 #Strip 7 header words and 1 tail
 payload(packet::VitaPacket) = packet[8:end-1]
 
 function convert(::Type{Vector{Int16}}, packet::VitaPacket)
-	#16bit words are packed as 
+	#16bit words are packed as
 	#	W1	W0
 	#	W3	W2
 	#	W5	W4
 	data = Array(Int16, 2*(length(packet)-8))
 	for (ct,word) in enumerate(payload(packet))
-		data[2*ct-1] = int16(word & 0xffff)
-		data[2*ct] = int16((word & 0xffff0000) >> 16)
-	end
-	data
-end
-
-function convert(::Type{Vector{Int16}}, packet::VitaPacket)
-	#16bit words are packed as 
-	#	W1	W0
-	#	W3	W2
-	#	W5	W4
-	data = Array(Int16, 2*(length(packet)-8))
-	for (ct,word) in enumerate(payload(packet))
-		data[2*ct-1] = int16(word & 0xffff)
-		data[2*ct] = int16((word & 0xffff0000) >> 16)
+		data[2*ct-1] = word % Int16
+		data[2*ct] = ((word & 0xffff0000) >> 16) % Int16
 	end
 	data
 end
@@ -43,7 +30,7 @@ end
 function convert(::Type{Vector{Complex{Int16}}}, packet::VitaPacket)
 	data = Array(Complex{Int16}, (length(packet)-8))
 	for (ct,word) in enumerate(payload(packet))
-		data[ct] = int16((word & 0xffff0000) >> 16) + 1im*int16(word & 0xffff)
+		data[ct] = ((word & 0xffff0000) >> 16) % Int16 + 1im*(word % Int16)
 	end
 	data
 end
@@ -96,5 +83,3 @@ function VitaStreamDict(fileName::String)
 	end
 	vitaDict
 end
-
-	
