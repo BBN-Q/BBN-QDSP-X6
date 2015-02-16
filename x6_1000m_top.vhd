@@ -433,7 +433,7 @@ architecture arch of x6_1000m_top is
 -----------------------------------------------------------------------------
   constant rev_maj            : std_logic_vector(7 downto 0) := X"01";
   constant rev_min            : std_logic_vector(7 downto 0) := X"06";
-  signal sub_rev              : std_logic_vector(7 downto 0) := X"02";
+  signal sub_rev              : std_logic_vector(7 downto 0) := X"03";
   signal revision             : std_logic_vector(15 downto 0) := rev_maj & rev_min;
   constant hw_type            : std_logic_vector(3 downto 0) := X"5"; -- X6-1000M
   constant fpga_type          : std_logic_vector(1 downto 0) := dev_encode(DEVICE);
@@ -712,10 +712,10 @@ architecture arch of x6_1000m_top is
 ------------------------------------------------------------------------------
 -- Custom DSP stuff
 ------------------------------------------------------------------------------
-  signal state0               : std_logic_vector(1 downto 0);
-  signal state1               : std_logic_vector(1 downto 0);
-  signal state0_vld           : std_logic_vector(1 downto 0);
-  signal state1_vld           : std_logic_vector(1 downto 0);
+  signal state0               : std_logic_vector(2 downto 0);
+  signal state1               : std_logic_vector(2 downto 0);
+  signal state0_vld           : std_logic_vector(2 downto 0);
+  signal state1_vld           : std_logic_vector(2 downto 0);
   signal state_vld            : std_logic;
 
 ------------------------------------------------------------------------------
@@ -1034,8 +1034,8 @@ begin
 
   
   dio_p(16) <= or_reduce(state1_vld & state0_vld);
-  dio_p(15 downto 12) <= state1 & state0;
-  dio_p(11 downto 0) <= (others => '0');
+  dio_p(15 downto 10) <= state1 & state0;
+  dio_p(9 downto 0) <= (others => '0');
   dio_n(31 downto 0) <= (others => '0');
 
 -----------------------------------------------------------------------------
