@@ -55,15 +55,15 @@ signal velo_dout : std_logic_vector(127 downto 0) ;
 signal trigger : std_logic := '0';
 
 --Decision Engine interface
-signal state : std_logic_vector(1 downto 0) := "00";
-signal state_vld : std_logic_vector(1 downto 0) := "00";
+signal state : std_logic_vector(2 downto 0) := (others => '0');
+signal state_vld : std_logic_vector(2 downto 0) := (others => '0');
 
 
 type testbench_states is (RESETTING, WB_WRITE, RUNNING, STOPPING);
 signal testbench_state : testbench_states := RESETTING;
 
 type KernelArray_t is array(natural range <>) of std_logic_vector(31 downto 0);
-constant allOnes : KernelArray_t(0 to 2*FRAME_SIZE/DECIMATION_FACTOR - 1) := (others => (31 => '0', 15 => '0', others => '1'));
+constant allOnes : KernelArray_t(0 to RECORD_LENGTH/DECIMATION_FACTOR - 1) := (others => (31 => '0', 15 => '0', others => '1'));
 
 signal testData0 : WFArray_t(0 to num_lines("testWFs.in")-1) := read_wf_file("testWFs.in");
 
@@ -112,7 +112,7 @@ begin
 					end if;
 
 				when PLAYING =>
-					adc0_raw_data <= testData0(wfct)(cnt) & testData0(wfct)(cnt+1) & testData0(wfct)(cnt+2) & testData0(wfct)(cnt+3);
+					adc0_raw_data <= testData0(wfct)(cnt+3) & testData0(wfct)(cnt+2) & testData0(wfct)(cnt+1) & testData0(wfct)(cnt);
 					cnt := cnt + 4;
 					if cnt = testData0(0)'length then
 						playState := WAITING;
@@ -284,11 +284,11 @@ begin
 		wb_write(8192 + phys*256, FRAME_SIZE+8);
 		wb_write(8192 + phys*256 + 32, 65536 + 256*(phys+1));
 		for demod in 1 to 2 loop
-			wb_write(8192 + phys*256 + demod, 2*FRAME_SIZE/DECIMATION_FACTOR+8);
+			wb_write(8192 + phys*256 + demod, 2*FRAME_SIZE/DECIMATION_FACTOR+8); --factor of 2 for complex demod stream
 			wb_write(8192 + phys*256 + 32 + demod, 65536 + 256*(phys+1) + 16*demod);
 		end loop;
 
-		wb_write(8192 + phys*256 + 63, 2*frame_size); -- recordLength
+		wb_write(8192 + phys*256 + 63, RECORD_LENGTH); -- recordLength
 
 		--write integration kernels
 		for demod in 0 to 1 loop
