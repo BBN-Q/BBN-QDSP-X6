@@ -224,26 +224,6 @@ entity x6_1000m_top is
     pex_mbist_n          : out   std_logic;
 
     -- LPDDR2 Interface
-    lpddr2_c0_ck_p       : out   std_logic_vector(0 downto 0);
-    lpddr2_c0_ck_n       : out   std_logic_vector(0 downto 0);
-    lpddr2_c0_cke        : out   std_logic_vector(1 downto 0);
-    lpddr2_c0_cs_n       : out   std_logic_vector(1 downto 0);
-    lpddr2_c0_ca         : out   std_logic_vector(9 downto 0);
-    lpddr2_c0_dm         : out   std_logic_vector(3 downto 0);
-    lpddr2_c0_dqs_p      : inout std_logic_vector(3 downto 0);
-    lpddr2_c0_dqs_n      : inout std_logic_vector(3 downto 0);
-    lpddr2_c0_dq         : inout std_logic_vector(31 downto 0);
-
-    lpddr2_c1_ck_p       : out   std_logic_vector(0 downto 0);
-    lpddr2_c1_ck_n       : out   std_logic_vector(0 downto 0);
-    lpddr2_c1_cke        : out   std_logic_vector(1 downto 0);
-    lpddr2_c1_cs_n       : out   std_logic_vector(1 downto 0);
-    lpddr2_c1_ca         : out   std_logic_vector(9 downto 0);
-    lpddr2_c1_dm         : out   std_logic_vector(3 downto 0);
-    lpddr2_c1_dqs_p      : inout std_logic_vector(3 downto 0);
-    lpddr2_c1_dqs_n      : inout std_logic_vector(3 downto 0);
-    lpddr2_c1_dq         : inout std_logic_vector(31 downto 0);
-
     lpddr2_c2_ck_p       : out   std_logic_vector(0 downto 0);
     lpddr2_c2_ck_n       : out   std_logic_vector(0 downto 0);
     lpddr2_c2_cke        : out   std_logic_vector(1 downto 0);
@@ -612,46 +592,6 @@ architecture arch of x6_1000m_top is
   signal playback_en          : std_logic_vector(1 downto 0);
   signal mem_test_en          : std_logic_vector(3 downto 0);
   signal mem_test_error       : std_logic_vector(3 downto 0);
-  signal vf0_pbcmd_fifo_wren  : std_logic;
-  signal vf0_pbcmd_fifo_data  : std_logic_vector(127 downto 0);
-  signal vf0_pbcmd_fifo_rdy   : std_logic;
-  signal vf0_tag_load_done    : std_logic;
-  signal vf0_tag_load_value   : std_logic_vector(7 downto 0);
-  signal vf0_tag_rep_done     : std_logic;
-  signal vf0_tag_rep_value    : std_logic_vector(7 downto 0);
-  signal vfifo0_i_wren        : std_logic;
-  signal vfifo0_i_data        : std_logic_vector(127 downto 0);
-  signal vfifo0_i_rdy         : std_logic;
-  signal vfifo0_o_rden        : std_logic;
-  signal vfifo0_o_aempty      : std_logic;
-  signal vfifo0_o_empty       : std_logic;
-  signal vfifo0_o_vld         : std_logic;
-  signal vfifo0_o_data        : std_logic_vector(127 downto 0);
-  signal vfifo0_overflow      : std_logic;
-  signal vfifo0_underflow     : std_logic;
-  signal vfifo0_wrd_cnt       : std_logic_vector(29 downto 0);
-  signal vfifo0_aempty        : std_logic;
-  signal vfifo0_afull         : std_logic;
-  signal vf1_pbcmd_fifo_wren  : std_logic;
-  signal vf1_pbcmd_fifo_data  : std_logic_vector(127 downto 0);
-  signal vf1_pbcmd_fifo_rdy   : std_logic;
-  signal vf1_tag_load_done    : std_logic;
-  signal vf1_tag_load_value   : std_logic_vector(7 downto 0);
-  signal vf1_tag_rep_done     : std_logic;
-  signal vf1_tag_rep_value    : std_logic_vector(7 downto 0);
-  signal vfifo1_i_wren        : std_logic;
-  signal vfifo1_i_data        : std_logic_vector(127 downto 0);
-  signal vfifo1_i_rdy         : std_logic;
-  signal vfifo1_o_rden        : std_logic;
-  signal vfifo1_o_aempty      : std_logic;
-  signal vfifo1_o_empty       : std_logic;
-  signal vfifo1_o_vld         : std_logic;
-  signal vfifo1_o_data        : std_logic_vector(127 downto 0);
-  signal vfifo1_overflow      : std_logic;
-  signal vfifo1_underflow     : std_logic;
-  signal vfifo1_wrd_cnt       : std_logic_vector(29 downto 0);
-  signal vfifo1_aempty        : std_logic;
-  signal vfifo1_afull         : std_logic;
   signal vfifo2_i_wren        : std_logic;
   signal vfifo2_i_data        : std_logic_vector(127 downto 0);
   signal vfifo2_i_rdy         : std_logic;
@@ -1007,28 +947,6 @@ begin
 ------------------------------------------------------------------------------
 -- Digital I/O
 ------------------------------------------------------------------------------
-  -- inst_dio_top : ii_dio_top
-  -- generic map (
-  --   width                => 32,
-  --   diff_en              => FALSE,
-  --   addr_bits            => 2,
-  --   offset               => MR_DIO
-  -- )
-  -- port map (
-  --   -- Wishbone interface signals
-  --   wb_rst_i             => wb_rst,
-  --   wb_clk_i             => sys_clk,
-  --   wb_adr_i             => wb_adr_o,
-  --   wb_dat_i             => wb_dat_o,
-  --   wb_we_i              => wb_we_o,
-  --   wb_stb_i             => wb_stb_o,
-  --   wb_ack_o             => wb_ack_i(5),
-  --   wb_dat_o             => wb_dat_i,
-  --   -- user registers
-  --   clk                  => sys_clk,
-  --   dio_p                => dio_p,
-  --   dio_n                => dio_n
-  -- );
   wb_ack_i(5) <= '0';
   dio_p(26 downto 17) <= (others => frontend_rst);
 
@@ -1104,10 +1022,7 @@ begin
 -----------------------------------------------------------------------------
   mem_alert_din <= (vfifo3_afull & vfifo3_aempty & vfifo3_underflow &
                     vfifo3_overflow & vfifo2_afull & vfifo2_aempty &
-                    vfifo2_underflow & vfifo2_overflow & vfifo1_afull &
-                    vfifo1_aempty & vfifo1_underflow & vfifo1_overflow &
-                    vfifo0_afull & vfifo0_aempty & vfifo0_underflow &
-                    vfifo0_overflow);
+                    vfifo2_underflow & vfifo2_overflow & x"00");
 
   inst_mem_alert_gen : ii_alert_gen
   generic map (
@@ -1204,7 +1119,7 @@ begin
   alert_data(16)      <= (others => '0');
   alert_data(17)      <= (others => '0');
   alert_data(18)      <= (others => '0');
-  alert_data(19)      <= (vf1_tag_rep_value & vf1_tag_load_value & vf0_tag_rep_value & vf0_tag_load_value);
+  alert_data(19)      <= (others => '0');
   alert_data(20)      <= (x"1303000" & "00" & adc1_overrange & adc0_overrange);
   alert_data(21)      <= (x"1303000" & "00" & adc1_overflow & adc0_overflow);
   alert_data(22)      <= (others => '0');
@@ -1224,7 +1139,7 @@ begin
   alert(2)            <= '0';
   alert(3)            <= temp_alert;
   alert(18 downto 4)  <= (others => '0');
-  alert(19)           <= vf1_tag_rep_done or vf1_tag_load_done or vf0_tag_rep_done or vf0_tag_load_done;
+  alert(19)           <= '0';
   alert(20)           <= adc1_overrange or adc0_overrange;
   alert(21)           <= adc1_overflow or adc0_overflow;
   alert(23 downto 22) <= (others => '0');
@@ -1298,206 +1213,6 @@ begin
   pd_addr_df(0)   <= def_pid_addr0;
   pd_addr_df(1)   <= def_pid_addr1;
 
-  def_dest_rdy(0) <= not lpbk_fifo_afull;
-
-  inst_deframer : ii_deframer
-  port map (
-    -- Reset and clock
-    srst                 => backend_rst,
-    sys_clk              => sys_clk,
-
-    -- Configuration
-    pd_addr              => pd_addr_df,
-
-    -- Status
-    new_packet           => open,
-    bad_pdn              => open,
-    end_of_packet        => open,
-
-    -- Source channel interface
-    src_aempty           => pcie_rx_aempty,
-    src_empty            => pcie_rx_empty,
-    src_rden             => pcie_rx_rden,
-    src_data_vld         => pcie_rx_data_vld,
-    data_in              => pcie_rx_dout,
-
-    -- Destination channels interface
-    dest_rdy             => def_dest_rdy,
-    dest_wren            => def_valid,
-    data_out             => def_data_out
-  );
-
------------------------------------------------------------------------------
--- Deframer output fifo
------------------------------------------------------------------------------
-  lpbk_fifo : sfifo_512x128_bltin
-  port map (
-    clk                  => sys_clk,
-    rst                  => backend_rst,
-    din                  => def_data_out,
-    wr_en                => def_valid(0),
-    rd_en                => lpbk_fifo_rden,
-    dout                 => lpbk_fifo_dout,
-    full                 => open,
-    empty                => lpbk_fifo_empty,
-    valid                => lpbk_fifo_vld,
-    prog_full            => lpbk_fifo_afull,
-    prog_empty           => lpbk_fifo_aempty
-  );
-
------------------------------------------------------------------------------
--- DAC router
------------------------------------------------------------------------------
-  inst_dac_rtr : ii_dac_router
-  port map (
-    -- Reset and clock
-    srst                 => backend_rst,
-    sys_clk              => sys_clk,
-
-    -- Routing configuration
-    dac0_stream_id       => dac0_stream_id,
-    dac1_stream_id       => dac1_stream_id,
-
-    -- Data source interface
-    dac_rtr_rdy          => def_dest_rdy(1),
-    dac_rtr_wren         => def_valid(1),
-    dac_rtr_data         => def_data_out,
-
-    -- Destination channels interface
-    dac0_pbcmd_rdy       => vf0_pbcmd_fifo_rdy,
-    dac0_pbcmd_wren      => vf0_pbcmd_fifo_wren,
-    dac0_pbcmd_data      => vf0_pbcmd_fifo_data,
-    dac0_vfifo_rdy       => vfifo0_i_rdy,
-    dac0_vfifo_wren      => vfifo0_i_wren,
-    dac0_vfifo_data      => vfifo0_i_data,
-    dac1_pbcmd_rdy       => vf1_pbcmd_fifo_rdy,
-    dac1_pbcmd_wren      => vf1_pbcmd_fifo_wren,
-    dac1_pbcmd_data      => vf1_pbcmd_fifo_data,
-    dac1_vfifo_rdy       => vfifo1_i_rdy,
-    dac1_vfifo_wren      => vfifo1_i_wren,
-    dac1_vfifo_data      => vfifo1_i_data
-  );
-
------------------------------------------------------------------------------
--- VFIFO interface
------------------------------------------------------------------------------
-  lpddr2_c0 : ii_vfifo_pb
-  port map (
-    -- Reset and Clock inputs
-    mem_rst              => mem_rst,
-    mem_clk_div2         => mem_clk_div2,
-    ref_clk200           => ref_clk200,
-    sys_clk              => sys_clk,
-
-    -- Control and status
-    dpd_req              => lpddr2_dpd_req(0),
-    run                  => dac_run_o,
-    playback_en          => playback_en(0),
-    test_en              => mem_test_en(0),
-    test_error           => mem_test_error(0),
-
-    -- Playback command FIFO interface
-    pbcmd_fifo_wren      => vf0_pbcmd_fifo_wren,
-    pbcmd_fifo_data      => vf0_pbcmd_fifo_data,
-    pbcmd_fifo_rdy       => vf0_pbcmd_fifo_rdy,
-
-    -- Alert output
-    tag_load_done        => vf0_tag_load_done,
-    tag_load_value       => vf0_tag_load_value,
-    tag_rep_done         => vf0_tag_rep_done,
-    tag_rep_value        => vf0_tag_rep_value,
-
-    -- Input fifo interface (data write port)
-    vfifo_i_wren         => vfifo0_i_wren,
-    vfifo_i_data         => vfifo0_i_data,
-    vfifo_i_rdy          => vfifo0_i_rdy,
-
-    -- Output fifo interface (data read port)
-    vfifo_o_rden         => vfifo0_o_rden,
-    vfifo_o_aethresh     => ("00" & x"08"),
-    vfifo_o_aempty       => vfifo0_o_aempty,
-    vfifo_o_empty        => vfifo0_o_empty,
-    vfifo_o_vld          => vfifo0_o_vld,
-    vfifo_o_data         => vfifo0_o_data,
-
-    -- LPDDR2 status
-    lpddr2_init_done     => lpddr2_phy_init_done(0),
-    lpddr2_overflow      => vfifo0_overflow,
-    lpddr2_underflow     => vfifo0_underflow,
-    lpddr2_wrd_cnt       => vfifo0_wrd_cnt,
-    lpddr2_aempty        => vfifo0_aempty,
-    lpddr2_afull         => vfifo0_afull,
-
-    -- LPDDR2 Output Interface
-    lpddr2_ck_p          => lpddr2_c0_ck_p,
-    lpddr2_ck_n          => lpddr2_c0_ck_n,
-    lpddr2_cke           => lpddr2_c0_cke,
-    lpddr2_cs_n          => lpddr2_c0_cs_n,
-    lpddr2_ca            => lpddr2_c0_ca,
-    lpddr2_dm            => lpddr2_c0_dm,
-    lpddr2_dqs_p         => lpddr2_c0_dqs_p,
-    lpddr2_dqs_n         => lpddr2_c0_dqs_n,
-    lpddr2_dq            => lpddr2_c0_dq
-  );
-
-  lpddr2_c1 : ii_vfifo_pb
-  port map (
-    -- Reset and Clock inputs
-    mem_rst              => mem_rst,
-    mem_clk_div2         => mem_clk_div2,
-    ref_clk200           => ref_clk200,
-    sys_clk              => sys_clk,
-
-    -- Control and status
-    dpd_req              => lpddr2_dpd_req(1),
-    run                  => dac_run_o,
-    playback_en          => playback_en(1),
-    test_en              => mem_test_en(1),
-    test_error           => mem_test_error(1),
-
-    -- Playback command FIFO interface
-    pbcmd_fifo_wren      => vf1_pbcmd_fifo_wren,
-    pbcmd_fifo_data      => vf1_pbcmd_fifo_data,
-    pbcmd_fifo_rdy       => vf1_pbcmd_fifo_rdy,
-
-    -- Alert output
-    tag_load_done        => vf1_tag_load_done,
-    tag_load_value       => vf1_tag_load_value,
-    tag_rep_done         => vf1_tag_rep_done,
-    tag_rep_value        => vf1_tag_rep_value,
-
-    -- Input fifo interface (data write port)
-    vfifo_i_wren         => vfifo1_i_wren,
-    vfifo_i_data         => vfifo1_i_data,
-    vfifo_i_rdy          => vfifo1_i_rdy,
-
-    -- Output fifo interface (data read port)
-    vfifo_o_rden         => vfifo1_o_rden,
-    vfifo_o_aethresh     => ("00" & x"08"),
-    vfifo_o_aempty       => vfifo1_o_aempty,
-    vfifo_o_empty        => vfifo1_o_empty,
-    vfifo_o_vld          => vfifo1_o_vld,
-    vfifo_o_data         => vfifo1_o_data,
-
-    -- LPDDR2 status
-    lpddr2_init_done     => lpddr2_phy_init_done(1),
-    lpddr2_overflow      => vfifo1_overflow,
-    lpddr2_underflow     => vfifo1_underflow,
-    lpddr2_wrd_cnt       => vfifo1_wrd_cnt,
-    lpddr2_aempty        => vfifo1_aempty,
-    lpddr2_afull         => vfifo1_afull,
-
-    -- LPDDR2 Output Interface
-    lpddr2_ck_p          => lpddr2_c1_ck_p,
-    lpddr2_ck_n          => lpddr2_c1_ck_n,
-    lpddr2_cke           => lpddr2_c1_cke,
-    lpddr2_cs_n          => lpddr2_c1_cs_n,
-    lpddr2_ca            => lpddr2_c1_ca,
-    lpddr2_dm            => lpddr2_c1_dm,
-    lpddr2_dqs_p         => lpddr2_c1_dqs_p,
-    lpddr2_dqs_n         => lpddr2_c1_dqs_n,
-    lpddr2_dq            => lpddr2_c1_dq
-  );
 
   lpddr2_c2 : ii_vfifo
   port map (
@@ -1880,11 +1595,11 @@ begin
     adc1_data_clk        => adc1_data_clk,
 
     -- DAC0 data source fifo interface
-    dac0_src_aempty      => vfifo0_o_aempty,
-    dac0_src_empty       => vfifo0_o_empty,
-    dac0_src_rden        => vfifo0_o_rden,
-    dac0_src_vld         => vfifo0_o_vld,
-    dac0_src_din         => vfifo0_o_data,
+    dac0_src_aempty      => '0',
+    dac0_src_empty       => '0',
+    dac0_src_rden        => open,
+    dac0_src_vld         => '0',
+    dac0_src_din         => (others => '0'),
 
     -- DAC0 raw sample interface
     dac0_data            => dac0_data,
@@ -1892,11 +1607,11 @@ begin
     dac0_data_rdy        => dac0_data_rdy,
 
     -- DAC1 data source fifo interface
-    dac1_src_aempty      => vfifo1_o_aempty,
-    dac1_src_empty       => vfifo1_o_empty,
-    dac1_src_rden        => vfifo1_o_rden,
-    dac1_src_vld         => vfifo1_o_vld,
-    dac1_src_din         => vfifo1_o_data,
+    dac1_src_aempty      => '0',
+    dac1_src_empty       => '0',
+    dac1_src_rden        => open,
+    dac1_src_vld         => '0',
+    dac1_src_din         => (others => '0'),
 
     -- DAC1 raw sample interface
     dac1_data            => dac1_data,
