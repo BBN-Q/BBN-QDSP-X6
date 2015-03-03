@@ -74,9 +74,13 @@ begin
 		tmp3 <= s_data_re * s_kernel_im;
 		tmp4 <= s_data_im * s_kernel_re;
 
-		prod_re <= tmp1 - tmp2;
-		prod_im <= tmp3 + tmp4;
-		
+		if rst = '1' then
+			prod_re <= (others => '0');
+			prod_im <= (others => '0');
+		else
+			prod_re <= tmp1 - tmp2;
+			prod_im <= tmp3 + tmp4;
+		end if;
 	end if ;
 end process ; -- mult
 
