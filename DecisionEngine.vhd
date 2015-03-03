@@ -8,10 +8,10 @@ entity DecisionEngine is
   port (
 	rst : in std_logic;
 	clk : in std_logic;
-	ce  : in std_logic;
 
 	data_re : in std_logic_vector(15 downto 0);
 	data_im : in std_logic_vector(15 downto 0);
+	data_vld : in std_logic;
 
 	kernel_re : in std_logic_vector(15 downto 0);
 	kernel_im : in std_logic_vector(15 downto 0);
@@ -52,12 +52,14 @@ kernel_addr <= std_logic_vector(addrct);
 
 addrCounter : process( clk )
 begin
-	if rising_edge(clk) and ce = '1' then
+	if rising_edge(clk) then
 		if rst = '1' then
 			addrct <= (others => '0');
 			kernel_last <= '0';
 		else
-			addrct <= addrct + 1;
+			if data_vld = '1' then
+				addrct <= addrct + 1;
+			end if;
 			if addrct = unsigned(kernel_len) - 1 then
 				kernel_last <= '1';
 			end if ;
@@ -76,7 +78,7 @@ begin
 		if rst = '1' then
 			data_re_delayline := (others => (others => '0'));
 			data_im_delayline := (others => (others => '0'));
-		elsif ce = '1' then
+		else
 			data_re_delayline := data_re_delayline(data_re_delayline'high-1 downto 0) & data_re;
 			data_re_d <= data_re_delayline(data_re_delayline'high);
 			data_im_delayline := data_im_delayline(data_im_delayline'high-1 downto 0) & data_im;
@@ -126,7 +128,7 @@ begin
 			accum_re <= accum_re + prod_re(31 downto 16);
 			accum_im <= accum_im + prod_im(31 downto 16);
 
-			if mult_last = '1' then
+			if mult_last = '1' and accum_last = '0' then -- rising edge of mult_last
 				result_re <= std_logic_vector(accum_re);
 				result_im <= std_logic_vector(accum_im);
 			end if;
