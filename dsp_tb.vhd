@@ -44,7 +44,7 @@ signal vita_dout     : std_logic_vector(127 downto 0) := (others => '0');
 signal trigger : std_logic := '0';
 
 --Decision Engine interface
-signal state : std_logic_vector(1 downto 0) := "00";
+signal state : std_logic_vector(3 downto 0) := "0000";
 
 type testbench_states is (RESETTING, WB_WRITE, RUNNING, STOPPING);
 signal testbench_state : testbench_states := RESETTING;
