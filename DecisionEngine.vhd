@@ -42,6 +42,10 @@ signal s_data_re, s_data_im, s_kernel_re, s_kernel_im : signed(15 downto 0);
 
 signal accum_re, accum_im : signed(31 downto 0);
 
+signal kernel_last : std_logic;
+signal mult_last   : std_logic;
+signal accum_last  : std_logic;
+
 begin
 
 kernel_addr <= std_logic_vector(addrct);
@@ -51,13 +55,11 @@ begin
 	if rising_edge(clk) and ce = '1' then
 		if rst = '1' then
 			addrct <= (others => '0');
-			state_vld <= '0';
+			kernel_last <= '0';
 		else
 			addrct <= addrct + 1;
 			if addrct = unsigned(kernel_len) - 1 then
-				state_vld <= '1';
-			else
-				state_vld <= '0';
+				kernel_last <= '1';
 			end if ;
 		end if;
 	end if ;
@@ -85,8 +87,16 @@ end process ; -- delayLines
 
 --Complex multiplier and pipelining
 mult : process( clk )
+variable last_delay : std_logic_vector(2 downto 0);
 begin
 	if rising_edge(clk) then
+		if rst = '1' then
+			last_delay := (others => '0');
+			mult_last <= '0';
+		else
+			mult_last <= last_delay(last_delay'high);
+			last_delay := last_delay(last_delay'high-1 downto 0) & kernel_last;
+		end if;
 		s_data_re <= signed(data_re_d);
 		s_data_im <= signed(data_im_d);
 		s_kernel_re <= signed(kernel_re);
@@ -97,13 +107,8 @@ begin
 		tmp3 <= s_data_re * s_kernel_im;
 		tmp4 <= s_data_im * s_kernel_re;
 
-		if rst = '1' then
-			prod_re <= (others => '0');
-			prod_im <= (others => '0');
-		else
-			prod_re <= tmp1 - tmp2;
-			prod_im <= tmp3 + tmp4;
-		end if;
+		prod_re <= tmp1 - tmp2;
+		prod_im <= tmp3 + tmp4;
 	end if ;
 end process ; -- mult
 
@@ -114,14 +119,18 @@ begin
 		if rst = '1' then
 			accum_re <= (others => '0');
 			accum_im <= (others => '0');
+			result_re <= (others => '0');
+			result_im <= (others => '0');
+			accum_last <= '0';
 		else
-			if ce = '1' then
-				accum_re <= accum_re + prod_re(31 downto 16);
-				accum_im <= accum_im + prod_im(31 downto 16);
-			end if;
+			accum_re <= accum_re + prod_re(31 downto 16);
+			accum_im <= accum_im + prod_im(31 downto 16);
 
-			result_re <= std_logic_vector(accum_re);
-			result_im <= std_logic_vector(accum_im);
+			if mult_last = '1' then
+				result_re <= std_logic_vector(accum_re);
+				result_im <= std_logic_vector(accum_im);
+			end if;
+			accum_last <= mult_last;
 		end if ;
 	end if ;
 end process ; -- accum
@@ -135,6 +144,8 @@ begin
 		else
 			state <= '0';
 		end if;
+
+		state_vld <= accum_last;
 	end if ;
 end process ; -- thresholding
 
