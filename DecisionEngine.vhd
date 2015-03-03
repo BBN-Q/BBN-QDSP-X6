@@ -31,9 +31,12 @@ end entity ; -- DecisionEngine
 
 architecture arch of DecisionEngine is
 
-signal addrct : unsigned(KERNEL_ADDR_WIDTH-1 downto 0) ;
+signal addrct : unsigned(KERNEL_ADDR_WIDTH-1 downto 0);
 
-signal prod_re, prod_im : signed(31 downto 0) ;
+signal data_re_d : std_logic_vector(15 downto 0);
+signal data_im_d : std_logic_vector(15 downto 0);
+
+signal prod_re, prod_im : signed(31 downto 0);
 signal tmp1, tmp2, tmp3, tmp4 : signed(31 downto 0);
 signal s_data_re, s_data_im, s_kernel_re, s_kernel_im : signed(15 downto 0);
 
@@ -60,12 +63,32 @@ begin
 	end if ;
 end process ; -- addrCounter
 
+--Delay lines to align input data and kernel
+--It takes two clock cycles for data to come out of the kernel BRAM
+delaylines : process( clk )
+type data_delayline_t is array(1 downto 0) of std_logic_vector(15 downto 0);
+variable data_re_delayline : data_delayline_t;
+variable data_im_delayline : data_delayline_t;
+begin
+	if rising_edge(clk) then
+		if rst = '1' then
+			data_re_delayline := (others => (others => '0'));
+			data_im_delayline := (others => (others => '0'));
+		elsif ce = '1' then
+			data_re_delayline := data_re_delayline(data_re_delayline'high-1 downto 0) & data_re;
+			data_re_d <= data_re_delayline(data_re_delayline'high);
+			data_im_delayline := data_im_delayline(data_im_delayline'high-1 downto 0) & data_im;
+			data_im_d <= data_im_delayline(data_im_delayline'high);
+		end if ;
+	end if ;
+end process ; -- delayLines
+
 --Complex multiplier and pipelining
 mult : process( clk )
 begin
 	if rising_edge(clk) then
-		s_data_re <= signed(data_re);
-		s_data_im <= signed(data_im);
+		s_data_re <= signed(data_re_d);
+		s_data_im <= signed(data_im_d);
 		s_kernel_re <= signed(kernel_re);
 		s_kernel_im <= signed(kernel_im);
 
