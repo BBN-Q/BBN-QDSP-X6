@@ -55,8 +55,8 @@ signal velo_dout : std_logic_vector(127 downto 0) ;
 signal trigger : std_logic := '0';
 
 --Decision Engine interface
-signal state : std_logic_vector(2 downto 0) := (others => '0');
-signal state_vld : std_logic_vector(2 downto 0) := (others => '0');
+signal state : std_logic_vector(3 downto 0) := (others => '0');
+signal state_vld : std_logic_vector(3 downto 0) := (others => '0');
 
 
 type testbench_states is (RESETTING, WB_WRITE, RUNNING, STOPPING);
