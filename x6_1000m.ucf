@@ -203,6 +203,11 @@ TIMESPEC "TS_SYS2REF_ADC_TIG" = FROM "TNM_sys_clk" TO "TNM_REF_ADC_CLK" TIG;
 TIMESPEC "TS_REF_ADC2SYS_TIG" = FROM "TNM_REF_ADC_CLK" TO "TNM_sys_clk" TIG;
 
 
+## Anything from the WB should be slow in the dsp control registers.  With the exception of kernel memory writes maybe
+INST "inst_dsp*/inst_dsp_regs/inst_core/wb_reg_o*" TNM = "TNM_wb_dps_reg_o";
+TIMESPEC "TS_dsp_wb_TIG" = FROM "TNM_wb_dps_reg_o" TO "FFS" TIG;
+
+
 ################################################################################
 # X6-1000M AFE (VCXO, PLL, External Sync, ADC, and DAC) interface constraints
 # I/O STANDARDS, PIN LOC, and timing Constraints

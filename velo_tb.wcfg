@@ -1,0 +1,682 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<wave_config>
+   <wave_state>
+   </wave_state>
+   <db_ref_list>
+      <db_ref path="C:/Users/qlab/Documents/II-v1.6/dsp_velo_testbench_isim_beh.wdb" id="1" type="auto">
+         <top_modules>
+            <top_module name="attributes" />
+            <top_module name="channelfilter_pkg" />
+            <top_module name="dsp_velo_testbench" />
+            <top_module name="fileio" />
+            <top_module name="ii_dsp_pkg" />
+            <top_module name="numeric_std" />
+            <top_module name="std_logic_1164" />
+            <top_module name="std_logic_arith" />
+            <top_module name="std_logic_misc" />
+            <top_module name="std_logic_signed" />
+            <top_module name="std_logic_textio" />
+            <top_module name="std_logic_unsigned" />
+            <top_module name="textio" />
+            <top_module name="vcomponents" />
+            <top_module name="vital_primitives" />
+            <top_module name="vital_timing" />
+            <top_module name="vpkg" />
+         </top_modules>
+      </db_ref>
+   </db_ref_list>
+   <WVObjectSize size="16" />
+   <wvobject fp_name="/dsp_velo_testbench/clk" type="logic" db_ref_id="1">
+      <obj_property name="ElementShortName">clk</obj_property>
+      <obj_property name="ObjectShortName">clk</obj_property>
+   </wvobject>
+   <wvobject fp_name="/dsp_velo_testbench/fs_clk" type="logic" db_ref_id="1">
+      <obj_property name="ElementShortName">fs_clk</obj_property>
+      <obj_property name="ObjectShortName">fs_clk</obj_property>
+   </wvobject>
+   <wvobject fp_name="/dsp_velo_testbench/rst" type="logic" db_ref_id="1">
+      <obj_property name="ElementShortName">rst</obj_property>
+      <obj_property name="ObjectShortName">rst</obj_property>
+   </wvobject>
+   <wvobject fp_name="/dsp_velo_testbench/testbench_state" type="other" db_ref_id="1">
+      <obj_property name="ElementShortName">testbench_state</obj_property>
+      <obj_property name="ObjectShortName">testbench_state</obj_property>
+   </wvobject>
+   <wvobject fp_name="/dsp_velo_testbench/trigger" type="logic" db_ref_id="1">
+      <obj_property name="ElementShortName">trigger</obj_property>
+      <obj_property name="ObjectShortName">trigger</obj_property>
+   </wvobject>
+   <wvobject fp_name="/dsp_velo_testbench/adc0_raw_data" type="array" db_ref_id="1">
+      <obj_property name="ElementShortName">adc0_raw_data[47:0]</obj_property>
+      <obj_property name="ObjectShortName">adc0_raw_data[47:0]</obj_property>
+      <obj_property name="Radix">HEXRADIX</obj_property>
+   </wvobject>
+   <wvobject fp_name="/dsp_velo_testbench/vita_wrd_cnt" type="array" db_ref_id="1">
+      <obj_property name="ElementShortName">vita_wrd_cnt[8:0]</obj_property>
+      <obj_property name="ObjectShortName">vita_wrd_cnt[8:0]</obj_property>
+      <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
+   </wvobject>
+   <wvobject fp_name="/dsp_velo_testbench/vita_aempty" type="logic" db_ref_id="1">
+      <obj_property name="ElementShortName">vita_aempty</obj_property>
+      <obj_property name="ObjectShortName">vita_aempty</obj_property>
+   </wvobject>
+   <wvobject fp_name="/dsp_velo_testbench/vita_empty" type="logic" db_ref_id="1">
+      <obj_property name="ElementShortName">vita_empty</obj_property>
+      <obj_property name="ObjectShortName">vita_empty</obj_property>
+   </wvobject>
+   <wvobject fp_name="/dsp_velo_testbench/vita_rden" type="logic" db_ref_id="1">
+      <obj_property name="ElementShortName">vita_rden</obj_property>
+      <obj_property name="ObjectShortName">vita_rden</obj_property>
+   </wvobject>
+   <wvobject fp_name="/dsp_velo_testbench/vita_vld" type="logic" db_ref_id="1">
+      <obj_property name="ElementShortName">vita_vld</obj_property>
+      <obj_property name="ObjectShortName">vita_vld</obj_property>
+   </wvobject>
+   <wvobject fp_name="/dsp_velo_testbench/vita_dout" type="array" db_ref_id="1">
+      <obj_property name="ElementShortName">vita_dout[127:0]</obj_property>
+      <obj_property name="ObjectShortName">vita_dout[127:0]</obj_property>
+      <obj_property name="Radix">HEXRADIX</obj_property>
+   </wvobject>
+   <wvobject fp_name="/dsp_velo_testbench/velo_vld" type="logic" db_ref_id="1">
+      <obj_property name="ElementShortName">velo_vld</obj_property>
+      <obj_property name="ObjectShortName">velo_vld</obj_property>
+   </wvobject>
+   <wvobject fp_name="/dsp_velo_testbench/velo_dout" type="array" db_ref_id="1">
+      <obj_property name="ElementShortName">velo_dout[127:0]</obj_property>
+      <obj_property name="ObjectShortName">velo_dout[127:0]</obj_property>
+      <obj_property name="Radix">HEXRADIX</obj_property>
+   </wvobject>
+   <wvobject fp_name="group1272" type="group">
+      <obj_property name="label">Velo Padder</obj_property>
+      <obj_property name="DisplayName">label</obj_property>
+      <wvobject fp_name="group1305" type="group">
+         <obj_property name="label">Vita Mover</obj_property>
+         <obj_property name="DisplayName">label</obj_property>
+         <wvobject fp_name="/dsp_velo_testbench/inst_velo_pad/mvr_inst/srst" type="logic" db_ref_id="1">
+            <obj_property name="ElementShortName">srst</obj_property>
+            <obj_property name="ObjectShortName">srst</obj_property>
+         </wvobject>
+         <wvobject fp_name="/dsp_velo_testbench/inst_velo_pad/mvr_inst/sys_clk" type="logic" db_ref_id="1">
+            <obj_property name="ElementShortName">sys_clk</obj_property>
+            <obj_property name="ObjectShortName">sys_clk</obj_property>
+         </wvobject>
+         <wvobject fp_name="/dsp_velo_testbench/inst_velo_pad/mvr_inst/en_strb" type="logic" db_ref_id="1">
+            <obj_property name="ElementShortName">en_strb</obj_property>
+            <obj_property name="ObjectShortName">en_strb</obj_property>
+         </wvobject>
+         <wvobject fp_name="/dsp_velo_testbench/inst_velo_pad/mvr_inst/src_ch_sel" type="array" db_ref_id="1">
+            <obj_property name="ElementShortName">src_ch_sel[0:0]</obj_property>
+            <obj_property name="ObjectShortName">src_ch_sel[0:0]</obj_property>
+         </wvobject>
+         <wvobject fp_name="/dsp_velo_testbench/inst_velo_pad/mvr_inst/src_ch_hdr" type="array" db_ref_id="1">
+            <obj_property name="ElementShortName">src_ch_hdr[127:0]</obj_property>
+            <obj_property name="ObjectShortName">src_ch_hdr[127:0]</obj_property>
+            <obj_property name="Radix">HEXRADIX</obj_property>
+         </wvobject>
+         <wvobject fp_name="/dsp_velo_testbench/inst_velo_pad/mvr_inst/mvr_busy" type="logic" db_ref_id="1">
+            <obj_property name="ElementShortName">mvr_busy</obj_property>
+            <obj_property name="ObjectShortName">mvr_busy</obj_property>
+         </wvobject>
+         <wvobject fp_name="/dsp_velo_testbench/inst_velo_pad/mvr_inst/dst_wip" type="array" db_ref_id="1">
+            <obj_property name="ElementShortName">dst_wip[15:0]</obj_property>
+            <obj_property name="ObjectShortName">dst_wip[15:0]</obj_property>
+         </wvobject>
+         <wvobject fp_name="/dsp_velo_testbench/inst_velo_pad/mvr_inst/src_rd_done" type="array" db_ref_id="1">
+            <obj_property name="ElementShortName">src_rd_done[0:0]</obj_property>
+            <obj_property name="ObjectShortName">src_rd_done[0:0]</obj_property>
+         </wvobject>
+         <wvobject fp_name="/dsp_velo_testbench/inst_velo_pad/mvr_inst/src_aempty" type="array" db_ref_id="1">
+            <obj_property name="ElementShortName">src_aempty[0:0]</obj_property>
+            <obj_property name="ObjectShortName">src_aempty[0:0]</obj_property>
+         </wvobject>
+         <wvobject fp_name="/dsp_velo_testbench/inst_velo_pad/mvr_inst/src_empty" type="array" db_ref_id="1">
+            <obj_property name="ElementShortName">src_empty[0:0]</obj_property>
+            <obj_property name="ObjectShortName">src_empty[0:0]</obj_property>
+         </wvobject>
+         <wvobject fp_name="/dsp_velo_testbench/inst_velo_pad/mvr_inst/src_rden" type="array" db_ref_id="1">
+            <obj_property name="ElementShortName">src_rden[0:0]</obj_property>
+            <obj_property name="ObjectShortName">src_rden[0:0]</obj_property>
+         </wvobject>
+         <wvobject fp_name="/dsp_velo_testbench/inst_velo_pad/mvr_inst/src_vld" type="array" db_ref_id="1">
+            <obj_property name="ElementShortName">src_vld[0:0]</obj_property>
+            <obj_property name="ObjectShortName">src_vld[0:0]</obj_property>
+         </wvobject>
+         <wvobject fp_name="/dsp_velo_testbench/inst_velo_pad/mvr_inst/src_data" type="array" db_ref_id="1">
+            <obj_property name="ElementShortName">src_data[127:0]</obj_property>
+            <obj_property name="ObjectShortName">src_data[127:0]</obj_property>
+         </wvobject>
+         <wvobject fp_name="/dsp_velo_testbench/inst_velo_pad/mvr_inst/dst_rdy" type="array" db_ref_id="1">
+            <obj_property name="ElementShortName">dst_rdy[15:0]</obj_property>
+            <obj_property name="ObjectShortName">dst_rdy[15:0]</obj_property>
+         </wvobject>
+         <wvobject fp_name="/dsp_velo_testbench/inst_velo_pad/mvr_inst/dst_wren" type="logic" db_ref_id="1">
+            <obj_property name="ElementShortName">dst_wren</obj_property>
+            <obj_property name="ObjectShortName">dst_wren</obj_property>
+         </wvobject>
+         <wvobject fp_name="/dsp_velo_testbench/inst_velo_pad/mvr_inst/dst_data" type="array" db_ref_id="1">
+            <obj_property name="ElementShortName">dst_data[127:0]</obj_property>
+            <obj_property name="ObjectShortName">dst_data[127:0]</obj_property>
+         </wvobject>
+         <wvobject fp_name="/dsp_velo_testbench/inst_velo_pad/mvr_inst/pkt_dqwrds" type="array" db_ref_id="1">
+            <obj_property name="ElementShortName">pkt_dqwrds[13:0]</obj_property>
+            <obj_property name="ObjectShortName">pkt_dqwrds[13:0]</obj_property>
+         </wvobject>
+         <wvobject fp_name="/dsp_velo_testbench/inst_velo_pad/mvr_inst/pkt_dst" type="array" db_ref_id="1">
+            <obj_property name="ElementShortName">pkt_dst[15:0]</obj_property>
+            <obj_property name="ObjectShortName">pkt_dst[15:0]</obj_property>
+         </wvobject>
+         <wvobject fp_name="/dsp_velo_testbench/inst_velo_pad/mvr_inst/all_dst_rdy" type="logic" db_ref_id="1">
+            <obj_property name="ElementShortName">all_dst_rdy</obj_property>
+            <obj_property name="ObjectShortName">all_dst_rdy</obj_property>
+         </wvobject>
+         <wvobject fp_name="/dsp_velo_testbench/inst_velo_pad/mvr_inst/src_ch" type="other" db_ref_id="1">
+            <obj_property name="ElementShortName">src_ch</obj_property>
+            <obj_property name="ObjectShortName">src_ch</obj_property>
+         </wvobject>
+         <wvobject fp_name="/dsp_velo_testbench/inst_velo_pad/mvr_inst/sel_ch_aempty" type="logic" db_ref_id="1">
+            <obj_property name="ElementShortName">sel_ch_aempty</obj_property>
+            <obj_property name="ObjectShortName">sel_ch_aempty</obj_property>
+         </wvobject>
+         <wvobject fp_name="/dsp_velo_testbench/inst_velo_pad/mvr_inst/sel_ch_empty" type="logic" db_ref_id="1">
+            <obj_property name="ElementShortName">sel_ch_empty</obj_property>
+            <obj_property name="ObjectShortName">sel_ch_empty</obj_property>
+         </wvobject>
+         <wvobject fp_name="/dsp_velo_testbench/inst_velo_pad/mvr_inst/rem_pkt_dqwrds" type="array" db_ref_id="1">
+            <obj_property name="ElementShortName">rem_pkt_dqwrds[13:0]</obj_property>
+            <obj_property name="ObjectShortName">rem_pkt_dqwrds[13:0]</obj_property>
+         </wvobject>
+         <wvobject fp_name="/dsp_velo_testbench/inst_velo_pad/mvr_inst/drip_dly_cnt" type="array" db_ref_id="1">
+            <obj_property name="ElementShortName">drip_dly_cnt[2:0]</obj_property>
+            <obj_property name="ObjectShortName">drip_dly_cnt[2:0]</obj_property>
+         </wvobject>
+         <wvobject fp_name="/dsp_velo_testbench/inst_velo_pad/mvr_inst/sel_ch_rden" type="logic" db_ref_id="1">
+            <obj_property name="ElementShortName">sel_ch_rden</obj_property>
+            <obj_property name="ObjectShortName">sel_ch_rden</obj_property>
+         </wvobject>
+         <wvobject fp_name="/dsp_velo_testbench/inst_velo_pad/mvr_inst/mvr_state" type="other" db_ref_id="1">
+            <obj_property name="ElementShortName">mvr_state</obj_property>
+            <obj_property name="ObjectShortName">mvr_state</obj_property>
+         </wvobject>
+         <wvobject fp_name="/dsp_velo_testbench/inst_velo_pad/mvr_inst/rem_data_vld_cnt" type="array" db_ref_id="1">
+            <obj_property name="ElementShortName">rem_data_vld_cnt[13:0]</obj_property>
+            <obj_property name="ObjectShortName">rem_data_vld_cnt[13:0]</obj_property>
+         </wvobject>
+         <wvobject fp_name="/dsp_velo_testbench/inst_velo_pad/mvr_inst/src_data_arr" type="array" db_ref_id="1">
+            <obj_property name="ElementShortName">src_data_arr[0:0]</obj_property>
+            <obj_property name="ObjectShortName">src_data_arr[0:0]</obj_property>
+         </wvobject>
+         <wvobject fp_name="/dsp_velo_testbench/inst_velo_pad/mvr_inst/num_src_ch" type="other" db_ref_id="1">
+            <obj_property name="ElementShortName">num_src_ch</obj_property>
+            <obj_property name="ObjectShortName">num_src_ch</obj_property>
+         </wvobject>
+         <wvobject fp_name="/dsp_velo_testbench/inst_velo_pad/mvr_inst/log2_num_src_ch" type="other" db_ref_id="1">
+            <obj_property name="ElementShortName">log2_num_src_ch</obj_property>
+            <obj_property name="ObjectShortName">log2_num_src_ch</obj_property>
+         </wvobject>
+         <wvobject fp_name="/dsp_velo_testbench/inst_velo_pad/mvr_inst/num_dst_ch" type="other" db_ref_id="1">
+            <obj_property name="ElementShortName">num_dst_ch</obj_property>
+            <obj_property name="ObjectShortName">num_dst_ch</obj_property>
+         </wvobject>
+         <wvobject fp_name="/dsp_velo_testbench/inst_velo_pad/mvr_inst/data_width" type="other" db_ref_id="1">
+            <obj_property name="ElementShortName">data_width</obj_property>
+            <obj_property name="ObjectShortName">data_width</obj_property>
+         </wvobject>
+      </wvobject>
+      <wvobject fp_name="/dsp_velo_testbench/inst_velo_pad/srst" type="logic" db_ref_id="1">
+         <obj_property name="ElementShortName">srst</obj_property>
+         <obj_property name="ObjectShortName">srst</obj_property>
+      </wvobject>
+      <wvobject fp_name="/dsp_velo_testbench/inst_velo_pad/sys_clk" type="logic" db_ref_id="1">
+         <obj_property name="ElementShortName">sys_clk</obj_property>
+         <obj_property name="ObjectShortName">sys_clk</obj_property>
+      </wvobject>
+      <wvobject fp_name="/dsp_velo_testbench/inst_velo_pad/ch_pkt_size" type="array" db_ref_id="1">
+         <obj_property name="ElementShortName">ch_pkt_size[23:0]</obj_property>
+         <obj_property name="ObjectShortName">ch_pkt_size[23:0]</obj_property>
+         <obj_property name="Radix">HEXRADIX</obj_property>
+      </wvobject>
+      <wvobject fp_name="/dsp_velo_testbench/inst_velo_pad/force_pkt_size" type="logic" db_ref_id="1">
+         <obj_property name="ElementShortName">force_pkt_size</obj_property>
+         <obj_property name="ObjectShortName">force_pkt_size</obj_property>
+      </wvobject>
+      <wvobject fp_name="/dsp_velo_testbench/inst_velo_pad/bypass" type="logic" db_ref_id="1">
+         <obj_property name="ElementShortName">bypass</obj_property>
+         <obj_property name="ObjectShortName">bypass</obj_property>
+      </wvobject>
+      <wvobject fp_name="/dsp_velo_testbench/inst_velo_pad/src_wrd_cnt" type="array" db_ref_id="1">
+         <obj_property name="ElementShortName">src_wrd_cnt[21:0]</obj_property>
+         <obj_property name="ObjectShortName">src_wrd_cnt[21:0]</obj_property>
+         <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
+      </wvobject>
+      <wvobject fp_name="/dsp_velo_testbench/inst_velo_pad/src_aempty" type="logic" db_ref_id="1">
+         <obj_property name="ElementShortName">src_aempty</obj_property>
+         <obj_property name="ObjectShortName">src_aempty</obj_property>
+      </wvobject>
+      <wvobject fp_name="/dsp_velo_testbench/inst_velo_pad/src_empty" type="logic" db_ref_id="1">
+         <obj_property name="ElementShortName">src_empty</obj_property>
+         <obj_property name="ObjectShortName">src_empty</obj_property>
+      </wvobject>
+      <wvobject fp_name="/dsp_velo_testbench/inst_velo_pad/src_rden" type="logic" db_ref_id="1">
+         <obj_property name="ElementShortName">src_rden</obj_property>
+         <obj_property name="ObjectShortName">src_rden</obj_property>
+      </wvobject>
+      <wvobject fp_name="/dsp_velo_testbench/inst_velo_pad/src_vld" type="logic" db_ref_id="1">
+         <obj_property name="ElementShortName">src_vld</obj_property>
+         <obj_property name="ObjectShortName">src_vld</obj_property>
+      </wvobject>
+      <wvobject fp_name="/dsp_velo_testbench/inst_velo_pad/src_data" type="array" db_ref_id="1">
+         <obj_property name="ElementShortName">src_data[127:0]</obj_property>
+         <obj_property name="ObjectShortName">src_data[127:0]</obj_property>
+      </wvobject>
+      <wvobject fp_name="/dsp_velo_testbench/inst_velo_pad/dst_wrd_cnt" type="array" db_ref_id="1">
+         <obj_property name="ElementShortName">dst_wrd_cnt[21:0]</obj_property>
+         <obj_property name="ObjectShortName">dst_wrd_cnt[21:0]</obj_property>
+         <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
+      </wvobject>
+      <wvobject fp_name="/dsp_velo_testbench/inst_velo_pad/dst_aempty" type="logic" db_ref_id="1">
+         <obj_property name="ElementShortName">dst_aempty</obj_property>
+         <obj_property name="ObjectShortName">dst_aempty</obj_property>
+      </wvobject>
+      <wvobject fp_name="/dsp_velo_testbench/inst_velo_pad/dst_empty" type="logic" db_ref_id="1">
+         <obj_property name="ElementShortName">dst_empty</obj_property>
+         <obj_property name="ObjectShortName">dst_empty</obj_property>
+      </wvobject>
+      <wvobject fp_name="/dsp_velo_testbench/inst_velo_pad/dst_rden" type="logic" db_ref_id="1">
+         <obj_property name="ElementShortName">dst_rden</obj_property>
+         <obj_property name="ObjectShortName">dst_rden</obj_property>
+      </wvobject>
+      <wvobject fp_name="/dsp_velo_testbench/inst_velo_pad/dst_vld" type="logic" db_ref_id="1">
+         <obj_property name="ElementShortName">dst_vld</obj_property>
+         <obj_property name="ObjectShortName">dst_vld</obj_property>
+      </wvobject>
+      <wvobject fp_name="/dsp_velo_testbench/inst_velo_pad/dst_dout" type="array" db_ref_id="1">
+         <obj_property name="ElementShortName">dst_dout[127:0]</obj_property>
+         <obj_property name="ObjectShortName">dst_dout[127:0]</obj_property>
+         <obj_property name="Radix">HEXRADIX</obj_property>
+      </wvobject>
+      <wvobject fp_name="/dsp_velo_testbench/inst_velo_pad/fifo_rst" type="logic" db_ref_id="1">
+         <obj_property name="ElementShortName">fifo_rst</obj_property>
+         <obj_property name="ObjectShortName">fifo_rst</obj_property>
+      </wvobject>
+      <wvobject fp_name="/dsp_velo_testbench/inst_velo_pad/velo_size" type="array" db_ref_id="1">
+         <obj_property name="ElementShortName">velo_size[21:0]</obj_property>
+         <obj_property name="ObjectShortName">velo_size[21:0]</obj_property>
+         <obj_property name="Radix">HEXRADIX</obj_property>
+      </wvobject>
+      <wvobject fp_name="/dsp_velo_testbench/inst_velo_pad/bypass_d" type="logic" db_ref_id="1">
+         <obj_property name="ElementShortName">bypass_d</obj_property>
+         <obj_property name="ObjectShortName">bypass_d</obj_property>
+      </wvobject>
+      <wvobject fp_name="/dsp_velo_testbench/inst_velo_pad/src_wrd_cnt_d" type="array" db_ref_id="1">
+         <obj_property name="ElementShortName">src_wrd_cnt_d[21:0]</obj_property>
+         <obj_property name="ObjectShortName">src_wrd_cnt_d[21:0]</obj_property>
+      </wvobject>
+      <wvobject fp_name="/dsp_velo_testbench/inst_velo_pad/src_aempty_d" type="array" db_ref_id="1">
+         <obj_property name="ElementShortName">src_aempty_d[0:0]</obj_property>
+         <obj_property name="ObjectShortName">src_aempty_d[0:0]</obj_property>
+      </wvobject>
+      <wvobject fp_name="/dsp_velo_testbench/inst_velo_pad/src_empty_d" type="array" db_ref_id="1">
+         <obj_property name="ElementShortName">src_empty_d[0:0]</obj_property>
+         <obj_property name="ObjectShortName">src_empty_d[0:0]</obj_property>
+      </wvobject>
+      <wvobject fp_name="/dsp_velo_testbench/inst_velo_pad/src_vld_d" type="array" db_ref_id="1">
+         <obj_property name="ElementShortName">src_vld_d[0:0]</obj_property>
+         <obj_property name="ObjectShortName">src_vld_d[0:0]</obj_property>
+      </wvobject>
+      <wvobject fp_name="/dsp_velo_testbench/inst_velo_pad/src_data_d" type="array" db_ref_id="1">
+         <obj_property name="ElementShortName">src_data_d[127:0]</obj_property>
+         <obj_property name="ObjectShortName">src_data_d[127:0]</obj_property>
+      </wvobject>
+      <wvobject fp_name="/dsp_velo_testbench/inst_velo_pad/state" type="other" db_ref_id="1">
+         <obj_property name="ElementShortName">state</obj_property>
+         <obj_property name="ObjectShortName">state</obj_property>
+      </wvobject>
+      <wvobject fp_name="/dsp_velo_testbench/inst_velo_pad/nxt_state" type="other" db_ref_id="1">
+         <obj_property name="ElementShortName">nxt_state</obj_property>
+         <obj_property name="ObjectShortName">nxt_state</obj_property>
+      </wvobject>
+      <wvobject fp_name="/dsp_velo_testbench/inst_velo_pad/src_hdr_rden" type="logic" db_ref_id="1">
+         <obj_property name="ElementShortName">src_hdr_rden</obj_property>
+         <obj_property name="ObjectShortName">src_hdr_rden</obj_property>
+      </wvobject>
+      <wvobject fp_name="/dsp_velo_testbench/inst_velo_pad/mvr_en_strb" type="logic" db_ref_id="1">
+         <obj_property name="ElementShortName">mvr_en_strb</obj_property>
+         <obj_property name="ObjectShortName">mvr_en_strb</obj_property>
+      </wvobject>
+      <wvobject fp_name="/dsp_velo_testbench/inst_velo_pad/pad_en_strb" type="logic" db_ref_id="1">
+         <obj_property name="ElementShortName">pad_en_strb</obj_property>
+         <obj_property name="ObjectShortName">pad_en_strb</obj_property>
+      </wvobject>
+      <wvobject fp_name="/dsp_velo_testbench/inst_velo_pad/pad_pkt_size" type="array" db_ref_id="1">
+         <obj_property name="ElementShortName">pad_pkt_size[15:0]</obj_property>
+         <obj_property name="ObjectShortName">pad_pkt_size[15:0]</obj_property>
+      </wvobject>
+      <wvobject fp_name="/dsp_velo_testbench/inst_velo_pad/src_hdr_pulled" type="logic" db_ref_id="1">
+         <obj_property name="ElementShortName">src_hdr_pulled</obj_property>
+         <obj_property name="ObjectShortName">src_hdr_pulled</obj_property>
+      </wvobject>
+      <wvobject fp_name="/dsp_velo_testbench/inst_velo_pad/dst_wrd_cnt_u" type="array" db_ref_id="1">
+         <obj_property name="ElementShortName">dst_wrd_cnt_u[21:0]</obj_property>
+         <obj_property name="ObjectShortName">dst_wrd_cnt_u[21:0]</obj_property>
+         <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
+      </wvobject>
+      <wvobject fp_name="/dsp_velo_testbench/inst_velo_pad/vita_hdr" type="array" db_ref_id="1">
+         <obj_property name="ElementShortName">vita_hdr[127:0]</obj_property>
+         <obj_property name="ObjectShortName">vita_hdr[127:0]</obj_property>
+         <obj_property name="Radix">HEXRADIX</obj_property>
+      </wvobject>
+      <wvobject fp_name="/dsp_velo_testbench/inst_velo_pad/vita_size" type="array" db_ref_id="1">
+         <obj_property name="ElementShortName">vita_size[21:0]</obj_property>
+         <obj_property name="ObjectShortName">vita_size[21:0]</obj_property>
+         <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
+      </wvobject>
+      <wvobject fp_name="/dsp_velo_testbench/inst_velo_pad/vita_size_min" type="array" db_ref_id="1">
+         <obj_property name="ElementShortName">vita_size_min[21:0]</obj_property>
+         <obj_property name="ObjectShortName">vita_size_min[21:0]</obj_property>
+         <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
+      </wvobject>
+      <wvobject fp_name="/dsp_velo_testbench/inst_velo_pad/src_wrd_cnt_l" type="array" db_ref_id="1">
+         <obj_property name="ElementShortName">src_wrd_cnt_l[21:0]</obj_property>
+         <obj_property name="ObjectShortName">src_wrd_cnt_l[21:0]</obj_property>
+         <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
+      </wvobject>
+      <wvobject fp_name="/dsp_velo_testbench/inst_velo_pad/velo_size_left" type="array" db_ref_id="1">
+         <obj_property name="ElementShortName">velo_size_left[21:0]</obj_property>
+         <obj_property name="ObjectShortName">velo_size_left[21:0]</obj_property>
+         <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
+      </wvobject>
+      <wvobject fp_name="/dsp_velo_testbench/inst_velo_pad/src_wrd_cnt_gte_velo" type="other" db_ref_id="1">
+         <obj_property name="ElementShortName">src_wrd_cnt_gte_velo</obj_property>
+         <obj_property name="ObjectShortName">src_wrd_cnt_gte_velo</obj_property>
+      </wvobject>
+      <wvobject fp_name="/dsp_velo_testbench/inst_velo_pad/src_wrd_cnt_lte_vita" type="other" db_ref_id="1">
+         <obj_property name="ElementShortName">src_wrd_cnt_lte_vita</obj_property>
+         <obj_property name="ObjectShortName">src_wrd_cnt_lte_vita</obj_property>
+      </wvobject>
+      <wvobject fp_name="/dsp_velo_testbench/inst_velo_pad/velo_lft_eq_vita" type="other" db_ref_id="1">
+         <obj_property name="ElementShortName">velo_lft_eq_vita</obj_property>
+         <obj_property name="ObjectShortName">velo_lft_eq_vita</obj_property>
+      </wvobject>
+      <wvobject fp_name="/dsp_velo_testbench/inst_velo_pad/velo_lft_gte_vita_mn" type="other" db_ref_id="1">
+         <obj_property name="ElementShortName">velo_lft_gte_vita_mn</obj_property>
+         <obj_property name="ObjectShortName">velo_lft_gte_vita_mn</obj_property>
+      </wvobject>
+      <wvobject fp_name="/dsp_velo_testbench/inst_velo_pad/src_rd_done" type="array" db_ref_id="1">
+         <obj_property name="ElementShortName">src_rd_done[0:0]</obj_property>
+         <obj_property name="ObjectShortName">src_rd_done[0:0]</obj_property>
+      </wvobject>
+      <wvobject fp_name="/dsp_velo_testbench/inst_velo_pad/src_mvr_rden" type="array" db_ref_id="1">
+         <obj_property name="ElementShortName">src_mvr_rden[0:0]</obj_property>
+         <obj_property name="ObjectShortName">src_mvr_rden[0:0]</obj_property>
+      </wvobject>
+      <wvobject fp_name="/dsp_velo_testbench/inst_velo_pad/mvr_dst_wren" type="logic" db_ref_id="1">
+         <obj_property name="ElementShortName">mvr_dst_wren</obj_property>
+         <obj_property name="ObjectShortName">mvr_dst_wren</obj_property>
+      </wvobject>
+      <wvobject fp_name="/dsp_velo_testbench/inst_velo_pad/mvr_dst_data" type="array" db_ref_id="1">
+         <obj_property name="ElementShortName">mvr_dst_data[127:0]</obj_property>
+         <obj_property name="ObjectShortName">mvr_dst_data[127:0]</obj_property>
+      </wvobject>
+      <wvobject fp_name="/dsp_velo_testbench/inst_velo_pad/dst_wren" type="logic" db_ref_id="1">
+         <obj_property name="ElementShortName">dst_wren</obj_property>
+         <obj_property name="ObjectShortName">dst_wren</obj_property>
+      </wvobject>
+      <wvobject fp_name="/dsp_velo_testbench/inst_velo_pad/dst_data" type="array" db_ref_id="1">
+         <obj_property name="ElementShortName">dst_data[127:0]</obj_property>
+         <obj_property name="ObjectShortName">dst_data[127:0]</obj_property>
+      </wvobject>
+      <wvobject fp_name="/dsp_velo_testbench/inst_velo_pad/dst_empty_c" type="logic" db_ref_id="1">
+         <obj_property name="ElementShortName">dst_empty_c</obj_property>
+         <obj_property name="ObjectShortName">dst_empty_c</obj_property>
+      </wvobject>
+      <wvobject fp_name="/dsp_velo_testbench/inst_velo_pad/dst_aempty_c" type="logic" db_ref_id="1">
+         <obj_property name="ElementShortName">dst_aempty_c</obj_property>
+         <obj_property name="ObjectShortName">dst_aempty_c</obj_property>
+      </wvobject>
+      <wvobject fp_name="/dsp_velo_testbench/inst_velo_pad/dst_dout_c" type="array" db_ref_id="1">
+         <obj_property name="ElementShortName">dst_dout_c[127:0]</obj_property>
+         <obj_property name="ObjectShortName">dst_dout_c[127:0]</obj_property>
+      </wvobject>
+      <wvobject fp_name="/dsp_velo_testbench/inst_velo_pad/dst_vld_c" type="logic" db_ref_id="1">
+         <obj_property name="ElementShortName">dst_vld_c</obj_property>
+         <obj_property name="ObjectShortName">dst_vld_c</obj_property>
+      </wvobject>
+      <wvobject fp_name="/dsp_velo_testbench/inst_velo_pad/dst_afull" type="logic" db_ref_id="1">
+         <obj_property name="ElementShortName">dst_afull</obj_property>
+         <obj_property name="ObjectShortName">dst_afull</obj_property>
+      </wvobject>
+      <wvobject fp_name="/dsp_velo_testbench/inst_velo_pad/dst_rdy" type="array" db_ref_id="1">
+         <obj_property name="ElementShortName">dst_rdy[15:0]</obj_property>
+         <obj_property name="ObjectShortName">dst_rdy[15:0]</obj_property>
+      </wvobject>
+      <wvobject fp_name="/dsp_velo_testbench/inst_velo_pad/pad_state" type="other" db_ref_id="1">
+         <obj_property name="ElementShortName">pad_state</obj_property>
+         <obj_property name="ObjectShortName">pad_state</obj_property>
+      </wvobject>
+      <wvobject fp_name="/dsp_velo_testbench/inst_velo_pad/pad_done" type="logic" db_ref_id="1">
+         <obj_property name="ElementShortName">pad_done</obj_property>
+         <obj_property name="ObjectShortName">pad_done</obj_property>
+      </wvobject>
+      <wvobject fp_name="/dsp_velo_testbench/inst_velo_pad/pad_dst_wren" type="logic" db_ref_id="1">
+         <obj_property name="ElementShortName">pad_dst_wren</obj_property>
+         <obj_property name="ObjectShortName">pad_dst_wren</obj_property>
+      </wvobject>
+      <wvobject fp_name="/dsp_velo_testbench/inst_velo_pad/pad_dst_data" type="array" db_ref_id="1">
+         <obj_property name="ElementShortName">pad_dst_data[127:0]</obj_property>
+         <obj_property name="ObjectShortName">pad_dst_data[127:0]</obj_property>
+      </wvobject>
+      <wvobject fp_name="/dsp_velo_testbench/inst_velo_pad/pad_pkt_size_dcnt" type="array" db_ref_id="1">
+         <obj_property name="ElementShortName">pad_pkt_size_dcnt[15:0]</obj_property>
+         <obj_property name="ObjectShortName">pad_pkt_size_dcnt[15:0]</obj_property>
+      </wvobject>
+      <wvobject fp_name="/dsp_velo_testbench/inst_velo_pad/pkt_hdr_0" type="array" db_ref_id="1">
+         <obj_property name="ElementShortName">pkt_hdr_0[31:0]</obj_property>
+         <obj_property name="ObjectShortName">pkt_hdr_0[31:0]</obj_property>
+      </wvobject>
+      <wvobject fp_name="/dsp_velo_testbench/inst_velo_pad/pkt_hdr_1" type="array" db_ref_id="1">
+         <obj_property name="ElementShortName">pkt_hdr_1[31:0]</obj_property>
+         <obj_property name="ObjectShortName">pkt_hdr_1[31:0]</obj_property>
+      </wvobject>
+      <wvobject fp_name="/dsp_velo_testbench/inst_velo_pad/pkt_hdr_2" type="array" db_ref_id="1">
+         <obj_property name="ElementShortName">pkt_hdr_2[31:0]</obj_property>
+         <obj_property name="ObjectShortName">pkt_hdr_2[31:0]</obj_property>
+      </wvobject>
+      <wvobject fp_name="/dsp_velo_testbench/inst_velo_pad/pkt_hdr_3" type="array" db_ref_id="1">
+         <obj_property name="ElementShortName">pkt_hdr_3[31:0]</obj_property>
+         <obj_property name="ObjectShortName">pkt_hdr_3[31:0]</obj_property>
+      </wvobject>
+      <wvobject fp_name="/dsp_velo_testbench/inst_velo_pad/pkt_hdr_4" type="array" db_ref_id="1">
+         <obj_property name="ElementShortName">pkt_hdr_4[31:0]</obj_property>
+         <obj_property name="ObjectShortName">pkt_hdr_4[31:0]</obj_property>
+      </wvobject>
+      <wvobject fp_name="/dsp_velo_testbench/inst_velo_pad/pkt_hdr_5" type="array" db_ref_id="1">
+         <obj_property name="ElementShortName">pkt_hdr_5[31:0]</obj_property>
+         <obj_property name="ObjectShortName">pkt_hdr_5[31:0]</obj_property>
+      </wvobject>
+      <wvobject fp_name="/dsp_velo_testbench/inst_velo_pad/pkt_hdr_6" type="array" db_ref_id="1">
+         <obj_property name="ElementShortName">pkt_hdr_6[31:0]</obj_property>
+         <obj_property name="ObjectShortName">pkt_hdr_6[31:0]</obj_property>
+      </wvobject>
+      <wvobject fp_name="/dsp_velo_testbench/inst_velo_pad/pkt_trailer" type="array" db_ref_id="1">
+         <obj_property name="ElementShortName">pkt_trailer[31:0]</obj_property>
+         <obj_property name="ObjectShortName">pkt_trailer[31:0]</obj_property>
+      </wvobject>
+      <wvobject fp_name="/dsp_velo_testbench/inst_velo_pad/pkt_pyld" type="array" db_ref_id="1">
+         <obj_property name="ElementShortName">pkt_pyld[31:0]</obj_property>
+         <obj_property name="ObjectShortName">pkt_pyld[31:0]</obj_property>
+      </wvobject>
+      <wvobject fp_name="/dsp_velo_testbench/inst_velo_pad/tsi" type="array" db_ref_id="1">
+         <obj_property name="ElementShortName">tsi[1:0]</obj_property>
+         <obj_property name="ObjectShortName">tsi[1:0]</obj_property>
+      </wvobject>
+      <wvobject fp_name="/dsp_velo_testbench/inst_velo_pad/tsf" type="array" db_ref_id="1">
+         <obj_property name="ElementShortName">tsf[1:0]</obj_property>
+         <obj_property name="ObjectShortName">tsf[1:0]</obj_property>
+      </wvobject>
+      <wvobject fp_name="/dsp_velo_testbench/inst_velo_pad/ts_int_secs" type="array" db_ref_id="1">
+         <obj_property name="ElementShortName">ts_int_secs[31:0]</obj_property>
+         <obj_property name="ObjectShortName">ts_int_secs[31:0]</obj_property>
+      </wvobject>
+      <wvobject fp_name="/dsp_velo_testbench/inst_velo_pad/ts_frc_secs" type="array" db_ref_id="1">
+         <obj_property name="ElementShortName">ts_frc_secs[63:0]</obj_property>
+         <obj_property name="ObjectShortName">ts_frc_secs[63:0]</obj_property>
+      </wvobject>
+      <wvobject fp_name="/dsp_velo_testbench/inst_velo_pad/sof" type="logic" db_ref_id="1">
+         <obj_property name="ElementShortName">sof</obj_property>
+         <obj_property name="ObjectShortName">sof</obj_property>
+      </wvobject>
+      <wvobject fp_name="/dsp_velo_testbench/inst_velo_pad/eof" type="logic" db_ref_id="1">
+         <obj_property name="ElementShortName">eof</obj_property>
+         <obj_property name="ObjectShortName">eof</obj_property>
+      </wvobject>
+      <wvobject fp_name="/dsp_velo_testbench/inst_velo_pad/pad_bytes" type="array" db_ref_id="1">
+         <obj_property name="ElementShortName">pad_bytes[3:0]</obj_property>
+         <obj_property name="ObjectShortName">pad_bytes[3:0]</obj_property>
+      </wvobject>
+      <wvobject fp_name="/dsp_velo_testbench/inst_velo_pad/pad_pkt_cnt" type="array" db_ref_id="1">
+         <obj_property name="ElementShortName">pad_pkt_cnt[3:0]</obj_property>
+         <obj_property name="ObjectShortName">pad_pkt_cnt[3:0]</obj_property>
+      </wvobject>
+      <wvobject fp_name="/dsp_velo_testbench/inst_velo_pad/stream_id" type="array" db_ref_id="1">
+         <obj_property name="ElementShortName">stream_id[31:0]</obj_property>
+         <obj_property name="ObjectShortName">stream_id[31:0]</obj_property>
+         <obj_property name="Radix">HEXRADIX</obj_property>
+      </wvobject>
+   </wvobject>
+   <wvobject fp_name="group1369" type="group">
+      <obj_property name="label">DSP</obj_property>
+      <obj_property name="DisplayName">label</obj_property>
+      <wvobject fp_name="/dsp_velo_testbench/inst_dsp/raw_data" type="array" db_ref_id="1">
+         <obj_property name="ElementShortName">raw_data[47:0]</obj_property>
+         <obj_property name="ObjectShortName">raw_data[47:0]</obj_property>
+         <obj_property name="Radix">HEXRADIX</obj_property>
+      </wvobject>
+      <wvobject fp_name="/dsp_velo_testbench/inst_dsp/adc_data_array" type="array" db_ref_id="1">
+         <obj_property name="ElementShortName">adc_data_array[0:3]</obj_property>
+         <obj_property name="ObjectShortName">adc_data_array[0:3]</obj_property>
+         <obj_property name="Radix">SIGNEDDECRADIX</obj_property>
+         <wvobject fp_name="/dsp_velo_testbench/inst_dsp/adc_data_array[0]" type="array" db_ref_id="1">
+            <obj_property name="ElementShortName">[0]</obj_property>
+            <obj_property name="ObjectShortName">adc_data_array[0]</obj_property>
+            <obj_property name="Radix">SIGNEDDECRADIX</obj_property>
+         </wvobject>
+         <wvobject fp_name="/dsp_velo_testbench/inst_dsp/adc_data_array[1]" type="array" db_ref_id="1">
+            <obj_property name="ElementShortName">[1]</obj_property>
+            <obj_property name="ObjectShortName">adc_data_array[1]</obj_property>
+            <obj_property name="Radix">SIGNEDDECRADIX</obj_property>
+         </wvobject>
+         <wvobject fp_name="/dsp_velo_testbench/inst_dsp/adc_data_array[2]" type="array" db_ref_id="1">
+            <obj_property name="ElementShortName">[2]</obj_property>
+            <obj_property name="ObjectShortName">adc_data_array[2]</obj_property>
+            <obj_property name="Radix">SIGNEDDECRADIX</obj_property>
+         </wvobject>
+         <wvobject fp_name="/dsp_velo_testbench/inst_dsp/adc_data_array[3]" type="array" db_ref_id="1">
+            <obj_property name="ElementShortName">[3]</obj_property>
+            <obj_property name="ObjectShortName">adc_data_array[3]</obj_property>
+            <obj_property name="Radix">SIGNEDDECRADIX</obj_property>
+         </wvobject>
+      </wvobject>
+      <wvobject fp_name="/dsp_velo_testbench/inst_dsp/adc_data_vld" type="logic" db_ref_id="1">
+         <obj_property name="ElementShortName">adc_data_vld</obj_property>
+         <obj_property name="ObjectShortName">adc_data_vld</obj_property>
+      </wvobject>
+      <wvobject fp_name="/dsp_velo_testbench/inst_dsp/adc_data_vld_d" type="logic" db_ref_id="1">
+         <obj_property name="ElementShortName">adc_data_vld_d</obj_property>
+         <obj_property name="ObjectShortName">adc_data_vld_d</obj_property>
+      </wvobject>
+      <wvobject fp_name="/dsp_velo_testbench/inst_dsp/frame" type="logic" db_ref_id="1">
+         <obj_property name="ElementShortName">frame</obj_property>
+         <obj_property name="ObjectShortName">frame</obj_property>
+      </wvobject>
+      <wvobject fp_name="/dsp_velo_testbench/inst_dsp/frame_pipeline" type="array" db_ref_id="1">
+         <obj_property name="ElementShortName">frame_pipeline[3:0]</obj_property>
+         <obj_property name="ObjectShortName">frame_pipeline[3:0]</obj_property>
+      </wvobject>
+      <wvobject fp_name="/dsp_velo_testbench/inst_dsp/fifo_rd_en" type="logic" db_ref_id="1">
+         <obj_property name="ElementShortName">fifo_rd_en</obj_property>
+         <obj_property name="ObjectShortName">fifo_rd_en</obj_property>
+      </wvobject>
+      <wvobject fp_name="/dsp_velo_testbench/inst_dsp/fifo_wr_en" type="logic" db_ref_id="1">
+         <obj_property name="ElementShortName">fifo_wr_en</obj_property>
+         <obj_property name="ObjectShortName">fifo_wr_en</obj_property>
+      </wvobject>
+      <wvobject fp_name="/dsp_velo_testbench/inst_dsp/adc_data_sext" type="array" db_ref_id="1">
+         <obj_property name="ElementShortName">adc_data_sext[63:0]</obj_property>
+         <obj_property name="ObjectShortName">adc_data_sext[63:0]</obj_property>
+         <obj_property name="Radix">HEXRADIX</obj_property>
+      </wvobject>
+      <wvobject fp_name="/dsp_velo_testbench/inst_dsp/filter_out_re" type="array" db_ref_id="1">
+         <obj_property name="ElementShortName">filter_out_re[2:0]</obj_property>
+         <obj_property name="ObjectShortName">filter_out_re[2:0]</obj_property>
+         <obj_property name="Radix">SIGNEDDECRADIX</obj_property>
+         <wvobject fp_name="/dsp_velo_testbench/inst_dsp/filter_out_re[2]" type="array" db_ref_id="1">
+            <obj_property name="ElementShortName">[2]</obj_property>
+            <obj_property name="ObjectShortName">filter_out_re[2]</obj_property>
+            <obj_property name="Radix">SIGNEDDECRADIX</obj_property>
+         </wvobject>
+         <wvobject fp_name="/dsp_velo_testbench/inst_dsp/filter_out_re[1]" type="array" db_ref_id="1">
+            <obj_property name="ElementShortName">[1]</obj_property>
+            <obj_property name="ObjectShortName">filter_out_re[1]</obj_property>
+            <obj_property name="Radix">SIGNEDDECRADIX</obj_property>
+         </wvobject>
+         <wvobject fp_name="/dsp_velo_testbench/inst_dsp/filter_out_re[0]" type="array" db_ref_id="1">
+            <obj_property name="ElementShortName">[0]</obj_property>
+            <obj_property name="ObjectShortName">filter_out_re[0]</obj_property>
+            <obj_property name="Radix">SIGNEDDECRADIX</obj_property>
+         </wvobject>
+      </wvobject>
+      <wvobject fp_name="/dsp_velo_testbench/inst_dsp/filter_out_im" type="array" db_ref_id="1">
+         <obj_property name="ElementShortName">filter_out_im[2:0]</obj_property>
+         <obj_property name="ObjectShortName">filter_out_im[2:0]</obj_property>
+         <obj_property name="Radix">SIGNEDDECRADIX</obj_property>
+         <wvobject fp_name="/dsp_velo_testbench/inst_dsp/filter_out_im[2]" type="array" db_ref_id="1">
+            <obj_property name="ElementShortName">[2]</obj_property>
+            <obj_property name="ObjectShortName">filter_out_im[2]</obj_property>
+            <obj_property name="Radix">SIGNEDDECRADIX</obj_property>
+         </wvobject>
+         <wvobject fp_name="/dsp_velo_testbench/inst_dsp/filter_out_im[1]" type="array" db_ref_id="1">
+            <obj_property name="ElementShortName">[1]</obj_property>
+            <obj_property name="ObjectShortName">filter_out_im[1]</obj_property>
+            <obj_property name="Radix">SIGNEDDECRADIX</obj_property>
+         </wvobject>
+         <wvobject fp_name="/dsp_velo_testbench/inst_dsp/filter_out_im[0]" type="array" db_ref_id="1">
+            <obj_property name="ElementShortName">[0]</obj_property>
+            <obj_property name="ObjectShortName">filter_out_im[0]</obj_property>
+            <obj_property name="Radix">SIGNEDDECRADIX</obj_property>
+         </wvobject>
+      </wvobject>
+      <wvobject fp_name="/dsp_velo_testbench/inst_dsp/state_vld" type="array" db_ref_id="1">
+         <obj_property name="ElementShortName">state_vld[2:0]</obj_property>
+         <obj_property name="ObjectShortName">state_vld[2:0]</obj_property>
+      </wvobject>
+      <wvobject fp_name="/dsp_velo_testbench/inst_dsp/filter_ce" type="array" db_ref_id="1">
+         <obj_property name="ElementShortName">filter_ce[2:0]</obj_property>
+         <obj_property name="ObjectShortName">filter_ce[2:0]</obj_property>
+      </wvobject>
+      <wvobject fp_name="/dsp_velo_testbench/inst_dsp/kernel_addr" type="array" db_ref_id="1">
+         <obj_property name="ElementShortName">kernel_addr[2:0]</obj_property>
+         <obj_property name="ObjectShortName">kernel_addr[2:0]</obj_property>
+         <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
+      </wvobject>
+      <wvobject fp_name="/dsp_velo_testbench/inst_dsp/kernel_len" type="array" db_ref_id="1">
+         <obj_property name="ElementShortName">kernel_len[2:0]</obj_property>
+         <obj_property name="ObjectShortName">kernel_len[2:0]</obj_property>
+         <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
+         <wvobject fp_name="/dsp_velo_testbench/inst_dsp/kernel_len[2]" type="array" db_ref_id="1">
+            <obj_property name="ElementShortName">[2]</obj_property>
+            <obj_property name="ObjectShortName">kernel_len[2]</obj_property>
+            <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
+         </wvobject>
+         <wvobject fp_name="/dsp_velo_testbench/inst_dsp/kernel_len[1]" type="array" db_ref_id="1">
+            <obj_property name="ElementShortName">[1]</obj_property>
+            <obj_property name="ObjectShortName">kernel_len[1]</obj_property>
+            <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
+         </wvobject>
+         <wvobject fp_name="/dsp_velo_testbench/inst_dsp/kernel_len[0]" type="array" db_ref_id="1">
+            <obj_property name="ElementShortName">[0]</obj_property>
+            <obj_property name="ObjectShortName">kernel_len[0]</obj_property>
+            <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
+         </wvobject>
+      </wvobject>
+   </wvobject>
+</wave_config>

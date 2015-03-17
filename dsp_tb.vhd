@@ -23,7 +23,7 @@ constant fs_period : time := 4 ns;
 
 signal clk : std_logic := '0';
 signal fs_clk : std_logic := '0';
-signal rst : std_logic := '1';
+signal rst : std_logic;
 
 -- wishbone signals
 signal wb_adr_i : std_logic_vector(15 downto 0) := (others => '0');
@@ -44,7 +44,7 @@ signal vita_dout     : std_logic_vector(127 downto 0) := (others => '0');
 signal trigger : std_logic := '0';
 
 --Decision Engine interface
-signal state : std_logic_vector(1 downto 0) := "00";
+signal state : std_logic_vector(3 downto 0) := "0000";
 
 type testbench_states is (RESETTING, WB_WRITE, RUNNING, STOPPING);
 signal testbench_state : testbench_states := RESETTING;
@@ -229,6 +229,7 @@ stim_proc : process
 
 
 begin
+	rst <= '1';
 	testbench_state <= RESETTING;
 	wait for 100 ns;
 	

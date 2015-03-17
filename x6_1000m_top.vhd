@@ -413,7 +413,7 @@ architecture arch of x6_1000m_top is
 -----------------------------------------------------------------------------
   constant rev_maj            : std_logic_vector(7 downto 0) := X"01";
   constant rev_min            : std_logic_vector(7 downto 0) := X"06";
-  signal sub_rev              : std_logic_vector(7 downto 0) := X"03";
+  signal sub_rev              : std_logic_vector(7 downto 0) := X"06";
   signal revision             : std_logic_vector(15 downto 0) := rev_maj & rev_min;
   constant hw_type            : std_logic_vector(3 downto 0) := X"5"; -- X6-1000M
   constant fpga_type          : std_logic_vector(1 downto 0) := dev_encode(DEVICE);
@@ -652,10 +652,10 @@ architecture arch of x6_1000m_top is
 ------------------------------------------------------------------------------
 -- Custom DSP stuff
 ------------------------------------------------------------------------------
-  signal state0               : std_logic_vector(2 downto 0);
-  signal state1               : std_logic_vector(2 downto 0);
-  signal state0_vld           : std_logic_vector(2 downto 0);
-  signal state1_vld           : std_logic_vector(2 downto 0);
+  signal state0               : std_logic_vector(3 downto 0);
+  signal state1               : std_logic_vector(3 downto 0);
+  signal state0_vld           : std_logic_vector(3 downto 0);
+  signal state1_vld           : std_logic_vector(3 downto 0);
   signal state_vld            : std_logic;
 
 ------------------------------------------------------------------------------
@@ -731,6 +731,7 @@ signal adc0_raw_data, adc1_raw_data : std_logic_vector(47 downto 0) ;
 
   signal wf_rd_addr_copy_dac0, wf_rd_addr_copy_dac1 : std_logic_vector(15 downto 0) ;
   signal dac_ch_en : std_logic_vector(3 downto 0) ;
+  signal dac_trigger_mode : std_logic_vector(2 downto 0) ;
   signal dac0_trigger, dac0_trigger_en, dac1_trigger, dac1_trigger_en : std_logic;
 
 begin
@@ -948,11 +949,10 @@ begin
 -- Digital I/O
 ------------------------------------------------------------------------------
   wb_ack_i(5) <= '0';
-  dio_p(26 downto 17) <= (others => frontend_rst);
-
+  dio_p(26 downto 19) <= (others => frontend_rst);
   
-  dio_p(16) <= or_reduce(state1_vld & state0_vld);
-  dio_p(15 downto 10) <= state1 & state0;
+  dio_p(18) <= or_reduce(state1_vld & state0_vld);
+  dio_p(17 downto 10) <= state1 & state0;
   dio_p(9 downto 0) <= (others => '0');
   dio_n(31 downto 0) <= (others => '0');
 
@@ -1645,8 +1645,10 @@ begin
     adc1_ext_sync        => adc1_ext_sync,
     dac0_ext_sync_p      => dac0_ext_sync_p,
     dac0_ext_sync_n      => dac0_ext_sync_n,
+    dac0_ext_sync        => dac0_ext_sync,
     dac1_ext_sync_p      => dac1_ext_sync_p,
     dac1_ext_sync_n      => dac1_ext_sync_n,
+    dac1_ext_sync        => dac1_ext_sync,
 
     -- ADC0 and ADC1 interface
     adc0_spi_sclk        => adc0_spi_sclk,
@@ -1705,6 +1707,7 @@ begin
     dac1_data_n          => dac1_data_n,
 
     dac_ch_en            => dac_ch_en,
+    dac_trigger_mode     => dac_trigger_mode,
     dac0_trigger         => dac0_trigger,
     dac0_trigger_en      => dac0_trigger_en,
     dac1_trigger         => dac1_trigger,
@@ -1724,9 +1727,6 @@ begin
   adc0_fifo_rd <= '1';
   adc1_fifo_rd <= '1';
 
-  dac0_ext_sync <= adc0_ext_sync;
-  dac1_ext_sync <= adc1_ext_sync;
-  
 --Pulse generators
 
 pg0 : entity work.PulseGenerator
@@ -1864,7 +1864,8 @@ inst_dsp0 : entity work.ii_dsp_top
   port map (
     CONTROL => control0,
     CLK => sys_clk,
-    DATA(111 downto 87) => (others => '0'),
+    DATA(111 downto 90) => (others => '0'),
+    DATA(89 downto 87) => dac_trigger_mode,
     DATA(86) => dac0_trigger_en,
     DATA(85) => dac0_trigger,
     DATA(84 downto 83) => dac_ch_en(1 downto 0),
@@ -1879,7 +1880,8 @@ inst_dsp0 : entity work.ii_dsp_top
   port map (
     CONTROL => control1,
     CLK => sys_clk,
-    DATA(111 downto 87) => (others => '0'),
+    DATA(111 downto 90) => (others => '0'),
+    DATA(89 downto 87) => dac_trigger_mode,
     DATA(86) => dac1_trigger_en,
     DATA(85) => dac1_trigger,
     DATA(84 downto 83) => dac_ch_en(3 downto 2),
