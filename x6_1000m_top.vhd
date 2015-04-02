@@ -554,16 +554,6 @@ architecture arch of x6_1000m_top is
   signal adc0_overflow        : std_logic;
   signal adc1_overflow        : std_logic;
   signal adc_run_o            : std_logic;
-  signal adc0_fifo_rd         : std_logic;
-  signal adc0_fifo_empty      : std_logic;
-  signal adc0_fifo_aempty     : std_logic;
-  signal adc0_fifo_valid      : std_logic;
-  signal adc0_fifo_dout       : std_logic_vector(127 downto 0);
-  signal adc1_fifo_rd         : std_logic;
-  signal adc1_fifo_empty      : std_logic;
-  signal adc1_fifo_aempty     : std_logic;
-  signal adc1_fifo_valid      : std_logic;
-  signal adc1_fifo_dout       : std_logic_vector(127 downto 0);
 ------------------------------------------------------------------------------
 -- DAC interface
 ------------------------------------------------------------------------------
@@ -1572,20 +1562,6 @@ begin
     dac0_stream_id       => dac0_stream_id,
     dac1_stream_id       => dac1_stream_id,
 
-    -- ADC0 fifo interface
-    adc0_fifo_empty      => adc0_fifo_empty,
-    adc0_fifo_aempty     => adc0_fifo_aempty,
-    adc0_fifo_rd         => adc0_fifo_rd,
-    adc0_fifo_vld        => adc0_fifo_valid,
-    adc0_fifo_dout       => adc0_fifo_dout,
-
-    -- ADC1 fifo interface
-    adc1_fifo_empty      => adc1_fifo_empty,
-    adc1_fifo_aempty     => adc1_fifo_aempty,
-    adc1_fifo_rd         => adc1_fifo_rd,
-    adc1_fifo_vld        => adc1_fifo_valid,
-    adc1_fifo_dout       => adc1_fifo_dout,
-
     -- ADC0 raw interface
     adc0_raw_data        => adc0_raw_data,
     adc0_data_clk        => adc0_data_clk,
@@ -1723,9 +1699,6 @@ begin
     -- PPS pulse input (ie. GPS)
     ts_pps_pls           => h_pps_demet_re
   );
-
-  adc0_fifo_rd <= '1';
-  adc1_fifo_rd <= '1';
 
 --Pulse generators
 
@@ -1925,13 +1898,6 @@ inst_dsp0 : entity work.ii_dsp_top
         DATA(128) => vfifo3_i_wren,
         DATA(127 downto 0) => vfifo3_i_data,
         TRIG0(0) => vfifo3_i_wren);
-
-------------------------------------------------------------------------------
--- DSP VITA mover
-------------------------------------------------------------------------------
-  -- rtr_src_aempty <= adc1_fifo_aempty & adc0_fifo_aempty & lpbk_fifo_aempty;
-  -- rtr_src_empty  <= adc1_fifo_empty & adc0_fifo_empty & lpbk_fifo_empty;
-  -- rtr_src_vld    <= adc1_fifo_valid & adc0_fifo_valid & lpbk_fifo_vld;
 
   lpbk_fifo_rden <= '1';
 
