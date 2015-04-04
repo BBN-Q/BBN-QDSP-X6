@@ -97,6 +97,8 @@ begin
 				if wf_rd_addr = unsigned(wf_length(12 downto 0)) then
 					wf_rd_addr <= (others => '0');
 				end if;
+			else
+				dac_data_wr_en <= '0';
 			end if;
 		end if;
 	end if ;
