@@ -662,7 +662,6 @@ signal dac0_data_rdy, dac1_data_rdy : std_logic;
 signal dac0_fifo_rden, dac1_fifo_rden : std_logic;
 signal dac0_sel_trigger, dac1_sel_trigger : std_logic;
 signal dac0_ph_en, dac1_ph_en : std_logic;
-signal dac0_dummy_ct, dac1_dummy_ct : std_logic_vector(3 downto 0) ;
 
 signal adc0_data_clk, adc1_data_clk : std_logic;
 signal adc0_raw_data, adc1_raw_data : std_logic_vector(47 downto 0) ;
@@ -1588,8 +1587,7 @@ begin
     dac0_data_rdy        => dac0_data_rdy,
     dac0_fifo_rden       => dac0_fifo_rden, 
     dac0_sel_trigger     => dac0_sel_trigger, 
-    dac0_ph_en           => dac0_ph_en, 
-    dac0_dummy_ct        => dac0_dummy_ct, 
+    dac0_ph_en           => dac0_ph_en,
 
     -- DAC1 data source fifo interface
     dac1_src_aempty      => '0',
@@ -1605,7 +1603,6 @@ begin
     dac1_fifo_rden       => dac1_fifo_rden, 
     dac1_sel_trigger     => dac1_sel_trigger, 
     dac1_ph_en           => dac1_ph_en, 
-    dac1_dummy_ct        => dac1_dummy_ct, 
 
     -- PLL interface
     pll_vcxo_en          => pll_vcxo_en,
@@ -1850,8 +1847,7 @@ inst_dsp0 : entity work.ii_dsp_top
   port map (
     CONTROL => control0,
     CLK => sys_clk,
-    DATA(111 downto 97) => (others => '0'),
-    DATA(96 downto 93) => dac0_dummy_ct,
+    DATA(111 downto 93) => (others => '0'),
     DATA(92) => dac0_ph_en,
     DATA(91) => dac0_sel_trigger,
     DATA(90) => dac0_fifo_rden,
@@ -1870,8 +1866,7 @@ inst_dsp0 : entity work.ii_dsp_top
   port map (
     CONTROL => control1,
     CLK => sys_clk,
-    DATA(111 downto 97) => (others => '0'),
-    DATA(96 downto 93) => dac1_dummy_ct,
+    DATA(111 downto 93) => (others => '0'),
     DATA(92) => dac1_ph_en,
     DATA(91) => dac1_sel_trigger,
     DATA(90) => dac1_fifo_rden,
