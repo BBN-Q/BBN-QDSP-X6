@@ -1574,13 +1574,6 @@ begin
     adc1_raw_data        => adc1_raw_data,
     adc1_data_clk        => adc1_data_clk,
 
-    -- DAC0 data source fifo interface
-    dac0_src_aempty      => '0',
-    dac0_src_empty       => '0',
-    dac0_src_rden        => open,
-    dac0_src_vld         => '0',
-    dac0_src_din         => (others => '0'),
-
     -- DAC0 raw sample interface
     dac0_data            => dac0_data,
     dac0_data_wr_en      => dac0_data_wr_en,
@@ -1588,13 +1581,6 @@ begin
     dac0_fifo_rden       => dac0_fifo_rden, 
     dac0_sel_trigger     => dac0_sel_trigger, 
     dac0_ph_en           => dac0_ph_en,
-
-    -- DAC1 data source fifo interface
-    dac1_src_aempty      => '0',
-    dac1_src_empty       => '0',
-    dac1_src_rden        => open,
-    dac1_src_vld         => '0',
-    dac1_src_din         => (others => '0'),
 
     -- DAC1 raw sample interface
     dac1_data            => dac1_data,
