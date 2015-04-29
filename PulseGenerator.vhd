@@ -33,14 +33,15 @@ architecture arch of PulseGenerator is
 signal control, status : std_logic_vector(31 downto 0) := (others => '0');
 signal wf_length : std_logic_vector(15 downto 0) := (others => '0');
 
-signal wf_wr_addr, wf_wr_data : std_logic_vector(31 downto 0) ;
-signal wf_wr_we : std_logic;
-signal wf_rd_addr : unsigned(11 downto 0) ;
+signal wf_addr_wr, wf_data_wr, wf_data_rd : std_logic_vector(31 downto 0) ;
+signal wf_we : std_logic;
+signal wf_addr_rd : unsigned(11 downto 0) ;
 
 begin
 
+--send waveform read address out as a debug signal
 wf_rd_addr_copy(15 downto 12) <= (others => '0');
-wf_rd_addr_copy(11 downto 0) <= std_logic_vector(wf_rd_addr);
+wf_rd_addr_copy(11 downto 0) <= std_logic_vector(wf_addr_rd);
 
 --Wishbone registers
 
@@ -63,9 +64,10 @@ wf_rd_addr_copy(11 downto 0) <= std_logic_vector(wf_rd_addr);
 		control     => control,
 		status      => status,
 		wf_length   => wf_length,
-		wf_wr_addr  => wf_wr_addr,
-		wf_wr_data  => wf_wr_data,
-		wf_wr_we    => wf_wr_we
+		wf_addr     => wf_addr_wr,
+		wf_data_out => wf_data_wr,
+		wf_we       => wf_we,
+		wf_data_in  => wf_data_rd
 	);
 
 
@@ -73,11 +75,14 @@ wf_rd_addr_copy(11 downto 0) <= std_logic_vector(wf_rd_addr);
 my_wf_bram : entity work.WF_BRAM
   PORT MAP (
     clka => sys_clk,
-    wea(0) => wf_wr_we,
-    addra => wf_wr_addr(12 downto 0),
-    dina => wf_wr_data,
+    wea(0) => wf_we,
+    addra => wf_addr_wr(12 downto 0),
+    dina => wf_data_wr,
+    douta => wf_data_rd,
     clkb => sys_clk,
-    addrb => std_logic_vector(wf_rd_addr),
+    web(0)  => '0',
+    addrb => std_logic_vector(wf_addr_rd),
+    dinb => (others => '0'),
     doutb => dac_data
   );
 
@@ -87,15 +92,15 @@ playback : process( sys_clk )
 begin
 	if rising_edge(sys_clk) then
 		if reset = '1' then
-			wf_rd_addr <= (others => '0');
+			wf_addr_rd <= (others => '0');
 			dac_data_wr_en <= '0';
 		else
 			if dac_data_rdy = '1' then
-				wf_rd_addr <= wf_rd_addr + 1;
+				wf_addr_rd <= wf_addr_rd + 1;
 				dac_data_wr_en <= '1';
 				
-				if wf_rd_addr = unsigned(wf_length(12 downto 0)) then
-					wf_rd_addr <= (others => '0');
+				if wf_addr_rd = unsigned(wf_length(12 downto 0)) then
+					wf_addr_rd <= (others => '0');
 				end if;
 			else
 				dac_data_wr_en <= '0';

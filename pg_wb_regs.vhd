@@ -23,10 +23,10 @@ entity pg_wb_regs is
     status            : in std_logic_vector(31 downto 0);
     wf_length         : out std_logic_vector(15 downto 0);
 
-    wf_wr_addr        : out std_logic_vector(31 downto 0) ;
-    wf_wr_data        : out std_logic_vector(31 downto 0) ;
-    wf_wr_we          : out std_logic
-
+    wf_addr           : out std_logic_vector(31 downto 0) ;
+    wf_data_out       : out std_logic_vector(31 downto 0) ;
+    wf_we             : out std_logic;
+    wf_data_in        : in std_logic_vector(31 downto 0)
   );
 end pg_wb_regs;
 
@@ -117,13 +117,14 @@ architecture arch of pg_wb_regs is
   wb_reg_i(8) <= wb_reg_o(8);
   wb_reg_init(8) <= x"00001000";
 
-  wf_wr_addr <= wb_reg_o(9);
-  wb_reg_i(9) <= wb_reg_o(9);
-  wf_wr_data <= wb_reg_o(10);
-  wb_reg_i(10) <= wb_reg_o(10);
+  --Use addr 9/10 for the addr/data of the pulse block RAM
+  wf_addr <= wb_reg_o(9);
+  wb_reg_i(9) <= wb_reg_o(9); --copy address back for reads
+  wf_data_out <= wb_reg_o(10);
+  wb_reg_i(10) <= wf_data_in;
 
   --use the write strobe of the data as write enable for BRAM
-  wf_wr_we <= wr_stb(10);
+  wf_we <= wr_stb(10);
 
 end arch;
 
