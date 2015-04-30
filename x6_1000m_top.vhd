@@ -1419,101 +1419,14 @@ begin
   led2 <= not (led(0) and clks_locked);   -- green LED, active low
   led3 <= not led(1);                     -- front panel LED, active low
 
-------------------------------------------------------------------------------
--- Aurora
-------------------------------------------------------------------------------
-  -- gen_aurora : if (ADD_AURORA) generate
-  --   rio0 : ii_aurora_4l_intf_top
-  --   generic map (
-  --     USE_CHIPSCOPE        => 0,
-  --     SIM_GTXRESET_SPEEDUP => 0,
-  --     addr_bits            => 2,
-  --     offset               => MR_AU0
-  --   )
-  --   port map (
-  --     -- System reset and clocks
-  --     srst                 => frontend_rst,
-  --     sys_clk              => sys_clk,
-  --     run_o                => open,
 
-  --     -- Data source i/f
-  --     src_rdy              => rio0_src_rdy,
-  --     src_valid            => rio0_src_valid,
-  --     src_din              => rio0_src_din,
-
-  --     -- Destination FIFO i/f
-  --     dest_rdy             => '1',
-  --     dest_valid           => open,
-  --     dest_dout            => open,
-
-  --     -- slave wishbone interface
-  --     wb_rst_i             => wb_rst,
-  --     wb_clk_i             => sys_clk,
-  --     wb_adr_i             => wb_adr_o,
-  --     wb_dat_i             => wb_dat_o,
-  --     wb_we_i              => wb_we_o,
-  --     wb_stb_i             => wb_stb_o,
-  --     wb_ack_o             => wb_ack_i(10),
-  --     wb_dat_o             => wb_dat_i,
-
-  --     -- GTX Serial I/O ports
-  --     gtx_refclk_p         => gtx0_refclk_p,
-  --     gtx_refclk_n         => gtx0_refclk_n,
-  --     gtx_rxp              => gtx0_rxp,
-  --     gtx_rxn              => gtx0_rxn,
-  --     gtx_txp              => gtx0_txp,
-  --     gtx_txn              => gtx0_txn
-  --   );
-
-  --   rio1 : ii_aurora_4l_intf_top
-  --   generic map (
-  --     USE_CHIPSCOPE        => 0,
-  --     SIM_GTXRESET_SPEEDUP => 0,
-  --     addr_bits            => 2,
-  --     offset               => MR_AU1
-  --   )
-  --   port map (
-  --     -- System reset and clocks
-  --     srst                 => frontend_rst,
-  --     sys_clk              => sys_clk,
-  --     run_o                => open,
-
-  --     -- Data source i/f
-  --     src_rdy              => rio1_src_rdy,
-  --     src_valid            => rio1_src_valid,
-  --     src_din              => rio1_src_din,
-
-  --     -- Destination FIFO i/f
-  --     dest_rdy             => '1',
-  --     dest_valid           => open,
-  --     dest_dout            => open,
-
-  --     -- slave wishbone interface
-  --     wb_rst_i             => wb_rst,
-  --     wb_clk_i             => sys_clk,
-  --     wb_adr_i             => wb_adr_o,
-  --     wb_dat_i             => wb_dat_o,
-  --     wb_we_i              => wb_we_o,
-  --     wb_stb_i             => wb_stb_o,
-  --     wb_ack_o             => wb_ack_i(11),
-  --     wb_dat_o             => wb_dat_i,
-
-  --     -- GTX Serial I/O ports
-  --     gtx_refclk_p         => gtx1_refclk_p,
-  --     gtx_refclk_n         => gtx1_refclk_n,
-  --     gtx_rxp              => gtx1_rxp,
-  --     gtx_rxn              => gtx1_rxn,
-  --     gtx_txp              => gtx1_txp,
-  --     gtx_txn              => gtx1_txn
-  --   );
-  -- end generate;
-
-  gen_no_aurora : if (not ADD_AURORA) generate
-    rio0_src_rdy <= '1';
-    rio1_src_rdy <= '1';
-    wb_ack_i(10) <= '0';
-    wb_ack_i(11) <= '0';
-  end generate;
+  -----------------------------------------------------------------------------
+  -- No Aurora
+  -----------------------------------------------------------------------------
+  rio0_src_rdy <= '1';
+  rio1_src_rdy <= '1';
+  wb_ack_i(10) <= '0';
+  wb_ack_i(11) <= '0';
 
 ------------------------------------------------------------------------------
 -- Analog Frontend Interface
