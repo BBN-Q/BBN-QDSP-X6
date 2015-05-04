@@ -199,9 +199,12 @@ proc add_source_files {} {
 	xfile add $REPO_ROOT/channelizer/*.vhd
 	xfile add $REPO_ROOT/DecisionEngine.vhd
 	xfile add $REPO_ROOT/ii_dsp_vita_framer.vhd
+	xfile add $REPO_ROOT/ii_dsp_pkg.vhd
 	
 	xfile add $REPO_ROOT/Synchronizer.vhd
+	
 	xfile add $REPO_ROOT/x6_1000m_top.vhd
+	xfile add $REPO_ROOT/x6_1000m_pkg.vhd
 
 	#Add IP cores with copy so when we generate them they don't barf files all over the repo
 	#First II ones
