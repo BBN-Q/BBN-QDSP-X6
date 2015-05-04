@@ -1,0 +1,205 @@
+################################################################################
+# I/O STANDARDS and PIN LOC Constraints
+################################################################################
+
+################################################################################
+# Clocks and resets
+################################################################################
+NET "sys_clk_p"      LOC = K24 | IOSTANDARD = DIFF_SSTL18_I;  #Bank 24
+NET "sys_clk_n"      LOC = K23 | IOSTANDARD = DIFF_SSTL18_I;  #Bank 24
+
+NET "pex_rst_n"      LOC = AC22 | IOSTANDARD = LVCMOS18;  #Bank 24
+NET "pex_mbist_n"    LOC = AD22 | IOSTANDARD = LVCMOS18;  #Bank 24
+NET "pci_rst_n"      LOC = AC23 | IOSTANDARD = LVCMOS18;  #Bank 24
+
+
+################################################################################
+# MISC
+################################################################################
+# Serial RapidIO clock control
+NET "sio_xo_*"       IOSTANDARD = LVCMOS25;
+NET "sio_xo_scl"     LOC = G33;  #Bank 16
+NET "sio_xo_sda"     LOC = B33;  #Bank 16
+NET "sio_xo_intr"    LOC = F33;  #Bank 16
+
+
+# Board revision info
+NET "hw_rev[*]"      IOSTANDARD = LVCMOS15;
+NET "cfg[*]"         IOSTANDARD = LVCMOS15;
+NET "hw_rev[0]"      LOC = F18  | PULLUP;  #Bank 36
+NET "hw_rev[1]"      LOC = E17  | PULLUP;  #Bank 36
+NET "hw_rev[2]"      LOC = E18  | PULLUP;  #Bank 36
+NET "hw_rev[3]"      LOC = D17  | PULLUP;  #Bank 36
+NET "cfg[0]"         LOC = AJ21 | PULLUP;  #Bank 22
+NET "cfg[1]"         LOC = AM22 | PULLUP;  #Bank 22
+NET "cfg[2]"         LOC = AN22 | PULLUP;  #Bank 22
+NET "cfg[3]"         LOC = AG20 | PULLUP;  #Bank 22
+
+
+# Digital I/O
+NET "dio_*"          IOSTANDARD = LVCMOS25;
+NET "h_*"            IOSTANDARD = LVCMOS25;
+NET "dio_p[0]"       LOC = AK9 ;  #Bank 34
+NET "dio_p[1]"       LOC = AD9 ;  #Bank 34
+NET "dio_p[2]"       LOC = AF9 ;  #Bank 34
+NET "dio_p[3]"       LOC = AG8 ;  #Bank 34
+NET "dio_p[4]"       LOC = F9  ;  #Bank 34
+NET "dio_p[5]"       LOC = C10 ;  #Bank 34
+NET "dio_p[6]"       LOC = C9  ;  #Bank 34
+NET "dio_p[7]"       LOC = A9  ;  #Bank 34
+NET "dio_p[8]"       LOC = E8  ;  #Bank 34
+NET "dio_p[9]"       LOC = B8  ;  #Bank 34
+NET "dio_p[10]"      LOC = L9  ;  #Bank 34
+NET "dio_p[11]"      LOC = L10 ;  #Bank 34
+NET "dio_p[12]"      LOC = AC10;  #Bank 34
+NET "dio_p[13]"      LOC = AH9 ;  #Bank 34
+NET "dio_p[14]"      LOC = AD10;  #Bank 34
+NET "dio_p[15]"      LOC = AK8 ;  #Bank 34
+NET "dio_p[16]"      LOC = AN9 ;  #Bank 34
+NET "dio_p[17]"      LOC = A10 ;  #Bank 34
+NET "dio_p[18]"      LOC = AN10;  #Bank 34
+NET "dio_p[19]"      LOC = AJ29;  #Bank 12
+NET "dio_p[20]"      LOC = AJ31;  #Bank 12
+NET "dio_p[21]"      LOC = AF26;  #Bank 12
+NET "dio_p[22]"      LOC = AF30;  #Bank 12
+NET "dio_p[23]"      LOC = AG27;  #Bank 12
+NET "dio_p[24]"      LOC = AN33;  #Bank 12
+NET "dio_p[25]"      LOC = AH29;  #Bank 12
+NET "dio_p[26]"      LOC = AL34;  #Bank 12
+NET "dio_p[27]"      LOC = AF28;  #Bank 12
+NET "dio_p[28]"      LOC = AJ34;  #Bank 12
+NET "dio_p[29]"      LOC = AE28;  #Bank 12
+NET "dio_p[30]"      LOC = AH33;  #Bank 12
+NET "dio_p[31]"      LOC = AE27;  #Bank 12
+NET "dio_n[0]"       LOC = AL9 ;  #Bank 34
+NET "dio_n[1]"       LOC = AE9 ;  #Bank 34
+NET "dio_n[2]"       LOC = AF10;  #Bank 34
+NET "dio_n[3]"       LOC = AH8 ;  #Bank 34
+NET "dio_n[4]"       LOC = F10 ;  #Bank 34
+NET "dio_n[5]"       LOC = D10 ;  #Bank 34
+NET "dio_n[6]"       LOC = D9  ;  #Bank 34
+NET "dio_n[7]"       LOC = A8  ;  #Bank 34
+NET "dio_n[8]"       LOC = E9  ;  #Bank 34
+NET "dio_n[9]"       LOC = C8  ;  #Bank 34
+NET "dio_n[10]"      LOC = K9  ;  #Bank 34
+NET "dio_n[11]"      LOC = M10 ;  #Bank 34
+NET "dio_n[12]"      LOC = AB10;  #Bank 34
+NET "dio_n[13]"      LOC = AJ9 ;  #Bank 34
+NET "dio_n[14]"      LOC = AC9 ;  #Bank 34
+NET "dio_n[15]"      LOC = AL8 ;  #Bank 34
+NET "dio_n[16]"      LOC = AP9 ;  #Bank 34
+NET "dio_n[17]"      LOC = B10 ;  #Bank 34
+NET "dio_n[18]"      LOC = AP10;  #Bank 34
+NET "dio_n[19]"      LOC = AJ30;  #Bank 12
+NET "dio_n[20]"      LOC = AJ32;  #Bank 12
+NET "dio_n[21]"      LOC = AE26;  #Bank 12
+NET "dio_n[22]"      LOC = AG30;  #Bank 12
+NET "dio_n[23]"      LOC = AG28;  #Bank 12
+NET "dio_n[24]"      LOC = AN34;  #Bank 12
+NET "dio_n[25]"      LOC = AH30;  #Bank 12
+NET "dio_n[26]"      LOC = AK34;  #Bank 12
+NET "dio_n[27]"      LOC = AF29;  #Bank 12
+NET "dio_n[28]"      LOC = AH34;  #Bank 12
+NET "dio_n[29]"      LOC = AE29;  #Bank 12
+NET "dio_n[30]"      LOC = AH32;  #Bank 12
+NET "dio_n[31]"      LOC = AD27;  #Bank 12
+NET "h_pps"          LOC = K27 ;  #Bank 16
+
+
+# CPLD interface
+NET "loader_*"       IOSTANDARD = LVCMOS18;
+NET "loader_clk"     LOC = V23 ;  #Bank 24
+NET "loader_cs"      LOC = J24 ;  #Bank 24
+NET "loader_dio"     LOC = U23 ;  #Bank 24
+NET "loader_bus[0]"  LOC = AF24;  #Bank 24
+NET "loader_bus[1]"  LOC = AF25;  #Bank 24
+NET "loader_bus[2]"  LOC = W24 ;  #Bank 24
+NET "loader_bus[3]"  LOC = V24 ;  #Bank 24
+NET "loader_bus[4]"  LOC = H24 ;  #Bank 24
+NET "loader_bus[5]"  LOC = H25 ;  #Bank 24
+NET "loader_bus[6]"  LOC = P24 ;  #Bank 24
+NET "loader_bus[7]"  LOC = R24 ;  #Bank 24
+NET "loader_bus[8]"  LOC = G23 ;  #Bank 24
+NET "loader_bus[9]"  LOC = H23 ;  #Bank 24
+NET "loader_bus[10]" LOC = N24 ;  #Bank 24
+NET "loader_bus[11]" LOC = N23 ;  #Bank 24
+NET "loader_bus[12]" LOC = F23 ;  #Bank 24
+NET "loader_bus[13]" LOC = F24 ;  #Bank 24
+NET "loader_bus[14]" LOC = L24 ;  #Bank 24
+NET "loader_bus[15]" LOC = M23 ;  #Bank 24
+
+
+# Calibration serial flash
+NET "rom_*"          IOSTANDARD = LVCMOS15;
+NET "rom_hold_n"     LOC = A31;  #Bank 25
+NET "rom_sck"        LOC = B31;  #Bank 25
+NET "rom_sdi"        LOC = H29;  #Bank 25
+NET "rom_sdo"        LOC = C30;  #Bank 25
+NET "rom_wp_n"       LOC = D30;  #Bank 25
+NET "rom_cs_n"       LOC = B30;  #Bank 25
+
+
+# Temperature monitoring
+NET "temp_*"         IOSTANDARD = LVCMOS25;
+NET "temp_smbclk"    LOC = J29;  #Bank 16
+NET "temp_smbdat"    LOC = A33;  #Bank 16
+
+
+# LED
+NET "led*"           IOSTANDARD = LVCMOS25;
+NET "led1"           LOC = D34;  #Bank 16
+NET "led2"           LOC = J26;  #Bank 16
+NET "led3"           LOC = J27;  #Bank 16
+
+
+################################################################################
+# Timing constraints                                                           #
+################################################################################
+NET "sys_clk_?" TNM_NET = "TNM_sys_clk_i";
+TIMESPEC "TS_sys_clk_i" = PERIOD "TNM_sys_clk_i" 5 ns;
+
+NET "ref_clk200" TNM = "TNM_ref_clk200";
+
+NET "lpddr2_c?/mem_clk_div2" TNM = "TNM_lpddr2_mmcm_clk";
+NET "lpddr2_c?/tb_clk" TNM = "TNM_lpddr2_tb_clk";
+
+NET "sys_clk" TNM = "TNM_sys_clk";
+TIMESPEC "TS_sys_clk" = PERIOD "TNM_sys_clk" 3.8 ns;
+
+# multi-cycle paths
+INST "*/inst_core/app_data_read*" TNM = "ctl_reg_grp_i";
+TIMESPEC "TS_ctl_reg_i_mcycle" = FROM "FFS" TO "ctl_reg_grp_i" "TS_sys_clk" * 4;
+
+INST "*/inst_core/app_wr_en*" TNM = "ctl_reg_wr_en";
+TIMESPEC "TS_ctl_reg_en_o_mcycle" = FROM "ctl_reg_wr_en" TO "FFS" "TS_sys_clk" * 2;
+
+INST "wb_dat_i_d*" TNM = "TNM_wb_dat_i_d";
+TIMESPEC "TS_wb_dat_i_mcycle" = FROM "FFS" TO "TNM_wb_dat_i_d" "TS_sys_clk" * 2;
+
+INST "inst_crm/u_ff_wb_rst_o" TNM = "TNM_crm_rst";
+INST "inst_crm/u_ff_frontend_rst" TNM = "TNM_crm_rst";
+INST "inst_crm/u_ff_backend_rst" TNM = "TNM_crm_rst";
+TIMESPEC "TS_MC_crm_rst" = FROM "TNM_crm_rst" TO "FFS" "TS_sys_clk" * 4;
+
+# Timing ignore paths
+TIMESPEC "TS_pex2sysclk_TIG" = FROM "CLK_USER_CLK" TO "TNM_sys_clk" TIG;
+TIMESPEC "TS_sys2pexclk_TIG" = FROM "TNM_sys_clk" TO "CLK_USER_CLK" TIG;
+TIMESPEC "TS_ref200_sysclk_TIG" = FROM "TNM_ref_clk200" TO "TNM_sys_clk" TIG;
+TIMESPEC "TS_sysclk_ref200_TIG" = FROM "TNM_sys_clk" TO "TNM_ref_clk200" TIG;
+TIMESPEC "TS_pddr2_sys2mmcm_clk_TIG" = FROM "TNM_sys_clk" TO "TNM_lpddr2_mmcm_clk" TIG;
+TIMESPEC "TS_pddr2_mmcm2sys_clk_TIG" = FROM "TNM_lpddr2_mmcm_clk" TO "TNM_sys_clk" TIG;
+TIMESPEC "TS_lpddr2_tb2sys_clk_TIG" = FROM "TNM_lpddr2_tb_clk" TO "TNM_sys_clk" TIG;
+TIMESPEC "TS_lpddr2_sys2tb_clk_TIG" = FROM "TNM_sys_clk" TO "TNM_lpddr2_tb_clk" TIG;
+TIMESPEC "TS_lpddr2_tb2mmcm_clk_TIG" = FROM "TNM_lpddr2_tb_clk" TO "TNM_lpddr2_mmcm_clk" TIG;
+TIMESPEC "TS_lpddr2_mmcm2tb_clk_TIG" = FROM "TNM_lpddr2_mmcm_clk" TO "TNM_lpddr2_tb_clk" TIG;
+TIMESPEC "TS_lpddr2_mmcm2ref_clk_TIG" = FROM "TNM_lpddr2_mmcm_clk" TO "TNM_ref_clk200" TIG;
+TIMESPEC "TS_SYS2DAC_TIG" = FROM "TNM_sys_clk" TO "TNM_DAC_CLK" TIG;
+TIMESPEC "TS_DAC2SYS_TIG" = FROM "TNM_DAC_CLK" TO "TNM_sys_clk" TIG;
+TIMESPEC "TS_SYS2ADC_TIG" = FROM "TNM_sys_clk" TO "TNM_ADC_CLK" TIG;
+TIMESPEC "TS_ADC2SYS_TIG" = FROM "TNM_ADC_CLK" TO "TNM_sys_clk" TIG;
+TIMESPEC "TS_SYS2REF_DAC_TIG" = FROM "TNM_sys_clk" TO "TNM_REF_DAC_CLK" TIG;
+TIMESPEC "TS_REF_DAC2SYS_TIG" = FROM "TNM_REF_DAC_CLK" TO "TNM_sys_clk" TIG;
+TIMESPEC "TS_SYS2REF_ADC_TIG" = FROM "TNM_sys_clk" TO "TNM_REF_ADC_CLK" TIG;
+TIMESPEC "TS_REF_ADC2SYS_TIG" = FROM "TNM_REF_ADC_CLK" TO "TNM_sys_clk" TIG;
+
+
