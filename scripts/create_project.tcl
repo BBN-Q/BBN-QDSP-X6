@@ -256,16 +256,20 @@ proc add_constraints {} {
 	global PCIE_LANES
 	global DEV
 	global ARCH
+	global REPO_ROOT
 
 	set X6_1000_SRC $II_X6_DIR/1000M/logic/rev_a/src
 
 	#Original II ones
-	xfile add $X6_1000_SRC/x6_1000m.ucf
-	xfile add $X6_1000_SRC/x6_1000m_$DEV.ucf
 	xfile add $X6_1000_SRC/ii_1000m_afe.ucf
 	xfile add $II_X6_DIR/lib/ip/pcie/$PCIE_LANES/$ARCH/ii_pcie_intf.ucf
 
 	#we only use VFIFO 2 and 3 for now
 	xfile add $II_X6_DIR/lib/ip/vfifo/$ARCH/ucf/ii_vfifo_c2.ucf
 	xfile add $II_X6_DIR/lib/ip/vfifo/$ARCH/ucf/ii_vfifo_c3.ucf
+
+	#modifed by BBN
+	xfile add $REPO_ROOT/constraints/x6_1000m.ucf
+	xfile add $REPO_ROOT/constraints/x6_1000m_$DEV.ucf
+
 }
