@@ -33,15 +33,7 @@ AREA_GROUP "AG_vmvr" RANGE = SLICE_X108Y80:SLICE_X123Y119;
 AREA_GROUP "AG_vmvr" RANGE = RAMB18_X7Y32:RAMB18_X7Y47;
 AREA_GROUP "AG_vmvr" RANGE = RAMB36_X7Y16:RAMB36_X7Y23;
 
-INST "inst_router" AREA_GROUP = "AG_router";
-AREA_GROUP "AG_router" RANGE = SLICE_X52Y40:SLICE_X67Y79;
-
-INST "inst_deframer" AREA_GROUP = "AG_deframer";
-
 INST "inst_packetizer_top/inst_packetizer" AREA_GROUP = "AG_packetizer";
-
-INST "lpbk_fifo" AREA_GROUP = "AG_lpbk_fifo";
-AREA_GROUP "AG_lpbk_fifo" RANGE = RAMB36_X6Y16:RAMB36_X6Y19;
 
 # Do not change these constraints
 INST "inst_afe_top/inst_adc0/inst_sync_s1p4_intf/sw_trig_s1p4_fabric/ISERDESE1_inst" LOC = ILOGIC_X0Y62;
