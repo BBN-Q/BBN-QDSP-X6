@@ -68,7 +68,7 @@ proc set_project_props {} {
 	set ADC_IP      $II_X6_DIR/1000M/logic/rev_a/ip/ads5400_intf_phy
 	set DAC_IP      $II_X6_DIR/1000M/logic/rev_a/ip/dac5682z_intf_phy
 	set DAC_LAT_IP  $II_X6_DIR/1000M/logic/rev_a/ip/dac_lat_cal
-	set CORE_DIRS   "$PCIE_IP|$VFIFO_IP|ADC_IP|DAC_IP|DAC_LAT_IP"
+	set CORE_DIRS   "$PCIE_IP|$VFIFO_IP|$ADC_IP|$DAC_IP|$DAC_LAT_IP"
 
 
 	#Top level project properties
@@ -200,7 +200,7 @@ proc add_source_files {} {
 	xfile add $REPO_ROOT/DecisionEngine.vhd
 	xfile add $REPO_ROOT/ii_dsp_vita_framer.vhd
 	xfile add $REPO_ROOT/ii_dsp_pkg.vhd
-	
+
 	xfile add $REPO_ROOT/Synchronizer.vhd
 	
 	xfile add $REPO_ROOT/x6_1000m_top.vhd
