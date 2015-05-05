@@ -453,30 +453,6 @@ package x6_pkg is
     );
   end component;
 
-  component ii_vita_router
-    generic (
-      num_src_ch           : integer := 4;
-      num_dst_ch           : integer := 3
-    );
-    port (
-      -- Reset and clock
-      srst                 : in  std_logic;
-      sys_clk              : in  std_logic;
-
-      -- Source channels interface
-      src_aempty           : in  std_logic_vector(num_src_ch-1 downto 0);
-      src_empty            : in  std_logic_vector(num_src_ch-1 downto 0);
-      src_rden             : out std_logic_vector(num_src_ch-1 downto 0);
-      src_vld              : in  std_logic_vector(num_src_ch-1 downto 0);
-      src_data             : in  std_logic_vector(128*num_src_ch-1 downto 0);
-
-      -- Destination channels interface
-      dst_rdy              : in  std_logic_vector(num_dst_ch-1 downto 0);
-      dst_wren             : out std_logic_vector(num_dst_ch-1 downto 0);
-      dst_data             : out std_logic_vector(128*num_dst_ch-1 downto 0)
-    );
-  end component;
-
   component ii_vita_velo_pad
     port (
       -- Reset and clock
@@ -558,34 +534,6 @@ package x6_pkg is
     );
   end component;
 
-  component ii_deframer
-    port (
-      -- Reset and clock
-      srst                 : in  std_logic;
-      sys_clk              : in  std_logic;
-
-      -- Configuration
-      pd_addr              : in  width_8_pd_df_array;
-
-      -- Status
-      new_packet           : out std_logic;
-      bad_pdn              : out std_logic;
-      end_of_packet        : out std_logic;
-
-      -- Source channel interface
-      src_aempty           : in  std_logic;
-      src_empty            : in  std_logic;
-      src_rden             : out std_logic;
-      src_data_vld         : in  std_logic;
-      data_in              : in  std_logic_vector(127 downto 0);
-
-      -- Destination channels interface
-      dest_rdy             : in  std_logic_vector(num_pd_df-1 downto 0);
-      dest_wren            : out std_logic_vector(num_pd_df-1 downto 0);
-      data_out             : out std_logic_vector(127 downto 0)
-    );
-  end component;
-
   component ii_loader_top
     generic (
       addr_bits            : integer := 2;
@@ -610,30 +558,6 @@ package x6_pkg is
       loader_cs            : out std_logic;
       loader_dio           : out std_logic;
       loader_bus           : inout std_logic_vector(15 downto 0)
-    );
-  end component;
-
-  component ii_dio_top
-    generic (
-      width                : integer := 8;
-      diff_en              : boolean := FALSE;
-      addr_bits            : integer := 2;
-      offset               : std_logic_vector(15 downto 0)
-    );
-    port (
-      -- Wishbone interface signals
-      wb_rst_i             : in  std_logic;
-      wb_clk_i             : in  std_logic;
-      wb_adr_i             : in  std_logic_vector(15 downto 0);
-      wb_dat_i             : in  std_logic_vector(31 downto 0);
-      wb_we_i              : in  std_logic;
-      wb_stb_i             : in  std_logic;
-      wb_ack_o             : out std_logic;
-      wb_dat_o             : out std_logic_vector(31 downto 0);
-      -- DIO signals
-      clk                  : in  std_logic;
-      dio_p                : inout std_logic_vector(width-1 downto 0);
-      dio_n                : inout std_logic_vector(width-1 downto 0)
     );
   end component;
 
@@ -712,109 +636,6 @@ package x6_pkg is
     );
   end component;
 
-  component ii_vfifo_pb
-    port (
-      -- Reset and Clock inputs
-      mem_rst              : in  std_logic;-- Synchronous active high memory reset
-      mem_clk_div2         : in  std_logic;-- Memory clock divided by 2
-      ref_clk200           : in  std_logic;-- 200MHz reference clock
-      sys_clk              : in  std_logic;-- System clock
-
-      -- Control and status
-      dpd_req              : in  std_logic;-- Request to enter deep power down state
-      run                  : in  std_logic;-- enable data flow
-      playback_en          : in  std_logic;-- enable playback mode
-      test_en              : in  std_logic;-- enable test mode
-      test_error           : out std_logic;-- error detected in test mode
-
-      -- Playback command FIFO interface
-      pbcmd_fifo_wren      : in  std_logic;-- write command strobe
-      pbcmd_fifo_data      : in  std_logic_vector(127 downto 0);
-      pbcmd_fifo_rdy       : out std_logic;-- ready for data
-
-      -- Alert output
-      tag_load_done        : out std_logic;
-      tag_load_value       : out std_logic_vector(7 downto 0);
-      tag_rep_done         : out std_logic;
-      tag_rep_value        : out std_logic_vector(7 downto 0);
-
-      -- Input fifo interface (data write port)
-      vfifo_i_wren         : in  std_logic;-- write data strobe
-      vfifo_i_data         : in  std_logic_vector(127 downto 0);
-      vfifo_i_rdy          : out std_logic;-- ready for data
-
-      -- Output fifo interface (data read port)
-      vfifo_o_rden         : in  std_logic;-- read data strobe
-      vfifo_o_aethresh     : in  std_logic_vector(9 downto 0);
-      vfifo_o_aempty       : out std_logic;
-      vfifo_o_empty        : out std_logic;
-      vfifo_o_vld          : out std_logic;-- read data valid indicator
-      vfifo_o_data         : out std_logic_vector(127 downto 0);
-
-      -- LPDDR2 status
-      lpddr2_init_done     : out std_logic;-- lpddr2 memory initialization done
-      lpddr2_overflow      : out std_logic;-- lpddr2 memory overflowed
-      lpddr2_underflow     : out std_logic;-- lpddr2 memory underflowed
-      lpddr2_wrd_cnt       : out std_logic_vector(29 downto 0);
-      lpddr2_aempty        : out std_logic;-- mem_word_cnt < 1/512th the memory size
-      lpddr2_afull         : out std_logic;-- mem_word_cnt > 511/512th the memory size
-
-      -- LPDDR2 Output Interface
-      lpddr2_ck_p          : out std_logic_vector(0 downto 0);
-      lpddr2_ck_n          : out std_logic_vector(0 downto 0);
-      lpddr2_cke           : out std_logic_vector(1 downto 0);
-      lpddr2_cs_n          : out std_logic_vector(1 downto 0);
-      lpddr2_ca            : out std_logic_vector(9 downto 0);
-      lpddr2_dm            : out std_logic_vector(3 downto 0);
-      lpddr2_dqs_p         : inout std_logic_vector(3 downto 0);
-      lpddr2_dqs_n         : inout std_logic_vector(3 downto 0);
-      lpddr2_dq            : inout std_logic_vector(31 downto 0)
-    );
-  end component;
-
-  component ii_aurora_4l_intf_top
-    generic (
-      USE_CHIPSCOPE        : integer := 0;
-      SIM_GTXRESET_SPEEDUP : integer := 0;  -- Set to 1 to speed up sim reset
-      addr_bits            : integer := 5;
-      offset               : std_logic_vector(15 downto 0)
-    );
-    port (
-      -- System reset and clocks
-      srst                 : in  std_logic;
-      sys_clk              : in  std_logic;
-      run_o                : out std_logic;
-
-      -- Data source i/f
-      src_rdy              : out std_logic;
-      src_valid            : in  std_logic;
-      src_din              : in  std_logic_vector(127 downto 0);
-
-      -- Destination FIFO i/f
-      dest_rdy             : in  std_logic;
-      dest_valid           : out std_logic;
-      dest_dout            : out std_logic_vector(127 downto 0);
-
-      -- slave wishbone interface
-      wb_rst_i             : in  std_logic;
-      wb_clk_i             : in  std_logic;
-      wb_adr_i             : in  std_logic_vector(15 downto 0);
-      wb_dat_i             : in  std_logic_vector(31 downto 0);
-      wb_we_i              : in  std_logic;
-      wb_stb_i             : in  std_logic;
-      wb_ack_o             : out std_logic;
-      wb_dat_o             : out std_logic_vector(31 downto 0);
-
-      -- GTX Serial I/O ports
-      gtx_refclk_p         : in  std_logic;
-      gtx_refclk_n         : in  std_logic;
-      gtx_rxp              : in  std_logic_vector(3 downto 0);
-      gtx_rxn              : in  std_logic_vector(3 downto 0);
-      gtx_txp              : out std_logic_vector(3 downto 0);
-      gtx_txn              : out std_logic_vector(3 downto 0)
-    );
-  end component;
-
   component ii_unsign_sat
     generic (
       ibw                  : integer;
@@ -839,37 +660,6 @@ package x6_pkg is
       valid                : out std_logic;
       prog_full            : out std_logic;
       prog_empty           : out std_logic
-    );
-  end component;
-
-  component ii_dac_router
-    port (
-      -- Reset and clock
-      srst                 : in  std_logic;
-      sys_clk              : in  std_logic;
-
-      -- Routing configuration
-      dac0_stream_id       : in  std_logic_vector(15 downto 0);
-      dac1_stream_id       : in  std_logic_vector(15 downto 0);
-
-      -- Data source interface
-      dac_rtr_rdy          : out std_logic;
-      dac_rtr_wren         : in  std_logic;
-      dac_rtr_data         : in  std_logic_vector(127 downto 0);
-
-      -- Destination channels interface
-      dac0_pbcmd_rdy       : in  std_logic;
-      dac0_pbcmd_wren      : out std_logic;
-      dac0_pbcmd_data      : out std_logic_vector(127 downto 0);
-      dac0_vfifo_rdy       : in  std_logic;
-      dac0_vfifo_wren      : out std_logic;
-      dac0_vfifo_data      : out std_logic_vector(127 downto 0);
-      dac1_pbcmd_rdy       : in  std_logic;
-      dac1_pbcmd_wren      : out std_logic;
-      dac1_pbcmd_data      : out std_logic_vector(127 downto 0);
-      dac1_vfifo_rdy       : in  std_logic;
-      dac1_vfifo_wren      : out std_logic;
-      dac1_vfifo_data      : out std_logic_vector(127 downto 0)
     );
   end component;
 

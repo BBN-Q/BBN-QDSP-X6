@@ -508,33 +508,6 @@ architecture arch of x6_1000m_top is
   signal pkt_din              : width_128_ch_array;
   signal pkt_valid            : std_logic;
 -----------------------------------------------------------------------------
--- Deframer
------------------------------------------------------------------------------
-  signal pd_addr_df           : width_8_pd_df_array;
-  signal def_dest_rdy         : std_logic_vector(num_pd_df-1 downto 0);
-  signal def_valid            : std_logic_vector(num_pd_df-1 downto 0);
-  signal def_data_out         : std_logic_vector(127 downto 0);
-  signal def_pid_addr0        : std_logic_vector(7 downto 0);
-  signal def_pid_addr1        : std_logic_vector(7 downto 0);
------------------------------------------------------------------------------
--- Loopback fifo signals
------------------------------------------------------------------------------
-  signal lpbk_fifo_rden       : std_logic;
-  signal lpbk_fifo_dout       : std_logic_vector(127 downto 0);
-  signal lpbk_fifo_empty      : std_logic;
-  signal lpbk_fifo_vld        : std_logic;
-  signal lpbk_fifo_afull      : std_logic;
-  signal lpbk_fifo_aempty     : std_logic;
-------------------------------------------------------------------------------
--- RIO
-------------------------------------------------------------------------------
-  signal rio0_src_rdy         : std_logic;
-  signal rio0_src_valid       : std_logic;
-  signal rio0_src_din         : std_logic_vector(127 downto 0);
-  signal rio1_src_rdy         : std_logic;
-  signal rio1_src_valid       : std_logic;
-  signal rio1_src_din         : std_logic_vector(127 downto 0);
------------------------------------------------------------------------------
 -- Misc.
 -----------------------------------------------------------------------------
   signal led                  : std_logic_vector(1 downto 0);
@@ -563,17 +536,6 @@ architecture arch of x6_1000m_top is
   signal dac_run_o            : std_logic;
   signal dac0_stream_id       : std_logic_vector(15 downto 0);
   signal dac1_stream_id       : std_logic_vector(15 downto 0);
-------------------------------------------------------------------------------
--- VITA router
-------------------------------------------------------------------------------
-  signal rtr_src_aempty       : std_logic_vector(2 downto 0);
-  signal rtr_src_empty        : std_logic_vector(2 downto 0);
-  signal rtr_src_rden         : std_logic_vector(2 downto 0);
-  signal rtr_src_vld          : std_logic_vector(2 downto 0);
-  signal rtr_src_data         : std_logic_vector(128*3-1 downto 0);
-  signal rtr_dst_rdy          : std_logic;
-  signal rtr_dst_wren         : std_logic;
-  signal rtr_dst_data         : std_logic_vector(127 downto 0);
 ------------------------------------------------------------------------------
 -- LPDDR2
 ------------------------------------------------------------------------------
@@ -654,6 +616,8 @@ architecture arch of x6_1000m_top is
   signal control0, control1, control2, control3, control4, control5 : std_logic_vector(35 downto 0) ;
 
 -----------------------------------------------------------------------------
+-- AFE signals
+-----------------------------------------------------------------------------
 signal dac0_ext_sync, dac1_ext_sync, adc0_ext_sync, adc1_ext_sync : std_logic;
 signal dac0_data, dac1_data : std_logic_vector(63 downto 0) ;
 signal dac0_data_wr_en, dac1_data_wr_en : std_logic;
@@ -666,67 +630,10 @@ signal dac0_ph_en, dac1_ph_en : std_logic;
 signal adc0_data_clk, adc1_data_clk : std_logic;
 signal adc0_raw_data, adc1_raw_data : std_logic_vector(47 downto 0) ;
 
--- AFE register connections
-
-  signal adc_phy_init_d       : std_logic;
-  signal adc_phy_init_re      : std_logic;
-
-    signal clk200_locked_d      : std_logic;
-    signal clk200_locked_dd     : std_logic;
-    signal clk200_locked_re     : std_logic;
-    signal idelayctrl_rst_sreg  : std_logic_vector(9 downto 0);
-    signal idelayctrl_rst       : std_logic;
-
-
-    signal adc_phy_init         : std_logic;
-    signal skip_adc_phy_cal     : std_logic;
-    signal adc0_delay_ce, adc1_delay_ce        : std_logic_vector(11 downto 0) ;
-    signal adc0_eye_aligned, adc1_eye_aligned     : std_logic_vector(11 downto 0);
-    signal adc1_prbs_locked     : std_logic;
-    signal adc1_prbs_aligned    : std_logic;
-    signal adc1_phy_rdy         : std_logic;
-
-  signal pll_spi_rdy          : std_logic;
-  signal pll_spi_rdata_valid  : std_logic;
-  signal pll_spi_wr_strb      : std_logic;
-  signal pll_spi_addr         : std_logic_vector(3 downto 0);
-  signal pll_spi_wdata        : std_logic_vector(27 downto 0);
-  signal pll_spi_rdata        : std_logic_vector(31 downto 0);
-  signal pll_vcxo_sdo         : std_logic;
-  signal adc0_spi_access_strb : std_logic;
-  signal adc0_spi_wdata       : std_logic_vector(7 downto 0);
-  signal adc0_spi_addr        : std_logic_vector(4 downto 0);
-  signal adc0_spi_rd_wrn      : std_logic;
-  signal adc0_spi_rdy         : std_logic;
-  signal adc0_spi_rdata_valid : std_logic;
-  signal adc0_spi_rdata       : std_logic_vector(7 downto 0);
-  signal adc1_spi_access_strb : std_logic;
-  signal adc1_spi_wdata       : std_logic_vector(7 downto 0);
-  signal adc1_spi_addr        : std_logic_vector(4 downto 0);
-  signal adc1_spi_rd_wrn      : std_logic;
-  signal adc1_spi_rdy         : std_logic;
-  signal adc1_spi_rdata_valid : std_logic;
-  signal adc1_spi_rdata       : std_logic_vector(7 downto 0);
-  signal dac0_spi_access_strb : std_logic;
-  signal dac0_spi_wdata       : std_logic_vector(7 downto 0);
-  signal dac0_spi_addr        : std_logic_vector(4 downto 0);
-  signal dac0_spi_rd_wrn      : std_logic;
-  signal dac0_spi_rdy         : std_logic;
-  signal dac0_spi_rdata_valid : std_logic;
-  signal dac0_spi_rdata       : std_logic_vector(7 downto 0);
-  signal dac1_spi_access_strb : std_logic;
-  signal dac1_spi_wdata       : std_logic_vector(7 downto 0);
-  signal dac1_spi_addr        : std_logic_vector(4 downto 0);
-  signal dac1_spi_rd_wrn      : std_logic;
-  signal dac1_spi_rdy         : std_logic;
-  signal dac1_spi_rdata_valid : std_logic;
-  signal dac1_spi_rdata       : std_logic_vector(7 downto 0);
-  signal dac0_spi_sdo_sysclk, dac1_spi_sdo_sysclk : std_logic;
-
-  signal wf_rd_addr_copy_dac0, wf_rd_addr_copy_dac1 : std_logic_vector(15 downto 0) ;
-  signal dac_ch_en : std_logic_vector(3 downto 0) ;
-  signal dac_trigger_mode : std_logic_vector(2 downto 0) ;
-  signal dac0_trigger, dac0_trigger_en, dac1_trigger, dac1_trigger_en : std_logic;
+signal wf_rd_addr_copy_dac0, wf_rd_addr_copy_dac1 : std_logic_vector(15 downto 0) ;
+signal dac_ch_en : std_logic_vector(3 downto 0) ;
+signal dac_trigger_mode : std_logic_vector(2 downto 0) ;
+signal dac0_trigger, dac0_trigger_en, dac1_trigger, dac1_trigger_en : std_logic;
 
 begin
 
@@ -906,8 +813,8 @@ begin
     playback_en          => playback_en,
     mem_test_en          => mem_test_en,
     mem_test_error       => mem_test_error,
-    def_pid_addr0        => def_pid_addr0,
-    def_pid_addr1        => def_pid_addr1
+    def_pid_addr0        => open,
+    def_pid_addr1        => open
   );
 
   sio_xo_sda <= '0' when (sio_xo_sdo = '0') else 'Z';
@@ -1201,12 +1108,6 @@ begin
   alert_fifo_rd <= pkt_rden(0);
   pad_dst_rden  <= pkt_rden(1);
 
------------------------------------------------------------------------------
--- Deframer  (Receives packet data from PCIe interface and routes it to DDR)
------------------------------------------------------------------------------
-  pd_addr_df(0)   <= def_pid_addr0;
-  pd_addr_df(1)   <= def_pid_addr1;
-
 
   lpddr2_c2 : ii_vfifo
   port map (
@@ -1423,8 +1324,6 @@ begin
   -----------------------------------------------------------------------------
   -- No Aurora
   -----------------------------------------------------------------------------
-  rio0_src_rdy <= '1';
-  rio1_src_rdy <= '1';
   wb_ack_i(10) <= '0';
   wb_ack_i(11) <= '0';
 
@@ -1813,9 +1712,6 @@ inst_dsp0 : entity work.ii_dsp_top
         DATA(128) => vfifo3_i_wren,
         DATA(127 downto 0) => vfifo3_i_data,
         TRIG0(0) => vfifo3_i_wren);
-
-  lpbk_fifo_rden <= '1';
-
 
 ------------------------------------------------------------------------------
 -- Misc.
