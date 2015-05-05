@@ -228,7 +228,10 @@ NET "pll_spi_le"     LOC = C34 | IOSTANDARD = LVCMOS25;  #Bank 16
 NET "pll_spi_miso"   LOC = B34 | IOSTANDARD = LVCMOS25;  #Bank 16
 NET "pll_spi_mosi"   LOC = K28 | IOSTANDARD = LVCMOS25;  #Bank 16
 NET "pll_spi_sclk"   LOC = E32 | IOSTANDARD = LVCMOS25;  #Bank 16
-
+NET "ref_adc_clk_p"  LOC = L23 | IOSTANDARD = DIFF_SSTL18_I;  #Bank 24
+NET "ref_adc_clk_n"  LOC = M22 | IOSTANDARD = DIFF_SSTL18_I;  #Bank 24
+NET "ref_dac_clk_p"  LOC = J9  | IOSTANDARD = LVDS_25;  #Bank 34
+NET "ref_dac_clk_n"  LOC = H9  | IOSTANDARD = LVDS_25;  #Bank 34
 
 # External Sync
 NET "ext_sync_sel"    LOC = B32  | IOSTANDARD = LVCMOS25;  #Bank 16
