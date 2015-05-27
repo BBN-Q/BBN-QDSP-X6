@@ -40,7 +40,9 @@ signal prod_re, prod_im : signed(31 downto 0);
 signal tmp1, tmp2, tmp3, tmp4 : signed(31 downto 0);
 signal s_data_re, s_data_im, s_kernel_re, s_kernel_im : signed(15 downto 0) := (others => '0');
 
-signal accum_re, accum_im : signed(31 downto 0);
+--The maximum bit width growth we need in the accumulator is the KERNEL_ADDR_WIDTH
+--The DSP48 supports 48 bit accumulator so as long as KERNEL_ADDR_WIDTH is <= 16 we are fine
+signal accum_re, accum_im : signed(32+KERNEL_ADDR_WIDTH-1 downto 0);
 
 signal kernel_data : std_logic_vector(31 downto 0);
 signal kernel_re, kernel_im : std_logic_vector(15 downto 0);
@@ -57,6 +59,9 @@ signal kernel_RAM : RAM_ARRAY_t := (others => (others => '0'));
 signal kernel_addr_d : unsigned(KERNEL_ADDR_WIDTH-1 downto 0);
 
 begin
+
+  --Make sure we fit in a DSP48
+  assert KERNEL_ADDR_WIDTH <= 16 report "KERNEL_ADDR_WIDTH too wide. Must be <= 16 to prevent accumulator overflow.";
 
   --Kernel memory write/read processes
   kernel_mem_wr : process(kernel_wr_clk)
@@ -173,16 +178,17 @@ begin
   			accum_last <= '0';
         accum_last_d <= '0';
   		else
-  			accum_re <= accum_re + prod_re(31 downto 16);
-  			accum_im <= accum_im + prod_im(31 downto 16);
+  			accum_re <= accum_re + prod_re;
+  			accum_im <= accum_im + prod_im;
 
         accum_last <= mult_last;
         accum_last_d <= accum_last;
 
         -- latch out result on rising edge of accum_last
+        -- slice out the top 32bits and truncate the rest
   			if accum_last = '1' and accum_last_d = '0' then
-  				result_re <= std_logic_vector(accum_re);
-  				result_im <= std_logic_vector(accum_im);
+  				result_re <= std_logic_vector(accum_re(accum_re'high downto accum_re'high-31));
+  				result_im <= std_logic_vector(accum_im(accum_re'high downto accum_re'high-31));
   			end if;
 
   		end if ;
