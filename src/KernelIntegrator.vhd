@@ -43,6 +43,10 @@ signal s_data_re, s_data_im, s_kernel_re, s_kernel_im : signed(15 downto 0) := (
 --The maximum bit width growth we need in the accumulator is the KERNEL_ADDR_WIDTH
 --The DSP48 supports 48 bit accumulator so as long as KERNEL_ADDR_WIDTH is <= 16 we are fine
 signal accum_re, accum_im : signed(32+KERNEL_ADDR_WIDTH-1 downto 0);
+--Xilinx does not infer DSP for accumulator by default so force DSP48 for performance
+attribute use_dsp48 : string;
+attribute use_dsp48 of accum_re : signal is "yes";
+attribute use_dsp48 of accum_im : signal is "yes";
 
 signal kernel_data : std_logic_vector(31 downto 0);
 signal kernel_re, kernel_im : std_logic_vector(15 downto 0);
