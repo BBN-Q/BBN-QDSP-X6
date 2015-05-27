@@ -1,3 +1,8 @@
+-- Integrate a complex AXI stream of data with a kernel stored in BRAM
+--
+-- Original authors Colm Ryan and Blake Johnson
+-- Copyright 2015, Raytheon BBN Technologies
+
 library ieee;
 use ieee.std_logic_1164.all;
 use ieee.numeric_std.all;
@@ -36,13 +41,12 @@ signal kernel_addr : unsigned(KERNEL_ADDR_WIDTH-1 downto 0);
 
 signal data_re_d, data_im_d : std_logic_vector(15 downto 0) := (others => '0');
 
-signal prod_re, prod_im : signed(31 downto 0);
-signal tmp1, tmp2, tmp3, tmp4 : signed(31 downto 0);
-signal s_data_re, s_data_im, s_kernel_re, s_kernel_im : signed(15 downto 0) := (others => '0');
+--complex multiplication gains an extra bit
+signal prod_re, prod_im : signed(32 downto 0);
 
 --The maximum bit width growth we need in the accumulator is the KERNEL_ADDR_WIDTH
---The DSP48 supports 48 bit accumulator so as long as KERNEL_ADDR_WIDTH is <= 16 we are fine
-signal accum_re, accum_im : signed(32+KERNEL_ADDR_WIDTH-1 downto 0);
+--The DSP48 supports 48 bit accumulator so as long as KERNEL_ADDR_WIDTH is <= 15 we are fine to use full product width
+signal accum_re, accum_im : signed(33+KERNEL_ADDR_WIDTH-1 downto 0);
 --Xilinx does not infer DSP for accumulator by default so force DSP48 for performance
 attribute use_dsp48 : string;
 attribute use_dsp48 of accum_re : signal is "yes";
@@ -51,8 +55,9 @@ attribute use_dsp48 of accum_im : signal is "yes";
 signal kernel_data : std_logic_vector(31 downto 0);
 signal kernel_re, kernel_im : std_logic_vector(15 downto 0);
 
+signal data_vld_d : std_logic := '0';
 signal kernel_last, kernel_last_d : std_logic := '0';
-signal mult_last   : std_logic := '0';
+signal mult_vld, mult_last   : std_logic := '0';
 signal accum_last, accum_last_d  : std_logic := '0';
 
 --instantiate kernel BRAM storage
@@ -65,7 +70,7 @@ signal kernel_addr_d : unsigned(KERNEL_ADDR_WIDTH-1 downto 0);
 begin
 
   --Make sure we fit in a DSP48
-  assert KERNEL_ADDR_WIDTH <= 16 report "KERNEL_ADDR_WIDTH too wide. Must be <= 16 to prevent accumulator overflow.";
+  assert KERNEL_ADDR_WIDTH <= 15 report "KERNEL_ADDR_WIDTH too wide. Must be <= 16 to prevent accumulator overflow.";
 
   --Kernel memory write/read processes
   kernel_mem_wr : process(kernel_wr_clk)
@@ -123,6 +128,7 @@ begin
   variable data_re_delayline : data_delayline_t;
   variable data_im_delayline : data_delayline_t;
   variable last_delayline : std_logic_vector(0 downto 0);
+  variable vld_delayline : std_logic_vector(0 downto 0);
   begin
   	if rising_edge(clk) then
   		if rst = '1' then
@@ -136,6 +142,8 @@ begin
   			data_im_delayline := data_im_delayline(data_im_delayline'high-1 downto 0) & data_im;
         kernel_last_d <= last_delayline(last_delayline'high);
         last_delayline := last_delayline(last_delayline'high-1 downto 0) & kernel_last;
+        data_vld_d <= vld_delayline(vld_delayline'high);
+        vld_delayline := vld_delayline(vld_delayline'high-1 downto 0) & data_vld;
   		end if ;
   	end if ;
   end process ; -- delayLines
@@ -144,31 +152,31 @@ begin
   kernel_re <= kernel_data(31 downto 16);
   kernel_im <= kernel_data(15 downto 0);
 
-  mult : process( clk )
-  variable last_delay : std_logic_vector(1 downto 0);
-  begin
-  	if rising_edge(clk) then
-  		if rst = '1' then
-  			last_delay := (others => '0');
-  			mult_last <= '0';
-  		else
-  			mult_last <= last_delay(last_delay'high);
-  			last_delay := last_delay(last_delay'high-1 downto 0) & kernel_last_d;
-  		end if;
-  		s_data_re <= signed(data_re_d);
-  		s_data_im <= signed(data_im_d);
-  		s_kernel_re <= signed(kernel_re);
-  		s_kernel_im <= signed(kernel_im);
+  multiplier : entity work.ComplexMultiplier
+  generic map(
+  A_WIDTH => 16,
+  B_WIDTH => 16,
+  PROD_WIDTH => 33
+  )
+  port map(
+    clk => clk,
+    rst => rst,
 
-  		tmp1 <= s_data_re * s_kernel_re;
-  		tmp2 <= s_data_im * s_kernel_im;
-  		tmp3 <= s_data_re * s_kernel_im;
-  		tmp4 <= s_data_im * s_kernel_re;
+    a_data_re => data_re_d,
+    a_data_im => data_im_d,
+    a_vld => data_vld_d,
+    a_last => kernel_last_d,
 
-  		prod_re <= tmp1 - tmp2;
-  		prod_im <= tmp3 + tmp4;
-  	end if ;
-  end process ; -- mult
+    b_data_re => kernel_re,
+    b_data_im => kernel_im,
+    b_vld => data_vld_d,
+    b_last => kernel_last_d,
+
+    signed(prod_data_re) => prod_re,
+    signed(prod_data_im) => prod_im,
+    prod_vld => mult_vld,
+    prod_last => mult_last
+  );
 
   --Acumulator
   accum : process( clk )

@@ -59,10 +59,10 @@ begin
 
     -- Load the kernel memory
     wait until rising_edge(kernel_wr_clk);
-    memoryWriter : for ct in 0 to to_integer(unsigned(kernel_len))-1 loop
-      kernel_wr_addr <= std_logic_vector(to_unsigned(ct, KERNEL_ADDR_WIDTH));
+    memoryWriter : for ct in 1 to to_integer(unsigned(kernel_len)) loop
+      kernel_wr_addr <= std_logic_vector(to_unsigned(ct-1, KERNEL_ADDR_WIDTH));
       --For now load ramp
-      kernel_wr_data <= std_logic_vector(to_signed(256*ct, 16)) & std_logic_vector(to_signed(ct, 16));
+      kernel_wr_data <= std_logic_vector(to_signed(256*ct-1, 16)) & std_logic_vector(to_signed(ct, 16));
       kernel_we <= '1';
       wait until rising_edge(kernel_wr_clk);
       kernel_we <= '0';
@@ -72,10 +72,10 @@ begin
     --Clock in the data
     wait until rising_edge(clk);
     data_vld <= '1';
-    dataWriter : for ct in 0 to 127 loop
+    dataWriter : for ct in 1 to 128 loop
       data_re <= std_logic_vector(to_signed(-256*ct, 16));
-      data_im <= std_logic_vector(to_signed(256*ct, 16));
-      if ct = 127 then
+      data_im <= std_logic_vector(to_signed(256*ct-1, 16));
+      if ct = 128 then
         data_last <= '1';
       else
         data_last <= '0';
@@ -97,12 +97,12 @@ begin
     --Value calculated in Julia with
     -- kernel = 256*(0:127) + 1im*(0:127)
     -- data = -256*(0:127) + 1im*256(0:127)
-    -- sum(kernel .* data) / 2^12 % assuming KERNEL_ADDR_WIDTH = 12
-    -- = -11097260 + 11010900im
+    -- floor(sum(kernel .* data) / 2^13) % assuming KERNEL_ADDR_WIDTH = 12 and extra bit from ComplexMultiplier
+    -- = -5679955 + 5635494im
     --
     wait until rising_edge(result_vld);
-    assert to_integer(signed(result_re)) = -11097260 report "KernelIntegrator real output incorrect!";
-    assert to_integer(signed(result_im)) = 11010900 report "KernelIntegrator real output incorrect!";
+    assert to_integer(signed(result_re)) = -5679955 report "KernelIntegrator real output incorrect!";
+    assert to_integer(signed(result_im)) = 5635494 report "KernelIntegrator real output incorrect!";
 
     wait;
 
