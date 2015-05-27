@@ -91,5 +91,28 @@ begin
     wait;
   end process;
 
+  check : process
+  begin
+    --Check the output result
+    --Value calculated in Julia with
+    -- kernel = 256*(0:127) + 1im*(0:127)
+    -- data = -256*(0:127) + 1im*256(0:127)
+    -- prodData = (kernel .* data)
+    -- sum(floor(real(prodData/2^16)) + 1im*floor(imag(prodData/2^16)))
+    -- = -693646.0 + 688114.0im
+    --
+    -- Note this has significant rounding errors
+    --  sum((prodData/2^16))
+    -- = -693578.75 + 688181.25im
+
+    wait until rising_edge(result_vld);
+    assert to_integer(signed(result_re)) = -693646 report "KernelIntegrator real output incorrect!";
+    assert to_integer(signed(result_im)) = 688114 report "KernelIntegrator real output incorrect!";
+
+    wait;
+
+
+  end process;
+
 
 end;
