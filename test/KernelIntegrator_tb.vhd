@@ -62,7 +62,7 @@ begin
     memoryWriter : for ct in 0 to to_integer(unsigned(kernel_len))-1 loop
       kernel_wr_addr <= std_logic_vector(to_unsigned(ct, KERNEL_ADDR_WIDTH));
       --For now load ramp
-      kernel_wr_data <= std_logic_vector(to_signed(ct, 16)) & std_logic_vector(to_signed(ct, 16));
+      kernel_wr_data <= std_logic_vector(to_signed(256*ct, 16)) & std_logic_vector(to_signed(ct, 16));
       kernel_we <= '1';
       wait until rising_edge(kernel_wr_clk);
       kernel_we <= '0';
@@ -73,8 +73,8 @@ begin
     wait until rising_edge(clk);
     data_vld <= '1';
     dataWriter : for ct in 0 to 127 loop
-      data_re <= std_logic_vector(to_signed(ct, 16));
-      data_im <= std_logic_vector(to_signed(ct, 16));
+      data_re <= std_logic_vector(to_signed(-256*ct, 16));
+      data_im <= std_logic_vector(to_signed(256*ct, 16));
       if ct = 127 then
         data_last <= '1';
       else

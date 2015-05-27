@@ -45,9 +45,9 @@ signal accum_re, accum_im : signed(31 downto 0);
 signal kernel_data : std_logic_vector(31 downto 0);
 signal kernel_re, kernel_im : std_logic_vector(15 downto 0);
 
-signal kernel_last : std_logic;
-signal mult_last   : std_logic;
-signal accum_last  : std_logic;
+signal kernel_last, kernel_last_d : std_logic := '0';
+signal mult_last   : std_logic := '0';
+signal accum_last, accum_last_d  : std_logic := '0';
 
 --instantiate kernel BRAM storage
 --easy enough to instantiate our own
@@ -110,19 +110,23 @@ begin
   --Delay lines to align input data and kernel
   --It takes two clock cycles for data to come out of the kernel BRAM
   delaylines : process( clk )
-  type data_delayline_t is array(1 downto 0) of std_logic_vector(15 downto 0);
+  type data_delayline_t is array(0 downto 0) of std_logic_vector(15 downto 0);
   variable data_re_delayline : data_delayline_t;
   variable data_im_delayline : data_delayline_t;
+  variable last_delayline : std_logic_vector(0 downto 0);
   begin
   	if rising_edge(clk) then
   		if rst = '1' then
   			data_re_delayline := (others => (others => '0'));
   			data_im_delayline := (others => (others => '0'));
+        last_delayline := (others => '0');
   		else
-  			data_re_delayline := data_re_delayline(data_re_delayline'high-1 downto 0) & data_re;
   			data_re_d <= data_re_delayline(data_re_delayline'high);
-  			data_im_delayline := data_im_delayline(data_im_delayline'high-1 downto 0) & data_im;
+  			data_re_delayline := data_re_delayline(data_re_delayline'high-1 downto 0) & data_re;
   			data_im_d <= data_im_delayline(data_im_delayline'high);
+  			data_im_delayline := data_im_delayline(data_im_delayline'high-1 downto 0) & data_im;
+        kernel_last_d <= last_delayline(last_delayline'high);
+        last_delayline := last_delayline(last_delayline'high-1 downto 0) & kernel_last;
   		end if ;
   	end if ;
   end process ; -- delayLines
@@ -132,7 +136,7 @@ begin
   kernel_im <= kernel_data(15 downto 0);
 
   mult : process( clk )
-  variable last_delay : std_logic_vector(2 downto 0);
+  variable last_delay : std_logic_vector(1 downto 0);
   begin
   	if rising_edge(clk) then
   		if rst = '1' then
@@ -140,7 +144,7 @@ begin
   			mult_last <= '0';
   		else
   			mult_last <= last_delay(last_delay'high);
-  			last_delay := last_delay(last_delay'high-1 downto 0) & kernel_last;
+  			last_delay := last_delay(last_delay'high-1 downto 0) & kernel_last_d;
   		end if;
   		s_data_re <= signed(data_re_d);
   		s_data_im <= signed(data_im_d);
@@ -167,20 +171,24 @@ begin
   			result_re <= (others => '0');
   			result_im <= (others => '0');
   			accum_last <= '0';
+        accum_last_d <= '0';
   		else
   			accum_re <= accum_re + prod_re(31 downto 16);
   			accum_im <= accum_im + prod_im(31 downto 16);
 
-  			if mult_last = '1' and accum_last = '0' then -- rising edge of mult_last
+        accum_last <= mult_last;
+        accum_last_d <= accum_last;
+
+        -- latch out result on rising edge of accum_last
+  			if accum_last = '1' and accum_last_d = '0' then
   				result_re <= std_logic_vector(accum_re);
   				result_im <= std_logic_vector(accum_im);
   			end if;
-  			accum_last <= mult_last;
 
   		end if ;
   	end if ;
   end process ; -- accum
 
-  result_vld <= accum_last;
+  result_vld <= accum_last_d;
 
 end architecture ; -- arch

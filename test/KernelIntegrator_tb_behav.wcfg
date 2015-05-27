@@ -103,13 +103,19 @@
          <obj_property name="ElementShortName">kernel_last</obj_property>
          <obj_property name="ObjectShortName">kernel_last</obj_property>
       </wvobject>
+      <wvobject db_ref_id="1" type="logic" fp_name="/KernelIntegrator_tb/uut/kernel_last_d">
+         <obj_property name="ElementShortName">kernel_last_d</obj_property>
+         <obj_property name="ObjectShortName">kernel_last_d</obj_property>
+      </wvobject>
       <wvobject db_ref_id="1" type="array" fp_name="/KernelIntegrator_tb/uut/data_re_d">
          <obj_property name="ElementShortName">data_re_d[15:0]</obj_property>
          <obj_property name="ObjectShortName">data_re_d[15:0]</obj_property>
+         <obj_property name="Radix">SIGNEDDECRADIX</obj_property>
       </wvobject>
       <wvobject db_ref_id="1" type="array" fp_name="/KernelIntegrator_tb/uut/data_im_d">
          <obj_property name="ElementShortName">data_im_d[15:0]</obj_property>
          <obj_property name="ObjectShortName">data_im_d[15:0]</obj_property>
+         <obj_property name="Radix">SIGNEDDECRADIX</obj_property>
       </wvobject>
       <wvobject db_ref_id="1" type="array" fp_name="/KernelIntegrator_tb/uut/prod_re">
          <obj_property name="ElementShortName">prod_re[31:0]</obj_property>
@@ -144,18 +150,22 @@
       <wvobject db_ref_id="1" type="array" fp_name="/KernelIntegrator_tb/uut/s_data_re">
          <obj_property name="ElementShortName">s_data_re[15:0]</obj_property>
          <obj_property name="ObjectShortName">s_data_re[15:0]</obj_property>
+         <obj_property name="Radix">SIGNEDDECRADIX</obj_property>
       </wvobject>
       <wvobject db_ref_id="1" type="array" fp_name="/KernelIntegrator_tb/uut/s_data_im">
          <obj_property name="ElementShortName">s_data_im[15:0]</obj_property>
          <obj_property name="ObjectShortName">s_data_im[15:0]</obj_property>
+         <obj_property name="Radix">SIGNEDDECRADIX</obj_property>
       </wvobject>
       <wvobject db_ref_id="1" type="array" fp_name="/KernelIntegrator_tb/uut/s_kernel_re">
          <obj_property name="ElementShortName">s_kernel_re[15:0]</obj_property>
          <obj_property name="ObjectShortName">s_kernel_re[15:0]</obj_property>
+         <obj_property name="Radix">SIGNEDDECRADIX</obj_property>
       </wvobject>
       <wvobject db_ref_id="1" type="array" fp_name="/KernelIntegrator_tb/uut/s_kernel_im">
          <obj_property name="ElementShortName">s_kernel_im[15:0]</obj_property>
          <obj_property name="ObjectShortName">s_kernel_im[15:0]</obj_property>
+         <obj_property name="Radix">SIGNEDDECRADIX</obj_property>
       </wvobject>
       <wvobject db_ref_id="1" type="logic" fp_name="/KernelIntegrator_tb/uut/mult_last">
          <obj_property name="ElementShortName">mult_last</obj_property>
@@ -164,14 +174,20 @@
       <wvobject db_ref_id="1" type="array" fp_name="/KernelIntegrator_tb/uut/accum_re">
          <obj_property name="ElementShortName">accum_re[31:0]</obj_property>
          <obj_property name="ObjectShortName">accum_re[31:0]</obj_property>
+         <obj_property name="Radix">SIGNEDDECRADIX</obj_property>
       </wvobject>
       <wvobject db_ref_id="1" type="array" fp_name="/KernelIntegrator_tb/uut/accum_im">
          <obj_property name="ElementShortName">accum_im[31:0]</obj_property>
          <obj_property name="ObjectShortName">accum_im[31:0]</obj_property>
+         <obj_property name="Radix">SIGNEDDECRADIX</obj_property>
       </wvobject>
       <wvobject db_ref_id="1" type="logic" fp_name="/KernelIntegrator_tb/uut/accum_last">
          <obj_property name="ElementShortName">accum_last</obj_property>
          <obj_property name="ObjectShortName">accum_last</obj_property>
+      </wvobject>
+      <wvobject db_ref_id="1" type="logic" fp_name="/KernelIntegrator_tb/uut/accum_last_d">
+         <obj_property name="ElementShortName">accum_last_d</obj_property>
+         <obj_property name="ObjectShortName">accum_last_d</obj_property>
       </wvobject>
    </wvobject>
 </wave_config>
