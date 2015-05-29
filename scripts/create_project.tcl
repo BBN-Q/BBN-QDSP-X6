@@ -28,7 +28,7 @@ proc create_project {} {
 	puts "\nX6 create_project.tcl: Building $MY_PROJECT...\n"
 
 	puts "Moving to $PROJECTS_DIR..."
-	cd $PROJECTS_DIR 
+	cd $PROJECTS_DIR
 
 	puts "Making directory for project..."
 	cd $PROJECTS_DIR
@@ -48,11 +48,11 @@ proc create_project {} {
 	puts "X6 create_project.tcl: project creation complete"
 }
 
-# 
+#
 # set_project_props
-# 
-# This procedure sets non-default project properties 
-# 
+#
+# This procedure sets non-default project properties
+#
 proc set_project_props {} {
 
 	global DEV
@@ -91,7 +91,7 @@ proc set_project_props {} {
 	project set "Equivalent Register Removal" "false" -process "Synthesize - XST"
 	project set "Max Fanout" "10000" -process "Synthesize - XST"
 	project set "Cores Search Directories" $CORE_DIRS
-	
+
 	#Translate properties
 	project set "Macro Search Path" $CORE_DIRS -process "Translate"
 
@@ -178,17 +178,17 @@ proc add_source_files {} {
 	xfile add $II_LIB_COMMON/ii_trig_alert.vhd
 
 	#BBN VHDL
-	xfile add $REPO_ROOT/ii_afe_intf_top.vhd
-	xfile add $REPO_ROOT/ii_afe_intf_regs.vhd
+	xfile add $REPO_ROOT/ii_mods/ii_afe_intf_top.vhd
+	xfile add $REPO_ROOT/ii_mods/ii_afe_intf_regs.vhd
 
-	xfile add $REPO_ROOT/ii_dac5682z_intf_top.vhd
-	xfile add $REPO_ROOT/ii_dac5682z_intf.vhd
+	xfile add $REPO_ROOT/ii_mods/ii_dac5682z_intf_top.vhd
+	xfile add $REPO_ROOT/ii_mods/ii_dac5682z_intf.vhd
 	xfile add $X6_1000_LOGIC/src/ii_dac5682z_spi.vhd
 	xfile add $REPO_ROOT/dac_offgain.vhd
 	xfile add $X6_1000_LOGIC/src/ii_dac_test_gen.vhd
 
-	xfile add $REPO_ROOT/ii_ads5400_intf_top.vhd
-	xfile add $REPO_ROOT/ii_ads5400_intf.vhd
+	xfile add $REPO_ROOT/ii_mods/ii_ads5400_intf_top.vhd
+	xfile add $REPO_ROOT/ii_mods/ii_ads5400_intf.vhd
 	xfile add $X6_1000_LOGIC/src/ii_sample_sort.vhd
 
 	xfile add $REPO_ROOT/PulseGenerator.vhd
@@ -202,7 +202,7 @@ proc add_source_files {} {
 	xfile add $REPO_ROOT/ii_dsp_pkg.vhd
 
 	xfile add $REPO_ROOT/Synchronizer.vhd
-	
+
 	xfile add $REPO_ROOT/x6_1000m_top.vhd
 	xfile add $REPO_ROOT/x6_1000m_pkg.vhd
 
@@ -251,7 +251,7 @@ proc regenerate_ip {} {
 }
 
 proc add_constraints {} {
-	
+
 	global II_X6_DIR
 	global PCIE_LANES
 	global ARCH
