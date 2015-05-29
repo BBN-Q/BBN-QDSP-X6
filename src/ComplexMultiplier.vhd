@@ -11,7 +11,8 @@ entity ComplexMultiplier is
   generic (
   A_WIDTH : natural := 16;
   B_WIDTH : natural := 16;
-  PROD_WIDTH : natural := 16
+  PROD_WIDTH : natural := 16;
+  BIT_SHIFT : natural := 0
   );
   port (
   clk : in std_logic;
@@ -37,11 +38,15 @@ end entity;
 architecture arch of ComplexMultiplier is
 
 signal a_reg_re, a_reg_im : signed(A_WIDTH-1 downto 0);
-signal b_reg_re, b_reg_im : signed(A_WIDTH-1 downto 0);
+signal b_reg_re, b_reg_im : signed(B_WIDTH-1 downto 0);
 
 constant SUM_WIDTH : natural := A_WIDTH+B_WIDTH;
 signal prod1, prod2, prod3, prod4 : signed(SUM_WIDTH-1 downto 0);
 signal sum_re, sum_im : signed(SUM_WIDTH downto 0);
+
+--How to slice the output sum
+constant SLICE_HIGH : natural := SUM_WIDTH - BIT_SHIFT;
+constant SLICE_LOW : natural := SLICE_HIGH - PROD_WIDTH + 1;
 
 begin
 
@@ -81,8 +86,8 @@ begin
         sum_im <= resize(prod2, SUM_WIDTH+1) + resize(prod3, SUM_WIDTH+1);
 
         --Slice output to truncate
-        prod_data_re <= std_logic_vector( sum_re(sum_re'high downto sum_re'high-PROD_WIDTH+1) );
-        prod_data_im <= std_logic_vector( sum_im(sum_im'high downto sum_im'high-PROD_WIDTH+1) );
+        prod_data_re <= std_logic_vector( sum_re(SLICE_HIGH downto SLICE_LOW) );
+        prod_data_im <= std_logic_vector( sum_im(SLICE_HIGH downto SLICE_LOW) );
 
   		end if;
   	end if;
