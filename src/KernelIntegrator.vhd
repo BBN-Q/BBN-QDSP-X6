@@ -7,7 +7,7 @@ library ieee;
 use ieee.std_logic_1164.all;
 use ieee.numeric_std.all;
 
-use work.bbn_qdsp_pkg.KERNEL_ADDR_WIDTH;
+use work.BBN_QDSP_pkg.KERNEL_ADDR_WIDTH;
 
 entity KernelIntegrator is
   port (
@@ -123,30 +123,21 @@ begin
 
   --Delay lines to align input data and kernel
   --It takes two clock cycles for data to come out of the kernel BRAM
-  delaylines : process( clk )
-  type data_delayline_t is array(0 downto 0) of std_logic_vector(15 downto 0);
-  variable data_re_delayline : data_delayline_t;
-  variable data_im_delayline : data_delayline_t;
-  variable last_delayline : std_logic_vector(0 downto 0);
-  variable vld_delayline : std_logic_vector(0 downto 0);
-  begin
-  	if rising_edge(clk) then
-  		if rst = '1' then
-  			data_re_delayline := (others => (others => '0'));
-  			data_im_delayline := (others => (others => '0'));
-        last_delayline := (others => '0');
-  		else
-  			data_re_d <= data_re_delayline(data_re_delayline'high);
-  			data_re_delayline := data_re_delayline(data_re_delayline'high-1 downto 0) & data_re;
-  			data_im_d <= data_im_delayline(data_im_delayline'high);
-  			data_im_delayline := data_im_delayline(data_im_delayline'high-1 downto 0) & data_im;
-        kernel_last_d <= last_delayline(last_delayline'high);
-        last_delayline := last_delayline(last_delayline'high-1 downto 0) & kernel_last;
-        data_vld_d <= vld_delayline(vld_delayline'high);
-        vld_delayline := vld_delayline(vld_delayline'high-1 downto 0) & data_vld;
-  		end if ;
-  	end if ;
-  end process ; -- delayLines
+  delayLine_data_vld : entity work.DelayLine
+  generic map(DELAY_TAPS => 2)
+  port map(clk => clk, rst => rst, data_in(0) => data_vld, data_out(0) => data_vld_d);
+
+  delayLine_kernel_last : entity work.DelayLine
+  generic map(DELAY_TAPS => 2)
+  port map(clk => clk, rst => rst, data_in(0) => kernel_last, data_out(0) => kernel_last_d);
+
+  delayLine_data_re : entity work.DelayLine
+  generic map(REG_WIDTH => 16, DELAY_TAPS => 2)
+  port map(clk => clk, rst => rst, data_in => data_re, data_out => data_re_d);
+
+  delayLine_data_im : entity work.DelayLine
+  generic map(REG_WIDTH => 16, DELAY_TAPS => 2)
+  port map(clk => clk, rst => rst, data_in => data_im, data_out => data_im_d);
 
   --Complex multiplier and pipelining
   kernel_re <= kernel_data(31 downto 16);

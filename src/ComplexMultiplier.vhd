@@ -93,23 +93,17 @@ begin
   	end if;
   end process; -- main
 
-  pipelineDelay : process(clk)
-  variable delayLineVld : std_logic_vector(3 downto 0);
-  variable delayLineLast : std_logic_vector(3 downto 0);
-  begin
-    if rising_edge(clk) then
-      if rst = '1' then
-        delayLineVld := (others => '0');
-        delayLineLast := (others => '0');
-      else
-        --Both inputs have to be valid
-        delayLineVld := delayLineVld(delayLineVld'high-1 downto 0) & (a_vld and b_vld);
-        --Either last
-        delayLineLast := delayLineLast(delayLineLast'high-1 downto 0) & (a_last or b_last);
-      end if;
-      prod_vld <= delayLineVld(delayLineVld'high);
-      prod_last <= delayLineLast(delayLineLast'high);
-    end if;
-  end process;
+  --Delay the valid and last for the pipelining through the multiplier
+  --Currently this is 4 clocks: input register; products; additions; output register
+
+  --Both inputs have to be valid
+  delayLine_vld : entity work.DelayLine
+  generic map(DELAY_TAPS => 4)
+  port map(clk => clk, rst => rst, data_in(0) => (a_vld and b_vld), data_out(0) => prod_vld);
+
+  --Either last -- unaligned lasts is not defined behaviour
+  delayLine_last : entity work.DelayLine
+  generic map(DELAY_TAPS => 4)
+  port map(clk => clk, rst => rst, data_in(0) => (a_last or b_last), data_out(0) => prod_last);
 
 end architecture;
