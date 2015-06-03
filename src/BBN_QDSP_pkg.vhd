@@ -6,12 +6,12 @@ library ieee;
 use ieee.std_logic_1164.all;
 use ieee.numeric_std.all;
 
-package bbn_qdsp_pkg is
+package BBN_QDSP_pkg is
 
 --------------------------------------------------------------------------------
 -- Constants declarations
 --------------------------------------------------------------------------------
-  constant num_demod_ch      : natural := 4;   -- number of matched channels
+  constant NUM_DEMOD_CH      : natural := 4;   -- number of demodulated channels 
   constant num_vita_streams  : natural := num_demod_ch + 2; -- results + demod + the raw data stream
   constant adc_data_width  : natural := 12;  -- number of bits in ADC data
 
@@ -29,4 +29,4 @@ package bbn_qdsp_pkg is
 
   type kernel_addr_array is array (natural range <>) of std_logic_vector(KERNEL_ADDR_WIDTH-1 downto 0) ;
 
-end bbn_qdsp_pkg;
+end BBN_QDSP_pkg;
