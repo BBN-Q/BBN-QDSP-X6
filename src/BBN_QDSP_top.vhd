@@ -76,7 +76,7 @@ signal kernel_addr, kernel_wr_addr  : kernel_addr_array(num_demod_ch-1 downto 0)
 signal kernel_data, kernel_wr_data  : width_32_array(num_demod_ch-1 downto 0) := (others => (others => '0'));
 signal kernel_len                   : kernel_addr_array(num_demod_ch-1 downto 0) := (others => (others => '0'));
 signal threshold        : width_32_array(num_demod_ch-1 downto 0) := (others => (others => '0'));
-signal kernel_we        : std_logic_vector(num_demod_ch-1 downto 0) := (others => (others => '0'));
+signal kernel_we        : std_logic_vector(num_demod_ch-1 downto 0) := (others => '0');
 
 
 begin

@@ -41,6 +41,7 @@ architecture bench of BBN_QDSP_tb is
 begin
 
   wb_clk_i <= sys_clk;
+  wb_rst_i <= rst;
 
   uut: entity work.BBN_QDSP_top
   generic map ( WB_OFFSET => x"2000" )
@@ -78,9 +79,10 @@ begin
     wb_we_i <= '1';
     wb_stb_i <= '1';
 
-    wait until wb_ack_o = '1';
+    wait until rising_edge(wb_clk_i) and wb_ack_o = '1';
     wb_stb_i <= '0';
-    wait until rising_edge(sys_clk);
+    wb_we_i <= '0';
+    wait until rising_edge(wb_clk_i);
 
   end procedure wb_write;
 
