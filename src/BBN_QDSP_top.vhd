@@ -58,9 +58,13 @@ end entity;
 
 architecture arch of BBN_QDSP_top is
 
-signal adc_data_vld : std_logic := '0';
-signal adc_decimated_data : std_logic_vector(13 downto 0) := (others => '0');
-signal adc_decimated_vld : std_logic := '0';
+signal adc_data_vld, adc_data_last : std_logic := '0';
+signal decimated_data : std_logic_vector(13 downto 0) := (others => '0');
+signal decimated_vld, decimated_last : std_logic := '0';
+
+signal decimated_sysclk_data : std_logic_vector(13 downto 0) := (others => '0');
+signal decimated_sysclk_vld, decimated_sysclk_last, decimated_sysclk_rdy : std_logic := '0';
+
 
 signal rst_adc_clk : std_logic := '1';
 
@@ -78,6 +82,8 @@ signal kernel_len                   : kernel_addr_array(num_demod_ch-1 downto 0)
 signal threshold        : width_32_array(num_demod_ch-1 downto 0) := (others => (others => '0'));
 signal kernel_we        : std_logic_vector(num_demod_ch-1 downto 0) := (others => '0');
 
+signal vita_raw_data : std_logic_vector(127 downto 0) := (others => '0');
+signal vita_raw_vld, vita_raw_last : std_logic := '0';
 
 begin
 
@@ -125,6 +131,7 @@ begin
       if rst_adc_clk = '1' then
         state := IDLE;
         adc_data_vld <= '0';
+        adc_data_last <= '0';
       else
         case( state ) is
           when IDLE =>
@@ -132,6 +139,7 @@ begin
             -- Drop bottom two bits because we have 4 sample wide bus
             counter := resize(unsigned(record_length(15 downto 2))-1, counter'length);
             adc_data_vld <= '0';
+            adc_data_last <= '0';
             if trigger = '1' then
               state := RECORDING;
             end if;
@@ -142,6 +150,7 @@ begin
             --catch roll-over
             if counter(counter'high) = '1' then
               state := IDLE;
+              adc_data_last <= '1';
             end if ;
 
             when others =>
@@ -158,12 +167,55 @@ begin
     clk => adc_data_clk,
     rst => rst,
 
-    data_in => adc_data,
-    data_in_vld => '0', --TODO
+    in_data => adc_data,
+    in_vld => adc_data_vld,
+    in_last => adc_data_last,
 
-    data_out => adc_decimated_data,
-    data_out_vld => adc_decimated_vld);
+    out_data => decimated_data,
+    out_vld => decimated_vld,
+    out_last => decimated_last);
+
+  --Get the data onto the system clock for raw stream and further demodulation
+  adc2sys_CDC : axis_async_fifo
+  generic map (
+    ADDR_WIDTH => 12,
+    DATA_WIDTH => 14
+  )
+  port map (
+    input_clk => adc_data_clk,
+    input_rst => rst_adc_clk,
+    input_axis_tdata => decimated_data,
+    input_axis_tvalid => decimated_vld,
+    input_axis_tready => open,
+    input_axis_tlast => decimated_last,
+    input_axis_tuser => '0',
+
+    output_clk => sys_clk,
+    output_rst => rst,
+    output_axis_tdata => decimated_sysclk_data,
+    output_axis_tvalid => decimated_sysclk_vld,
+    output_axis_tready => decimated_sysclk_rdy,
+    output_axis_tlast => decimated_sysclk_last,
+    output_axis_tuser => open
+  );
 
   --Package the raw data into a vita frame
+  raw_stream_framer : entity work.VitaFramer
+  generic map (INPUT_BYTE_WIDTH => 2)
+  port map (
+    clk => sys_clk,
+    rst => rst,
+
+    frame_size => frame_size(0),
+
+    in_data => std_logic_vector(resize(signed(decimated_sysclk_data),16)),
+    in_vld  => decimated_sysclk_vld,
+    in_last => decimated_sysclk_last,
+    in_rdy  => decimated_sysclk_rdy,
+
+    out_data => vita_raw_data,
+    out_vld  => vita_raw_vld,
+    out_last => vita_raw_last
+  );
 
 end architecture;
