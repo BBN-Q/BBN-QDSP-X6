@@ -14,11 +14,13 @@ entity ADCDecimator is
   clk : in std_logic;
   rst : in std_logic;
 
-  data_in : in std_logic_vector(4*ADC_DATA_WIDTH-1 downto 0);
-  data_in_vld : in std_logic;
+  in_data : in std_logic_vector(4*ADC_DATA_WIDTH-1 downto 0);
+  in_vld : in std_logic;
+  in_last : in std_logic;
 
-  data_out : out std_logic_vector(ADC_DATA_WIDTH+1 downto 0);
-  data_out_vld : out std_logic
+  out_data : out std_logic_vector(ADC_DATA_WIDTH+1 downto 0);
+  out_vld : out std_logic;
+  out_last : out std_logic
   );
 end entity;
 
@@ -30,31 +32,28 @@ signal tmp_sum1, tmp_sum2 : signed(ADC_DATA_WIDTH downto 0) := (others => '0');
 begin
 
 --Break-out the 4 samples
-samp0 <= signed(data_in(ADC_DATA_WIDTH-1 downto 0));
-samp1 <= signed(data_in(2*ADC_DATA_WIDTH-1 downto ADC_DATA_WIDTH));
-samp2 <= signed(data_in(3*ADC_DATA_WIDTH-1 downto 2*ADC_DATA_WIDTH));
-samp3 <= signed(data_in(4*ADC_DATA_WIDTH-1 downto 3*ADC_DATA_WIDTH));
+samp0 <= signed(in_data(ADC_DATA_WIDTH-1 downto 0));
+samp1 <= signed(in_data(2*ADC_DATA_WIDTH-1 downto ADC_DATA_WIDTH));
+samp2 <= signed(in_data(3*ADC_DATA_WIDTH-1 downto 2*ADC_DATA_WIDTH));
+samp3 <= signed(in_data(4*ADC_DATA_WIDTH-1 downto 3*ADC_DATA_WIDTH));
 
 main : process(clk)
 begin
   if rising_edge(clk) then
     tmp_sum1 <= resize(samp0, ADC_DATA_WIDTH+1) + resize(samp1, ADC_DATA_WIDTH+1);
     tmp_sum2 <= resize(samp2, ADC_DATA_WIDTH+1) + resize(samp3, ADC_DATA_WIDTH+1);
-    data_out <= std_logic_vector(resize(tmp_sum1, ADC_DATA_WIDTH+2) + resize(tmp_sum2, ADC_DATA_WIDTH+2));
+    out_data <= std_logic_vector(resize(tmp_sum1, ADC_DATA_WIDTH+2) + resize(tmp_sum2, ADC_DATA_WIDTH+2));
   end if;
 end process;
 
-vldDelay : process(clk)
-variable delayLine : std_logic_vector(1 downto 0);
-begin
-  if rising_edge(clk) then
-    if rst = '1' then
-      delayLine := (others => '0');
-    else
-      delayLine := delayLine(delayLine'high-1 downto 0) & data_in_vld;
-    end if;
-    data_out_vld <= delayLine(delayLine'high);
-  end if;
-end process;
+--Pipeline delays
+vldDelay : entity work.DelayLine
+generic map(DELAY_TAPS => 2)
+port map(clk => clk, rst => rst, data_in(0) => in_vld, data_out(0) => out_vld);
+
+lastDelay : entity work.DelayLine
+generic map(DELAY_TAPS => 2)
+port map(clk => clk, rst => rst, data_in(0) => in_last, data_out(0) => out_last);
+
 
 end architecture;

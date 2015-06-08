@@ -9,7 +9,7 @@
          </top_modules>
       </db_ref>
    </db_ref_list>
-   <WVObjectSize size="14" />
+   <WVObjectSize size="10" />
    <wvobject db_ref_id="1" type="logic" fp_name="/ADCDecimator_tb/clk">
       <obj_property name="ElementShortName">clk</obj_property>
       <obj_property name="ObjectShortName">clk</obj_property>
@@ -18,61 +18,68 @@
       <obj_property name="ElementShortName">rst</obj_property>
       <obj_property name="ObjectShortName">rst</obj_property>
    </wvobject>
-   <wvobject db_ref_id="1" type="logic" fp_name="/ADCDecimator_tb/data_in_vld">
-      <obj_property name="ElementShortName">data_in_vld</obj_property>
-      <obj_property name="ObjectShortName">data_in_vld</obj_property>
-   </wvobject>
-   <wvobject db_ref_id="1" type="array" fp_name="/ADCDecimator_tb/data_in">
-      <obj_property name="ElementShortName">data_in[47:0]</obj_property>
-      <obj_property name="ObjectShortName">data_in[47:0]</obj_property>
-      <obj_property name="Radix">HEXRADIX</obj_property>
-   </wvobject>
-   <wvobject db_ref_id="1" type="logic" fp_name="/ADCDecimator_tb/data_out_vld">
-      <obj_property name="ElementShortName">data_out_vld</obj_property>
-      <obj_property name="ObjectShortName">data_out_vld</obj_property>
-   </wvobject>
-   <wvobject db_ref_id="1" type="array" fp_name="/ADCDecimator_tb/data_out">
-      <obj_property name="ElementShortName">data_out[13:0]</obj_property>
-      <obj_property name="ObjectShortName">data_out[13:0]</obj_property>
-      <obj_property name="Radix">SIGNEDDECRADIX</obj_property>
-   </wvobject>
    <wvobject db_ref_id="1" type="array" fp_name="/ADCDecimator_tb/data_check">
       <obj_property name="ElementShortName">data_check[13:0]</obj_property>
       <obj_property name="ObjectShortName">data_check[13:0]</obj_property>
+      <obj_property name="Radix">SIGNEDDECRADIX</obj_property>
+   </wvobject>
+   <wvobject db_ref_id="1" type="array" fp_name="/ADCDecimator_tb/out_data">
+      <obj_property name="ElementShortName">out_data[13:0]</obj_property>
+      <obj_property name="ObjectShortName">out_data[13:0]</obj_property>
       <obj_property name="Radix">SIGNEDDECRADIX</obj_property>
    </wvobject>
    <wvobject db_ref_id="1" type="other" fp_name="/ADCDecimator_tb/finished">
       <obj_property name="ElementShortName">finished</obj_property>
       <obj_property name="ObjectShortName">finished</obj_property>
    </wvobject>
-   <wvobject db_ref_id="1" type="array" fp_name="/ADCDecimator_tb/uut/samp0">
-      <obj_property name="ElementShortName">samp0[11:0]</obj_property>
-      <obj_property name="ObjectShortName">samp0[11:0]</obj_property>
-      <obj_property name="Radix">SIGNEDDECRADIX</obj_property>
+   <wvobject db_ref_id="1" type="logic" fp_name="/ADCDecimator_tb/in_vld">
+      <obj_property name="ElementShortName">in_vld</obj_property>
+      <obj_property name="ObjectShortName">in_vld</obj_property>
    </wvobject>
-   <wvobject db_ref_id="1" type="array" fp_name="/ADCDecimator_tb/uut/samp1">
-      <obj_property name="ElementShortName">samp1[11:0]</obj_property>
-      <obj_property name="ObjectShortName">samp1[11:0]</obj_property>
-      <obj_property name="Radix">SIGNEDDECRADIX</obj_property>
+   <wvobject db_ref_id="1" type="logic" fp_name="/ADCDecimator_tb/in_last">
+      <obj_property name="ElementShortName">in_last</obj_property>
+      <obj_property name="ObjectShortName">in_last</obj_property>
    </wvobject>
-   <wvobject db_ref_id="1" type="array" fp_name="/ADCDecimator_tb/uut/samp2">
-      <obj_property name="ElementShortName">samp2[11:0]</obj_property>
-      <obj_property name="ObjectShortName">samp2[11:0]</obj_property>
-      <obj_property name="Radix">SIGNEDDECRADIX</obj_property>
+   <wvobject db_ref_id="1" type="logic" fp_name="/ADCDecimator_tb/out_vld">
+      <obj_property name="ElementShortName">out_vld</obj_property>
+      <obj_property name="ObjectShortName">out_vld</obj_property>
    </wvobject>
-   <wvobject db_ref_id="1" type="array" fp_name="/ADCDecimator_tb/uut/samp3">
-      <obj_property name="ElementShortName">samp3[11:0]</obj_property>
-      <obj_property name="ObjectShortName">samp3[11:0]</obj_property>
-      <obj_property name="Radix">SIGNEDDECRADIX</obj_property>
+   <wvobject db_ref_id="1" type="logic" fp_name="/ADCDecimator_tb/out_last">
+      <obj_property name="ElementShortName">out_last</obj_property>
+      <obj_property name="ObjectShortName">out_last</obj_property>
    </wvobject>
-   <wvobject db_ref_id="1" type="array" fp_name="/ADCDecimator_tb/uut/tmp_sum1">
-      <obj_property name="ElementShortName">tmp_sum1[12:0]</obj_property>
-      <obj_property name="ObjectShortName">tmp_sum1[12:0]</obj_property>
-      <obj_property name="Radix">SIGNEDDECRADIX</obj_property>
-   </wvobject>
-   <wvobject db_ref_id="1" type="array" fp_name="/ADCDecimator_tb/uut/tmp_sum2">
-      <obj_property name="ElementShortName">tmp_sum2[12:0]</obj_property>
-      <obj_property name="ObjectShortName">tmp_sum2[12:0]</obj_property>
-      <obj_property name="Radix">SIGNEDDECRADIX</obj_property>
+   <wvobject type="group" fp_name="group493">
+      <obj_property name="label">Decimator Interals</obj_property>
+      <obj_property name="DisplayName">label</obj_property>
+      <wvobject db_ref_id="1" type="array" fp_name="/ADCDecimator_tb/uut/samp0">
+         <obj_property name="ElementShortName">samp0[11:0]</obj_property>
+         <obj_property name="ObjectShortName">samp0[11:0]</obj_property>
+         <obj_property name="Radix">SIGNEDDECRADIX</obj_property>
+      </wvobject>
+      <wvobject db_ref_id="1" type="array" fp_name="/ADCDecimator_tb/uut/samp1">
+         <obj_property name="ElementShortName">samp1[11:0]</obj_property>
+         <obj_property name="ObjectShortName">samp1[11:0]</obj_property>
+         <obj_property name="Radix">SIGNEDDECRADIX</obj_property>
+      </wvobject>
+      <wvobject db_ref_id="1" type="array" fp_name="/ADCDecimator_tb/uut/samp2">
+         <obj_property name="ElementShortName">samp2[11:0]</obj_property>
+         <obj_property name="ObjectShortName">samp2[11:0]</obj_property>
+         <obj_property name="Radix">SIGNEDDECRADIX</obj_property>
+      </wvobject>
+      <wvobject db_ref_id="1" type="array" fp_name="/ADCDecimator_tb/uut/samp3">
+         <obj_property name="ElementShortName">samp3[11:0]</obj_property>
+         <obj_property name="ObjectShortName">samp3[11:0]</obj_property>
+         <obj_property name="Radix">SIGNEDDECRADIX</obj_property>
+      </wvobject>
+      <wvobject db_ref_id="1" type="array" fp_name="/ADCDecimator_tb/uut/tmp_sum1">
+         <obj_property name="ElementShortName">tmp_sum1[12:0]</obj_property>
+         <obj_property name="ObjectShortName">tmp_sum1[12:0]</obj_property>
+         <obj_property name="Radix">SIGNEDDECRADIX</obj_property>
+      </wvobject>
+      <wvobject db_ref_id="1" type="array" fp_name="/ADCDecimator_tb/uut/tmp_sum2">
+         <obj_property name="ElementShortName">tmp_sum2[12:0]</obj_property>
+         <obj_property name="ObjectShortName">tmp_sum2[12:0]</obj_property>
+         <obj_property name="Radix">SIGNEDDECRADIX</obj_property>
+      </wvobject>
    </wvobject>
 </wave_config>
