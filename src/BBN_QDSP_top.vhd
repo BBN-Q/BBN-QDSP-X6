@@ -82,7 +82,7 @@ signal kernel_len                   : kernel_addr_array(num_demod_ch-1 downto 0)
 signal threshold        : width_32_array(num_demod_ch-1 downto 0) := (others => (others => '0'));
 signal kernel_we        : std_logic_vector(num_demod_ch-1 downto 0) := (others => '0');
 
-signal vita_raw_data : std_logic_vector(127 downto 0) := (others => '0');
+signal vita_raw_data : std_logic_vector(31 downto 0) := (others => '0');
 signal vita_raw_vld, vita_raw_last : std_logic := '0';
 
 begin
@@ -207,6 +207,7 @@ begin
     rst => rst,
 
     frame_size => frame_size(0),
+    stream_id => x"baad",
 
     in_data => std_logic_vector(resize(signed(decimated_sysclk_data),16)),
     in_vld  => decimated_sysclk_vld,
@@ -215,6 +216,7 @@ begin
 
     out_data => vita_raw_data,
     out_vld  => vita_raw_vld,
+    out_rdy => '1',
     out_last => vita_raw_last
   );
 

@@ -187,9 +187,9 @@ begin
 
   				when PLAYING =>
 
-            if ct < 256 then
-              adc_data <= (others => '0');
-            elsif ct < 768 then
+            -- if ct < 256 then
+            --   adc_data <= (others => '0');
+            if ct < 1024 then
               for ct2 in 0 to 3 loop
                 phase := 2.0*MATH_PI * 10.0e6 * (real(ct+ct2) * real( ADC_CLK_PERIOD / 4 / 1ns) * 1.0e-9);
                 adc_data(12*(4-ct2)-1 downto 12*(3-ct2)) <= std_logic_vector(to_signed(integer(DATA_SCALE * cos(phase)), 12));

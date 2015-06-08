@@ -29,7 +29,7 @@ package BBN_QDSP_pkg is
 
   type kernel_addr_array is array (natural range <>) of std_logic_vector(KERNEL_ADDR_WIDTH-1 downto 0) ;
 
-  component axis_async_fifo is
+  component axis_async_fifo
     generic (
       ADDR_WIDTH : natural := 12;
       DATA_WIDTH : natural := 8
@@ -51,7 +51,6 @@ package BBN_QDSP_pkg is
       output_axis_tlast  : out std_logic;
       output_axis_tuser  : out std_logic
     );
-
   end component;
 
 end BBN_QDSP_pkg;
