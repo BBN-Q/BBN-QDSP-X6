@@ -1,0 +1,140 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<wave_config>
+   <wave_state>
+   </wave_state>
+   <db_ref_list>
+      <db_ref path="VitaFramer_tb_behav.wdb" id="1">
+         <top_modules>
+            <top_module name="VitaFramer_tb" />
+            <top_module name="glbl" />
+            <top_module name="vitaframer_pkg" />
+         </top_modules>
+      </db_ref>
+   </db_ref_list>
+   <WVObjectSize size="30" />
+   <wvobject db_ref_id="1" type="other" fp_name="/VitaFramer_tb/CLK_PERIOD">
+      <obj_property name="ElementShortName">CLK_PERIOD</obj_property>
+      <obj_property name="ObjectShortName">CLK_PERIOD</obj_property>
+   </wvobject>
+   <wvobject db_ref_id="1" type="other" fp_name="/VitaFramer_tb/INPUT_BYTE_WIDTH">
+      <obj_property name="ElementShortName">INPUT_BYTE_WIDTH</obj_property>
+      <obj_property name="ObjectShortName">INPUT_BYTE_WIDTH</obj_property>
+   </wvobject>
+   <wvobject db_ref_id="1" type="logic" fp_name="/VitaFramer_tb/clk">
+      <obj_property name="ElementShortName">clk</obj_property>
+      <obj_property name="ObjectShortName">clk</obj_property>
+   </wvobject>
+   <wvobject db_ref_id="1" type="logic" fp_name="/VitaFramer_tb/rst">
+      <obj_property name="ElementShortName">rst</obj_property>
+      <obj_property name="ObjectShortName">rst</obj_property>
+   </wvobject>
+   <wvobject db_ref_id="1" type="other" fp_name="/VitaFramer_tb/testBench_state">
+      <obj_property name="ElementShortName">testBench_state</obj_property>
+      <obj_property name="ObjectShortName">testBench_state</obj_property>
+   </wvobject>
+   <wvobject db_ref_id="1" type="array" fp_name="/VitaFramer_tb/frame_size">
+      <obj_property name="ElementShortName">frame_size[15:0]</obj_property>
+      <obj_property name="ObjectShortName">frame_size[15:0]</obj_property>
+      <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
+   </wvobject>
+   <wvobject db_ref_id="1" type="array" fp_name="/VitaFramer_tb/stream_id">
+      <obj_property name="ElementShortName">stream_id[15:0]</obj_property>
+      <obj_property name="ObjectShortName">stream_id[15:0]</obj_property>
+      <obj_property name="Radix">HEXRADIX</obj_property>
+   </wvobject>
+   <wvobject db_ref_id="1" type="array" fp_name="/VitaFramer_tb/in_data">
+      <obj_property name="ElementShortName">in_data[15:0]</obj_property>
+      <obj_property name="ObjectShortName">in_data[15:0]</obj_property>
+      <obj_property name="Radix">SIGNEDDECRADIX</obj_property>
+   </wvobject>
+   <wvobject db_ref_id="1" type="logic" fp_name="/VitaFramer_tb/in_last">
+      <obj_property name="ElementShortName">in_last</obj_property>
+      <obj_property name="ObjectShortName">in_last</obj_property>
+   </wvobject>
+   <wvobject db_ref_id="1" type="logic" fp_name="/VitaFramer_tb/in_rdy">
+      <obj_property name="ElementShortName">in_rdy</obj_property>
+      <obj_property name="ObjectShortName">in_rdy</obj_property>
+   </wvobject>
+   <wvobject db_ref_id="1" type="logic" fp_name="/VitaFramer_tb/in_vld">
+      <obj_property name="ElementShortName">in_vld</obj_property>
+      <obj_property name="ObjectShortName">in_vld</obj_property>
+   </wvobject>
+   <wvobject db_ref_id="1" type="array" fp_name="/VitaFramer_tb/out_data">
+      <obj_property name="ElementShortName">out_data[31:0]</obj_property>
+      <obj_property name="ObjectShortName">out_data[31:0]</obj_property>
+      <obj_property name="Radix">HEXRADIX</obj_property>
+   </wvobject>
+   <wvobject db_ref_id="1" type="logic" fp_name="/VitaFramer_tb/out_last">
+      <obj_property name="ElementShortName">out_last</obj_property>
+      <obj_property name="ObjectShortName">out_last</obj_property>
+   </wvobject>
+   <wvobject db_ref_id="1" type="logic" fp_name="/VitaFramer_tb/out_rdy">
+      <obj_property name="ElementShortName">out_rdy</obj_property>
+      <obj_property name="ObjectShortName">out_rdy</obj_property>
+   </wvobject>
+   <wvobject db_ref_id="1" type="logic" fp_name="/VitaFramer_tb/out_vld">
+      <obj_property name="ElementShortName">out_vld</obj_property>
+      <obj_property name="ObjectShortName">out_vld</obj_property>
+   </wvobject>
+   <wvobject db_ref_id="1" type="other" fp_name="/VitaFramer_tb/stop_the_clock">
+      <obj_property name="ElementShortName">stop_the_clock</obj_property>
+      <obj_property name="ObjectShortName">stop_the_clock</obj_property>
+   </wvobject>
+   <wvobject db_ref_id="1" type="array" fp_name="/VitaFramer_tb/uut/vita_header_array">
+      <obj_property name="ElementShortName">vita_header_array[0:6][31:0]</obj_property>
+      <obj_property name="ObjectShortName">vita_header_array[0:6][31:0]</obj_property>
+   </wvobject>
+   <wvobject db_ref_id="1" type="array" fp_name="/VitaFramer_tb/uut/pad_bytes">
+      <obj_property name="ElementShortName">pad_bytes[3:0]</obj_property>
+      <obj_property name="ObjectShortName">pad_bytes[3:0]</obj_property>
+   </wvobject>
+   <wvobject db_ref_id="1" type="array" fp_name="/VitaFramer_tb/uut/vita_tail">
+      <obj_property name="ElementShortName">vita_tail[31:0]</obj_property>
+      <obj_property name="ObjectShortName">vita_tail[31:0]</obj_property>
+   </wvobject>
+   <wvobject db_ref_id="1" type="array" fp_name="/VitaFramer_tb/uut/in_vww_data">
+      <obj_property name="ElementShortName">in_vww_data[31:0]</obj_property>
+      <obj_property name="ObjectShortName">in_vww_data[31:0]</obj_property>
+   </wvobject>
+   <wvobject db_ref_id="1" type="logic" fp_name="/VitaFramer_tb/uut/in_vww_vld">
+      <obj_property name="ElementShortName">in_vww_vld</obj_property>
+      <obj_property name="ObjectShortName">in_vww_vld</obj_property>
+   </wvobject>
+   <wvobject db_ref_id="1" type="logic" fp_name="/VitaFramer_tb/uut/in_vww_last">
+      <obj_property name="ElementShortName">in_vww_last</obj_property>
+      <obj_property name="ObjectShortName">in_vww_last</obj_property>
+   </wvobject>
+   <wvobject db_ref_id="1" type="logic" fp_name="/VitaFramer_tb/uut/in_vww_rdy">
+      <obj_property name="ElementShortName">in_vww_rdy</obj_property>
+      <obj_property name="ObjectShortName">in_vww_rdy</obj_property>
+   </wvobject>
+   <wvobject db_ref_id="1" type="array" fp_name="/VitaFramer_tb/uut/pkt_data">
+      <obj_property name="ElementShortName">pkt_data[31:0]</obj_property>
+      <obj_property name="ObjectShortName">pkt_data[31:0]</obj_property>
+      <obj_property name="Radix">HEXRADIX</obj_property>
+   </wvobject>
+   <wvobject db_ref_id="1" type="array" fp_name="/VitaFramer_tb/uut/meta_data">
+      <obj_property name="ElementShortName">meta_data[31:0]</obj_property>
+      <obj_property name="ObjectShortName">meta_data[31:0]</obj_property>
+   </wvobject>
+   <wvobject db_ref_id="1" type="logic" fp_name="/VitaFramer_tb/uut/pkt_vld">
+      <obj_property name="ElementShortName">pkt_vld</obj_property>
+      <obj_property name="ObjectShortName">pkt_vld</obj_property>
+   </wvobject>
+   <wvobject db_ref_id="1" type="logic" fp_name="/VitaFramer_tb/uut/pkt_last">
+      <obj_property name="ElementShortName">pkt_last</obj_property>
+      <obj_property name="ObjectShortName">pkt_last</obj_property>
+   </wvobject>
+   <wvobject db_ref_id="1" type="logic" fp_name="/VitaFramer_tb/uut/pkt_rdy">
+      <obj_property name="ElementShortName">pkt_rdy</obj_property>
+      <obj_property name="ObjectShortName">pkt_rdy</obj_property>
+   </wvobject>
+   <wvobject db_ref_id="1" type="logic" fp_name="/VitaFramer_tb/uut/meta_vld">
+      <obj_property name="ElementShortName">meta_vld</obj_property>
+      <obj_property name="ObjectShortName">meta_vld</obj_property>
+   </wvobject>
+   <wvobject db_ref_id="1" type="other" fp_name="/VitaFramer_tb/uut/state">
+      <obj_property name="ElementShortName">state</obj_property>
+      <obj_property name="ObjectShortName">state</obj_property>
+   </wvobject>
+</wave_config>

@@ -2,6 +2,7 @@
 -- Exhibits back presssure while applying header
 -- Currently works at VITA word width (4 bytes) with adapters as necessary
 -- This could be a performance bottleneck for continuous wide input streams
+-- However because of the 7 word VITA header it makes life much easier
 
 --
 -- Original author Colm Ryan
@@ -52,7 +53,7 @@ signal in_vww_vld, in_vww_last, in_vww_rdy : std_logic := '0';
 signal pkt_data, meta_data : std_logic_vector(31 downto 0) := (others => '0');
 signal pkt_vld, pkt_last, pkt_rdy, meta_vld : std_logic := '0';
 
-type STATE_t is (IDLE, WRITE_HEADER, RUN, WRITE_TAIL);
+type STATE_t is (IDLE, WRITE_HEADER, RUN, HOLDOFF, WRITE_TAIL);
 signal state : STATE_t;
 
 
@@ -128,12 +129,16 @@ begin
           meta_data <= vita_header_array(headerct);
           meta_vld <= '1';
           if headerct = 6 then
-            state <= RUN;
+            state <= HOLDOFF;
           end if;
           headerct := headerct + 1;
 
-        when RUN =>
+        --Hold off 1 clock to finish writing header before combination mux below kicks in
+        when HOLDOFF =>
           meta_vld <= '0';
+          state <= RUN;
+
+        when RUN =>
           if in_vww_last = '1' then
             state <= WRITE_TAIL;
           end if;
@@ -152,7 +157,7 @@ end process;
 --Mux the packet data between header/tail and data
 pkt_data <= in_vww_data when state = RUN else meta_data;
 pkt_vld <= in_vww_vld when state = RUN else meta_vld;
-in_vww_rdy <= '1' when state = RUN else '0';
+in_vww_rdy <= pkt_rdy when state = RUN else '0';
 
 --FIFO to absorb packet
 pktFIFO : axis_fifo
@@ -166,7 +171,7 @@ port map (
 
   input_axis_tdata => pkt_data,
   input_axis_tvalid => pkt_vld,
-  input_axis_tready => open,
+  input_axis_tready => pkt_rdy,
   input_axis_tlast => pkt_last,
   input_axis_tuser => '0',
 
