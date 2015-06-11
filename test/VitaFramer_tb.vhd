@@ -2,8 +2,6 @@ library IEEE;
 use IEEE.Std_logic_1164.all;
 use IEEE.Numeric_Std.all;
 
-use work.VitaFramer_pkg.all;
-
 entity VitaFramer_tb is
 end;
 
@@ -33,6 +31,29 @@ architecture bench of VitaFramer_tb is
   signal testBench_state : TestBenchState_t;
 
   shared variable ct : natural;
+
+  component axis_fifo
+    generic (
+      ADDR_WIDTH : natural := 12;
+      DATA_WIDTH : natural := 8
+    );
+    port (
+      clk         : in std_logic;
+      rst         : in std_logic;
+
+      input_axis_tdata  : in std_logic_vector(DATA_WIDTH-1 downto 0);
+      input_axis_tvalid : in std_logic;
+      input_axis_tready : out std_logic;
+      input_axis_tlast  : in std_logic;
+      input_axis_tuser  : in std_logic;
+
+      output_axis_tdata  : out std_logic_vector(DATA_WIDTH-1 downto 0);
+      output_axis_tvalid : out std_logic;
+      output_axis_tready : in std_logic;
+      output_axis_tlast  : out std_logic;
+      output_axis_tuser  : out std_logic
+    );
+  end component;
 
 begin
 

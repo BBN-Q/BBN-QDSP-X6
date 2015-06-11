@@ -33,9 +33,8 @@ package VitaFramer_pkg is
     );
   end component;
 
-  component axis_fifo
+  component axis_srl_register
     generic (
-      ADDR_WIDTH : natural := 12;
       DATA_WIDTH : natural := 8
     );
     port (
@@ -55,7 +54,5 @@ package VitaFramer_pkg is
       output_axis_tuser  : out std_logic
     );
   end component;
-
-
 
 end VitaFramer_pkg;

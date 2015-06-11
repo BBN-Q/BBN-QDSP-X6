@@ -159,11 +159,10 @@ pkt_data <= in_vww_data when state = RUN else meta_data;
 pkt_vld <= in_vww_vld when state = RUN else meta_vld;
 in_vww_rdy <= pkt_rdy when state = RUN else '0';
 
---FIFO to absorb packet
-pktFIFO : axis_fifo
+--Output register
+pktFIFO : axis_srl_register
 generic map (
-  DATA_WIDTH => 32,
-  ADDR_WIDTH => FIFO_ADDR_WIDTH
+  DATA_WIDTH => 32
 )
 port map (
   clk => clk,
@@ -181,6 +180,5 @@ port map (
   output_axis_tlast => out_last,
   output_axis_tuser => open
 );
-
 
 end architecture;
