@@ -22,8 +22,9 @@ entity VitaFramer is
   clk : in std_logic;
   rst : in std_logic;
 
-  frame_size : in std_logic_vector(15 downto 0);
   stream_id : in std_logic_vector(15 downto 0);
+  frame_size : in std_logic_vector(15 downto 0);
+  pad_bytes : in std_logic_vector(3 downto 0);
 
   in_data : in std_logic_vector(INPUT_BYTE_WIDTH*8 - 1 downto 0);
   in_vld : in std_logic;
@@ -42,7 +43,6 @@ architecture arch of VitaFramer is
 type VITA_HEADER_ARRAY_t is array(0 to 6) of std_logic_vector(31 downto 0);
 signal vita_header_array : VITA_HEADER_ARRAY_t;
 
-signal pad_bytes : std_logic_vector(3 downto 0) := (others => '0');
 signal vita_tail : std_logic_vector(31 downto 0) := (others => '0');
 
 --vww = Vita Word Wide
@@ -52,9 +52,8 @@ signal in_vww_vld, in_vww_last, in_vww_rdy : std_logic := '0';
 signal pkt_data, meta_data : std_logic_vector(31 downto 0) := (others => '0');
 signal pkt_vld, pkt_last, pkt_rdy, meta_vld : std_logic := '0';
 
-type STATE_t is (IDLE, WRITE_HEADER, RUN, HOLDOFF, WRITE_TAIL);
+type STATE_t is (IDLE, WRITE_HEADER, RUN, HOLDOFF, PAD_FRAME, WRITE_TAIL);
 signal state : STATE_t;
-
 
 begin
 
@@ -72,7 +71,6 @@ vita_header_array(4) <= (others => '0'); -- timestamp integer seconds TODO
 vita_header_array(5) <= (others => '0'); -- timestamp fraction seconds high TODO
 vita_header_array(6) <= (others => '0'); -- timestamp fraction seconds low TODO
 
-pad_bytes <= (others => '0');
 vita_tail <= x"00f00" & pad_bytes & X"00";
 
 --Bring the width to 32 bits using an adaptor
@@ -106,19 +104,23 @@ port map (
 );
 
 main : process(clk)
-variable headerct : natural := 0;
+variable headerct : natural range 0 to 7 := 0;
+variable wordct : unsigned(16 downto 0) := (others => '0');
 begin
   if rising_edge(clk) then
     if rst = '1' then
       state <= IDLE;
       meta_vld <= '0';
       pkt_last <= '0';
+      headerct := 0;
     else
       case( state ) is
 
         when IDLE =>
           meta_vld <= '0';
           pkt_last <= '0';
+          headerct := 0;
+          wordct := resize(unsigned(frame_size),17) - 1 - 8;
           --Wait until in_vld is asserted
           if in_vld = '1' then
             state <= WRITE_HEADER;
@@ -138,8 +140,23 @@ begin
           state <= RUN;
 
         when RUN =>
-          if in_vww_last = '1' then
+          if in_vww_vld = '1' and in_vww_rdy = '1' then
+            wordct := wordct - 1;
+          end if;
+          if in_vww_last = '1' and in_vww_rdy = '1' then
+            state <= PAD_FRAME;
+          end if;
+
+        when PAD_FRAME =>
+          meta_data <= (others => '0');
+          if wordct(wordct'high) = '1' then
             state <= WRITE_TAIL;
+            meta_vld <= '0';
+          else
+            meta_vld <= '1';
+            if pkt_rdy = '1' then
+              wordct := wordct - 1;
+            end if;
           end if;
 
         when WRITE_TAIL =>

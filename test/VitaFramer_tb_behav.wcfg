@@ -91,10 +91,12 @@
    <wvobject db_ref_id="1" type="array" fp_name="/VitaFramer_tb/uut/vita_tail">
       <obj_property name="ElementShortName">vita_tail[31:0]</obj_property>
       <obj_property name="ObjectShortName">vita_tail[31:0]</obj_property>
+      <obj_property name="Radix">HEXRADIX</obj_property>
    </wvobject>
    <wvobject db_ref_id="1" type="array" fp_name="/VitaFramer_tb/uut/in_vww_data">
       <obj_property name="ElementShortName">in_vww_data[31:0]</obj_property>
       <obj_property name="ObjectShortName">in_vww_data[31:0]</obj_property>
+      <obj_property name="Radix">HEXRADIX</obj_property>
    </wvobject>
    <wvobject db_ref_id="1" type="logic" fp_name="/VitaFramer_tb/uut/in_vww_vld">
       <obj_property name="ElementShortName">in_vww_vld</obj_property>

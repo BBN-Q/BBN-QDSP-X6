@@ -11,6 +11,7 @@ architecture bench of VitaFramer_tb is
   signal clk : std_logic := '0';
   signal rst : std_logic := '0';
   signal frame_size : std_logic_vector(15 downto 0) := (others => '0');
+  signal pad_bytes : std_logic_vector(3 downto 0) := (others => '0');
   signal stream_id : std_logic_vector(15 downto 0) := (others => '0');
   signal in_data : std_logic_vector(INPUT_BYTE_WIDTH*8 - 1 downto 0) := (others => '0');
   signal in_vld : std_logic := '0';
@@ -64,8 +65,9 @@ begin
     port map (
       clk        => clk,
       rst        => rst,
-      frame_size => frame_size,
       stream_id  => stream_id,
+      frame_size => frame_size,
+      pad_bytes  => pad_bytes,
       in_data    => in_data,
       in_vld     => in_vld,
       in_last    => in_last,
@@ -112,7 +114,7 @@ begin
 
     --Clock in a medium size frame
     testBench_state <= MEDIUM_FRAME;
-    frame_size <= std_logic_vector(to_unsigned(128, 16));
+    frame_size <= std_logic_vector(to_unsigned(64+8, 16));
     stream_id <= x"baad";
     out_rdy <= '1';
     wait until rising_edge(clk);
@@ -129,6 +131,29 @@ begin
     test_last <= '0';
     test_data <= (others => '0');
 
+    --Wait for packet to come out so we don't clobber frame_size, pad_bytes etc
+    wait until out_last = '1';
+    wait for 50ns;
+    wait until rising_edge(clk);
+
+    --Clock in a short frame with padding
+    testBench_state <= SHORT_FRAME;
+    frame_size <= std_logic_vector(to_unsigned(4+8, 16));
+    pad_bytes <= x"e";
+    stream_id <= x"1234";
+    out_rdy <= '1';
+    wait until rising_edge(clk);
+
+    test_vld <= '1';
+    test_data <= x"abcd";
+    test_last <= '1';
+    wait until rising_edge(clk);
+    test_vld <= '0';
+    test_last <= '0';
+    test_data <= (others => '0');
+
+    wait for 50ns;
+
     testBench_state <= FINISHED;
     wait for 200ns;
 
@@ -138,6 +163,9 @@ begin
 
   dataCheck : process
   begin
+
+    ----------------------------------------------------------------------------
+    wait until testBench_state = MEDIUM_FRAME;
 
     wait until rising_edge(clk) and out_vld = '1';
     assert out_data = x"1cf0" & frame_size report "Vita header IF word incorrect";
@@ -163,7 +191,41 @@ begin
     end loop;
 
     wait until rising_edge(clk) and out_vld = '1';
-    assert out_data = x"00f00000";
+    assert out_data = x"00f00000" report "Vita tail incorrect";
+    assert out_last = '1' report "Last flag not set high at tail";
+
+    -------------------------------------------------------------------------------
+    wait until testBench_state = SHORT_FRAME;
+
+    wait until rising_edge(clk) and out_vld = '1';
+    assert out_data = x"1cf0" & frame_size report "Vita header IF word incorrect";
+
+    wait until rising_edge(clk) and out_vld = '1';
+    assert out_data = x"0001" & stream_id report "Vita header SID word incorrect";
+
+    wait until rising_edge(clk) and out_vld = '1';
+    assert out_data = x"00000000" report "Vita header class OUI incorrect";
+
+    wait until rising_edge(clk) and out_vld = '1';
+    assert out_data = x"00030000" report "Vita header class info. incorrect";
+
+    for ct in 1 to 3 loop
+      wait until rising_edge(clk) and out_vld = '1';
+      assert out_data = x"00000000" report "Vita timestamp incorrect";
+    end loop;
+
+    --16 bit samples are packed in sample1sample0
+    wait until rising_edge(clk) and out_vld = '1';
+    assert out_data = x"0000abcd" report "Vita packet data incorrect";
+
+    --padding words
+    for ct in 1 to 3 loop
+      wait until rising_edge(clk) and out_vld = '1';
+      assert out_data = x"00000000" and out_last = '0' report "Padding incorrect";      
+    end loop;
+
+    wait until rising_edge(clk) and out_vld = '1' and out_last = '1';
+    assert out_data = x"00f00" & pad_bytes & x"00" report "Vita tail incorrect";
 
     wait;
   end process;
