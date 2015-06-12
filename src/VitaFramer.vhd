@@ -23,7 +23,7 @@ entity VitaFramer is
   rst : in std_logic;
 
   stream_id : in std_logic_vector(15 downto 0);
-  frame_size : in std_logic_vector(15 downto 0);
+  payload_size : in std_logic_vector(15 downto 0);
   pad_bytes : in std_logic_vector(3 downto 0);
 
   in_data : in std_logic_vector(INPUT_BYTE_WIDTH*8 - 1 downto 0);
@@ -62,7 +62,7 @@ vita_header_array(0) <= "0001" & "1100" --set by II
                         & "11" --timestamping integer seconds format = other
                         & "11" --timestamping fractional seconds format = other
                         & "0000" -- packet count
-                        & frame_size;
+                        & std_logic_vector(unsigned(payload_size) + 8);
 
 vita_header_array(1) <= x"0001" & stream_id;
 vita_header_array(2) <= (others => '0'); --Class OUI apparently not used
@@ -120,7 +120,7 @@ begin
           meta_vld <= '0';
           pkt_last <= '0';
           headerct := 0;
-          wordct := resize(unsigned(frame_size),17) - 1 - 8;
+          wordct := resize(unsigned(payload_size),17) - 1;
           --Wait until in_vld is asserted
           if in_vld = '1' then
             state <= WRITE_HEADER;

@@ -10,7 +10,7 @@ architecture bench of VitaFramer_tb is
   constant INPUT_BYTE_WIDTH : natural := 2;
   signal clk : std_logic := '0';
   signal rst : std_logic := '0';
-  signal frame_size : std_logic_vector(15 downto 0) := (others => '0');
+  signal payload_size : std_logic_vector(15 downto 0) := (others => '0');
   signal pad_bytes : std_logic_vector(3 downto 0) := (others => '0');
   signal stream_id : std_logic_vector(15 downto 0) := (others => '0');
   signal in_data : std_logic_vector(INPUT_BYTE_WIDTH*8 - 1 downto 0) := (others => '0');
@@ -63,19 +63,19 @@ begin
       INPUT_BYTE_WIDTH => INPUT_BYTE_WIDTH
     )
     port map (
-      clk        => clk,
-      rst        => rst,
-      stream_id  => stream_id,
-      frame_size => frame_size,
-      pad_bytes  => pad_bytes,
-      in_data    => in_data,
-      in_vld     => in_vld,
-      in_last    => in_last,
-      in_rdy     => in_rdy,
-      out_data   => out_data,
-      out_vld    => out_vld,
-      out_last   => out_last,
-      out_rdy    => out_rdy
+      clk          => clk,
+      rst          => rst,
+      stream_id    => stream_id,
+      payload_size => payload_size,
+      pad_bytes    => pad_bytes,
+      in_data      => in_data,
+      in_vld       => in_vld,
+      in_last      => in_last,
+      in_rdy       => in_rdy,
+      out_data     => out_data,
+      out_vld      => out_vld,
+      out_last     => out_last,
+      out_rdy      => out_rdy
     );
 
   --Little FIFO so we don't have to worry about stream rdy handshaking
@@ -114,7 +114,7 @@ begin
 
     --Clock in a medium size frame
     testBench_state <= MEDIUM_FRAME;
-    frame_size <= std_logic_vector(to_unsigned(64+8, 16));
+    payload_size <= std_logic_vector(to_unsigned(64, 16));
     stream_id <= x"baad";
     out_rdy <= '1';
     wait until rising_edge(clk);
@@ -131,14 +131,14 @@ begin
     test_last <= '0';
     test_data <= (others => '0');
 
-    --Wait for packet to come out so we don't clobber frame_size, pad_bytes etc
+    --Wait for packet to come out so we don't clobber payload_size, pad_bytes etc
     wait until out_last = '1';
     wait for 50ns;
     wait until rising_edge(clk);
 
     --Clock in a short frame with padding
     testBench_state <= SHORT_FRAME;
-    frame_size <= std_logic_vector(to_unsigned(4+8, 16));
+    payload_size <= std_logic_vector(to_unsigned(4, 16));
     pad_bytes <= x"e";
     stream_id <= x"1234";
     out_rdy <= '1';
@@ -168,7 +168,7 @@ begin
     wait until testBench_state = MEDIUM_FRAME;
 
     wait until rising_edge(clk) and out_vld = '1';
-    assert out_data = x"1cf0" & frame_size report "Vita header IF word incorrect";
+    assert out_data = x"1cf0" & std_logic_vector(unsigned(payload_size)+8) report "Vita header IF word incorrect";
 
     wait until rising_edge(clk) and out_vld = '1';
     assert out_data = x"0001" & stream_id report "Vita header SID word incorrect";
@@ -198,7 +198,7 @@ begin
     wait until testBench_state = SHORT_FRAME;
 
     wait until rising_edge(clk) and out_vld = '1';
-    assert out_data = x"1cf0" & frame_size report "Vita header IF word incorrect";
+    assert out_data = x"1cf0" & std_logic_vector(unsigned(payload_size)+8) report "Vita header IF word incorrect";
 
     wait until rising_edge(clk) and out_vld = '1';
     assert out_data = x"0001" & stream_id report "Vita header SID word incorrect";
@@ -221,7 +221,7 @@ begin
     --padding words
     for ct in 1 to 3 loop
       wait until rising_edge(clk) and out_vld = '1';
-      assert out_data = x"00000000" and out_last = '0' report "Padding incorrect";      
+      assert out_data = x"00000000" and out_last = '0' report "Padding incorrect";
     end loop;
 
     wait until rising_edge(clk) and out_vld = '1' and out_last = '1';
