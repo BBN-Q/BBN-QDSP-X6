@@ -59,9 +59,8 @@ begin
 
   uut: entity work.VitaFramer
     generic map (
-      INPUT_BYTE_WIDTH => INPUT_BYTE_WIDTH,
-      FIFO_ADDR_WIDTH  => 5
-      )
+      INPUT_BYTE_WIDTH => INPUT_BYTE_WIDTH
+    )
     port map (
       clk        => clk,
       rst        => rst,

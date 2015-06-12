@@ -16,8 +16,7 @@ use work.VitaFramer_pkg.all;
 
 entity VitaFramer is
   generic (
-    INPUT_BYTE_WIDTH : natural := 4;
-    FIFO_ADDR_WIDTH : natural := 5
+    INPUT_BYTE_WIDTH : natural := 4
   );
   port (
   clk : in std_logic;
