@@ -237,7 +237,7 @@ begin
         dds_phase_inc_vld => '1',
         data_in_re        => decimated_sysclk_data,
         data_in_im        => (others => '0'),
-        data_in_vld       => decimated_sysclk_vld,
+        data_in_vld       => decimated_sysclk_vld and decimated_sysclk_rdy,
         data_in_last      => decimated_sysclk_last,
         data_out_re       => channelized_data_re(ct),
         data_out_im       => channelized_data_im(ct),
