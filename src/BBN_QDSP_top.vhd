@@ -202,14 +202,14 @@ begin
   );
 
   --Package the decimated data into a vita frame
-  raw_stream_framer : entity work.VitaFramer
+  rawFramer : entity work.VitaFramer
   generic map (INPUT_BYTE_WIDTH => 2)
   port map (
     clk => sys_clk,
     rst => rst,
 
     stream_id => stream_id(0)(15 downto 0),
-    payload_size => "00" & record_length(15 downto 2),
+    payload_size => "000" & record_length(15 downto 3),  --divide by four for decimation and two samples per word
     pad_bytes => (others => '0'),
 
     in_data => std_logic_vector(resize(signed(decimated_sysclk_data),16)),
@@ -253,7 +253,7 @@ begin
         rst => rst,
 
         stream_id => stream_id(0)(15 downto 0),
-        payload_size => "00000" & record_length(15 downto 5),
+        payload_size => "00000" & record_length(15 downto 5), --total decimation factor of 32
         pad_bytes => (others => '0'),
 
         in_data => channelized_data_re(ct) & channelized_data_im(ct),
