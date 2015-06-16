@@ -42,17 +42,15 @@ entity BBN_QDSP_top is
     adc_data_clk         : in std_logic;
     adc_data             : in std_logic_vector(47 downto 0) ;
 
-    -- VITA-49 Output FIFO Interface
-    muxed_vita_wrd_cnt   : out std_logic_vector(8 downto 0);
-    muxed_vita_aempty    : out std_logic;
-    muxed_vita_empty     : out std_logic;
-    muxed_vita_rden      : in std_logic;
-    muxed_vita_vld       : out std_logic;
-    muxed_vita_data      : out std_logic_vector(127 downto 0);
+    -- VITA-49 Output FIFO Interfaces
+    vita_muxed_data      : out std_logic_vector(31 downto 0);
+    vita_muxed_vld       : out std_logic;
+    vita_muxed_rdy       : in std_logic;
+    vita_muxed_last      : out std_logic;
 
     -- Decision Engine outputs
-    state                : out std_logic_vector(num_demod_ch-1 downto 0);
-    state_vld            : out std_logic_vector(num_demod_ch-1 downto 0)
+    state                : out std_logic_vector(NUM_DEMOD_CH-1 downto 0);
+    state_vld            : out std_logic_vector(NUM_DEMOD_CH-1 downto 0)
   );
 end entity;
 
@@ -65,25 +63,30 @@ signal decimated_vld, decimated_last : std_logic := '0';
 signal decimated_sysclk_data : std_logic_vector(13 downto 0) := (others => '0');
 signal decimated_sysclk_vld, decimated_sysclk_last, decimated_sysclk_rdy : std_logic := '0';
 
+signal channelized_data_re, channelized_data_im : width_16_array_t(NUM_DEMOD_CH-1 downto 0) := (others => (others => '0'));
+signal channelized_vld, channelized_last : std_logic_vector(NUM_DEMOD_CH-1 downto 0) := (others => '0');
 
 signal rst_adc_clk : std_logic := '1';
 
 --WB registers
 signal record_length      : std_logic_vector(15 downto 0) := (others => '0');
 signal stream_enable      : std_logic_vector(31 downto 0) := (others => '0');
-signal frame_size         : width_16_array(num_vita_streams-1 downto 0) := (others => (others => '0'));
-signal stream_id          : width_32_array(num_vita_streams-1 downto 0) := (others => (others => '0'));
-signal phase_inc          : width_18_array(num_demod_ch-1 downto 0) := (others => (others => '0'));
+signal stream_id          : width_32_array_t(num_vita_streams-1 downto 0) := (others => (others => '0'));
+signal phase_inc          : width_24_array_t(NUM_DEMOD_CH-1 downto 0) := (others => (others => '0'));
 
 --Kernel memory
-signal kernel_addr, kernel_wr_addr  : kernel_addr_array(num_demod_ch-1 downto 0) := (others => (others => '0'));
-signal kernel_data, kernel_wr_data  : width_32_array(num_demod_ch-1 downto 0) := (others => (others => '0'));
-signal kernel_len                   : kernel_addr_array(num_demod_ch-1 downto 0) := (others => (others => '0'));
-signal threshold        : width_32_array(num_demod_ch-1 downto 0) := (others => (others => '0'));
-signal kernel_we        : std_logic_vector(num_demod_ch-1 downto 0) := (others => '0');
+signal kernel_addr, kernel_wr_addr  : kernel_addr_array(NUM_DEMOD_CH-1 downto 0) := (others => (others => '0'));
+signal kernel_data, kernel_wr_data  : width_32_array_t(NUM_DEMOD_CH-1 downto 0) := (others => (others => '0'));
+signal kernel_len                   : kernel_addr_array(NUM_DEMOD_CH-1 downto 0) := (others => (others => '0'));
+signal threshold        : width_32_array_t(NUM_DEMOD_CH-1 downto 0) := (others => (others => '0'));
+signal kernel_we        : std_logic_vector(NUM_DEMOD_CH-1 downto 0) := (others => '0');
 
 signal vita_raw_data : std_logic_vector(31 downto 0) := (others => '0');
-signal vita_raw_vld, vita_raw_last : std_logic := '0';
+signal vita_raw_vld, vita_raw_last, vita_raw_rdy : std_logic := '0';
+
+signal vita_demod_data : width_32_array_t(NUM_DEMOD_CH-1 downto 0) := (others => (others => '0'));
+signal vita_demod_vld, vita_demod_last, vita_demod_rdy : std_logic_vector(NUM_DEMOD_CH-1 downto 0) := (others => '0');
+
 
 begin
 
@@ -104,7 +107,6 @@ begin
     record_length        => record_length,
     stream_enable        => stream_enable,
 
-    frame_size           => frame_size,
     stream_id            => stream_id,
     phase_inc            => phase_inc,
     kernel_len           => kernel_len,
@@ -199,15 +201,16 @@ begin
     output_axis_tuser => open
   );
 
-  --Package the raw data into a vita frame
+  --Package the decimated data into a vita frame
   raw_stream_framer : entity work.VitaFramer
   generic map (INPUT_BYTE_WIDTH => 2)
   port map (
     clk => sys_clk,
     rst => rst,
 
-    frame_size => frame_size(0),
-    stream_id => x"baad",
+    stream_id => stream_id(0)(15 downto 0),
+    payload_size => "00" & record_length(15 downto 2),
+    pad_bytes => (others => '0'),
 
     in_data => std_logic_vector(resize(signed(decimated_sysclk_data),16)),
     in_vld  => decimated_sysclk_vld,
@@ -216,8 +219,77 @@ begin
 
     out_data => vita_raw_data,
     out_vld  => vita_raw_vld,
-    out_rdy => '1',
+    out_rdy  => vita_raw_rdy,
     out_last => vita_raw_last
   );
+
+  -- For each demod channel demodulate and frame
+  demodGenLoop : for ct in 0 to NUM_DEMOD_CH-1 generate
+    genChannelizer: entity work.Channelizer
+      generic map (
+        DATA_IN_WIDTH  => 14,
+        DATA_OUT_WIDTH => 16
+      )
+      port map (
+        clk               => sys_clk,
+        rst               => rst,
+        dds_phase_inc     => phase_inc(ct),
+        dds_phase_inc_vld => '1',
+        data_in_re        => decimated_sysclk_data,
+        data_in_im        => (others => '0'),
+        data_in_vld       => decimated_sysclk_vld,
+        data_in_last      => decimated_sysclk_last,
+        data_out_re       => channelized_data_re(ct),
+        data_out_im       => channelized_data_im(ct),
+        data_out_vld      => channelized_vld(ct),
+        data_out_last     => channelized_last(ct)
+      );
+
+      --Package the decimated data into a vita frame
+      demodFramer : entity work.VitaFramer
+      generic map (INPUT_BYTE_WIDTH => 4)
+      port map (
+        clk => sys_clk,
+        rst => rst,
+
+        stream_id => stream_id(0)(15 downto 0),
+        payload_size => "00000" & record_length(15 downto 5),
+        pad_bytes => (others => '0'),
+
+        in_data => channelized_data_re(ct) & channelized_data_im(ct),
+        in_vld  => channelized_vld(ct),
+        in_last => channelized_last(ct),
+        in_rdy  => open,
+
+        out_data => vita_demod_data(ct),
+        out_vld  => vita_demod_vld(ct),
+        out_rdy  => vita_demod_rdy(ct),
+        out_last => vita_demod_last(ct)
+      );
+
+  end generate;
+
+  --Mux together all the vita channels
+  vitaMuxer : entity work.BBN_QDSP_VitaMuxer
+  port map (
+    clk => sys_clk,
+    rst => rst,
+
+    vita_raw_data  => vita_raw_data,
+    vita_raw_vld   => vita_raw_vld,
+    vita_raw_rdy   => vita_raw_rdy,
+    vita_raw_last  => vita_raw_last,
+
+    vita_demod_data  => vita_demod_data,
+    vita_demod_vld   => vita_demod_vld,
+    vita_demod_rdy   => vita_demod_rdy,
+    vita_demod_last  => vita_demod_last,
+
+    vita_muxed_data  => vita_muxed_data,
+    vita_muxed_vld   => vita_muxed_vld,
+    vita_muxed_rdy   => vita_muxed_rdy,
+    vita_muxed_last  => vita_muxed_last
+  );
+
 
 end architecture;

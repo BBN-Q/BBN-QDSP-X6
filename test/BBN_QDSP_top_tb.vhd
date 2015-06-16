@@ -23,12 +23,10 @@ architecture bench of BBN_QDSP_tb is
   signal wb_dat_o : std_logic_vector(31 downto 0) := (others => '0');
   signal adc_data_clk : std_logic := '0';
   signal adc_data : std_logic_vector(47 downto 0) := (others => '0');
-  signal muxed_vita_wrd_cnt : std_logic_vector(8 downto 0) := (others => '0');
-  signal muxed_vita_aempty : std_logic := '0';
-  signal muxed_vita_empty : std_logic := '0';
-  signal muxed_vita_rden : std_logic := '0';
-  signal muxed_vita_vld : std_logic := '0';
-  signal muxed_vita_data : std_logic_vector(127 downto 0) := (others => '0');
+  signal vita_muxed_data : std_logic_vector(31 downto 0) := (others => '0');
+  signal vita_muxed_vld : std_logic := '0';
+  signal vita_muxed_rdy : std_logic := '0';
+  signal vita_muxed_last : std_logic := '0';
   signal state : std_logic_vector(NUM_DEMOD_CH-1 downto 0) := (others => '0');
   signal state_vld : std_logic_vector(NUM_DEMOD_CH-1 downto 0) := (others => '0');
 
@@ -62,12 +60,10 @@ begin
     wb_dat_o           => wb_dat_o,
     adc_data_clk       => adc_data_clk,
     adc_data           => adc_data,
-    muxed_vita_wrd_cnt => muxed_vita_wrd_cnt,
-    muxed_vita_aempty  => muxed_vita_aempty,
-    muxed_vita_empty   => muxed_vita_empty,
-    muxed_vita_rden    => muxed_vita_rden,
-    muxed_vita_vld     => muxed_vita_vld,
-    muxed_vita_data    => muxed_vita_data,
+    vita_muxed_data    => vita_muxed_data,
+    vita_muxed_vld     => vita_muxed_vld,
+    vita_muxed_rdy     => '1',
+    vita_muxed_last    => vita_muxed_last,
     state              => state,
     state_vld          => state_vld );
 
@@ -116,13 +112,13 @@ begin
   	for phys in 0 to 0 loop
   		-- write the phase increments for the NCO's
   		for demod in 0 to 1 loop
-  			wb_write(8192 + phys*256 + 16 + demod, (2*phys+demod+1)* 10486);
+  			wb_write(8192 + phys*256 + 16 + demod, (2*phys+demod+1)* 671088);
   		end loop;
 
       --Write record length
       wb_write(8192 + phys*256 + 63, RECORD_LENGTH); -- recordLength
   		-- write frame sizes and stream IDs
-  		wb_write(8192 + phys*256, RECORD_LENGTH/2);
+  		wb_write(8192 + phys*256, RECORD_LENGTH/4/2);
   		-- wb_write(8192 + phys*256 + 32, 65536 + 256*(phys+1));
   		-- for demod in 1 to 2 loop
   		-- 	wb_write(8192 + phys*256 + demod, 2*FRAME_SIZE/DECIMATION_FACTOR+8); --factor of 2 for complex demod stream
