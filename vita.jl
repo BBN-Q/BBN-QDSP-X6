@@ -1,13 +1,10 @@
-typealias VitaPacket Vector{Uint32}
+typealias VitaPacket Vector{UInt32}
 typealias VitaStreamDict Dict{Uint16, Vector{VitaPacket}}
 
-import Base.convert, Base.size
+import Base.convert
 
 #Stream ID lives in the bottom 16 bits of the second word
 streamID(packet::VitaPacket) = packet[2] % UInt16
-
-#total packet size including header from the header - should equal length(packet)
-size(packet::VitaPacket) = packet[1] % UInt16
 
 padding_bytes(packet::VitaPacket) = ((packet[end] & 0x0f00) >> 8) % UInt8
 
@@ -67,13 +64,13 @@ function VitaStreamDict(fileName::String)
 	vitaDict = VitaStreamDict() #scope for the do block below; TODO: potentially use default dict
 
 	open(fileName, "r") do FID
-		rawData = [uint32(parseint(rstrip(ln), 16)) for ln in readlines(FID)]
+		rawData = map(ln -> parse(UInt32, rstrip(ln), 16), readlines(FID))
 
 		#Peak at the packet header to pull out the length and stream ID
 		idx = 1
 		while (idx < length(rawData))
 			packetLength = rawData[idx] & 0xffff
-			streamID = uint16(rawData[idx+1] & 0xffff)
+			streamID = UInt16(rawData[idx+1] & 0xffff)
 			if (!haskey(vitaDict, streamID))
 				vitaDict[streamID] = VitaPacket[]
 			end
