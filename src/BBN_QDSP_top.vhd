@@ -26,7 +26,7 @@ entity BBN_QDSP_top is
     -- Reset and Clock
     sys_clk              : in  std_logic;
     rst                  : in  std_logic; --reset synchronous to sys_clk
-    trigger              : in  std_logic; --trigger synchronous to sys_clk
+    trig_ext             : in  std_logic; --trigger synchronous to adc_clk
 
     -- Slave Wishbone Interface
     wb_rst_i             : in  std_logic;
@@ -39,7 +39,7 @@ entity BBN_QDSP_top is
     wb_dat_o             : out std_logic_vector(31 downto 0);
 
     --ADC data interface
-    adc_data_clk         : in std_logic;
+    adc_clk         : in std_logic;
     adc_data             : in std_logic_vector(47 downto 0) ;
 
     -- VITA-49 Output FIFO Interfaces
@@ -56,7 +56,9 @@ end entity;
 
 architecture arch of BBN_QDSP_top is
 
-signal adc_data_vld, adc_data_last : std_logic := '0';
+signal in_data : std_logic_vector(47 downto 0) := (others => '0');
+signal in_vld, in_last : std_logic := '0';
+
 signal decimated_data : std_logic_vector(13 downto 0) := (others => '0');
 signal decimated_vld, decimated_last : std_logic := '0';
 
@@ -68,11 +70,18 @@ signal channelized_vld, channelized_last : std_logic_vector(NUM_DEMOD_CH-1 downt
 
 signal rst_adc_clk : std_logic := '1';
 
+signal trigger, trig_test    : std_logic := '0';
+
+signal test_pattern_re, test_pattern_im : std_logic_vector(47 downto 0) := (others => '0');
+
 --WB registers
-signal record_length      : std_logic_vector(15 downto 0) := (others => '0');
-signal stream_enable      : std_logic_vector(31 downto 0) := (others => '0');
-signal stream_id          : width_32_array_t(num_vita_streams-1 downto 0) := (others => (others => '0'));
-signal phase_inc          : width_24_array_t(NUM_DEMOD_CH-1 downto 0) := (others => (others => '0'));
+signal test_settings         : std_logic_vector(31 downto 0) := (others => '0');
+alias  test_enable           : std_logic is test_settings(16);
+alias  test_trig_interval : std_logic_vector(15 downto 0) is test_settings(15 downto 0);
+signal record_length  : std_logic_vector(15 downto 0) := (others => '0');
+signal stream_enable  : std_logic_vector(31 downto 0) := (others => '0');
+signal stream_id      : width_32_array_t(num_vita_streams-1 downto 0) := (others => (others => '0'));
+signal phase_inc      : width_24_array_t(NUM_DEMOD_CH-1 downto 0) := (others => (others => '0'));
 
 --Kernel memory
 signal kernel_addr, kernel_wr_addr  : kernel_addr_array(NUM_DEMOD_CH-1 downto 0) := (others => (others => '0'));
@@ -104,6 +113,7 @@ begin
     wb_dat_o             => wb_dat_o,
 
     -- User registers
+    test_settings        => test_settings,
     record_length        => record_length,
     stream_enable        => stream_enable,
 
@@ -120,43 +130,41 @@ begin
   --See https://github.com/noasic/noasic/blob/master/components/reset_synchronizer.vhd
   rst_sync_adc : entity work.synchronizer
   generic map(G_INIT_VALUE => '1', G_NUM_GUARD_FFS => 1)
-  port map(reset => rst, clk => adc_data_clk, i_data => '0', o_data => rst_adc_clk);
+  port map(reset => rst, clk => adc_clk, i_data => '0', o_data => rst_adc_clk);
 
   --Hold valid high for the record length amount of time
   --TODO: add a trigger delay state
-  recordCounter_proc : process( adc_data_clk )
+  recordCounter_proc : process( adc_clk )
   type state_t is (IDLE, RECORDING);
   variable state : state_t;
   variable counter : unsigned(15 downto 0);
   begin
-    if rising_edge(adc_data_clk) then
+    if rising_edge(adc_clk) then
       if rst_adc_clk = '1' then
         state := IDLE;
-        adc_data_vld <= '0';
-        adc_data_last <= '0';
+        in_vld <= '0';
+        in_last <= '0';
       else
         case( state ) is
           when IDLE =>
             -- -1 because we catch underflow below
             -- Drop bottom two bits because we have 4 sample wide bus
             counter := resize(unsigned(record_length(15 downto 2))-1, counter'length);
-            adc_data_vld <= '0';
-            adc_data_last <= '0';
+            in_vld <= '0';
+            in_last <= '0';
             if trigger = '1' then
               state := RECORDING;
             end if;
 
           when RECORDING =>
             counter := counter - 1;
-            adc_data_vld <= '1';
+            in_vld <= '1';
             --catch roll-over
             if counter(counter'high) = '1' then
               state := IDLE;
-              adc_data_last <= '1';
+              in_last <= '1';
             end if ;
 
-            when others =>
-            null;
         end case ;
       end if; --reset if
     end if ; -- rising_edge if
@@ -166,12 +174,12 @@ begin
   ADCDecimator_inst : entity work.ADCDecimator
   generic map (ADC_DATA_WIDTH => 12)
   port map (
-    clk => adc_data_clk,
+    clk => adc_clk,
     rst => rst,
 
-    in_data => adc_data,
-    in_vld => adc_data_vld,
-    in_last => adc_data_last,
+    in_data => in_data,
+    in_vld => in_vld,
+    in_last => in_last,
 
     out_data => decimated_data,
     out_vld => decimated_vld,
@@ -184,7 +192,7 @@ begin
     DATA_WIDTH => 14
   )
   port map (
-    input_clk => adc_data_clk,
+    input_clk => adc_clk,
     input_rst => rst_adc_clk,
     input_axis_tdata => decimated_data,
     input_axis_tvalid => decimated_vld,
@@ -252,7 +260,7 @@ begin
         clk => sys_clk,
         rst => rst,
 
-        stream_id => stream_id(0)(15 downto 0),
+        stream_id => stream_id(ct+1)(15 downto 0),
         payload_size => "00000" & record_length(15 downto 5), --total decimation factor of 32
         pad_bytes => (others => '0'),
 
@@ -291,5 +299,22 @@ begin
     vita_muxed_last  => vita_muxed_last
   );
 
+  --Test pattern generator
+  myTestPattern : entity work.TestPattern
+  generic map ( SAMPLE_WIDTH => 12)
+  port map (
+    clk => adc_clk,
+    rst => not test_enable,
+
+    trig_interval => test_trig_interval,
+    trigger       => trig_test,
+
+    pattern_data_re => test_pattern_re,
+    pattern_data_im => test_pattern_im
+  );
+
+  --Mux data and trigger source depending on mode
+  in_data <= test_pattern_re when test_enable = '1' else adc_data;
+  trigger <= trig_test when test_enable = '1' else trig_ext;
 
 end architecture;

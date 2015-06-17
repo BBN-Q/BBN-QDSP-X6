@@ -3,6 +3,9 @@ use IEEE.Std_logic_1164.all;
 use IEEE.Numeric_Std.all;
 use IEEE.math_real.all;
 
+use std.textio.all;
+use ieee.std_logic_textio.all;
+
 use work.BBN_QDSP_pkg.NUM_DEMOD_CH;
 
 entity BBN_QDSP_tb is
@@ -21,7 +24,7 @@ architecture bench of BBN_QDSP_tb is
   signal wb_stb_i : std_logic := '0';
   signal wb_ack_o : std_logic := '0';
   signal wb_dat_o : std_logic_vector(31 downto 0) := (others => '0');
-  signal adc_data_clk : std_logic := '0';
+  signal adc_clk : std_logic := '0';
   signal adc_data : std_logic_vector(47 downto 0) := (others => '0');
   signal vita_muxed_data : std_logic_vector(31 downto 0) := (others => '0');
   signal vita_muxed_vld : std_logic := '0';
@@ -34,7 +37,7 @@ architecture bench of BBN_QDSP_tb is
   constant ADC_CLK_PERIOD : time := 4 ns;
   signal stop_the_clocks: boolean := false;
 
-  constant RECORD_LENGTH : natural := 1024;
+  constant RECORD_LENGTH : natural := 5120;
 
   type TestBenchState_t is (RESET, WB_WRITES, RUNNING, FINISHED);
   signal testBench_state : TestBenchState_t;
@@ -49,7 +52,7 @@ begin
   port map (
     sys_clk            => sys_clk,
     rst                => rst,
-    trigger            => trigger,
+    trig_ext           => trigger,
     wb_rst_i           => wb_rst_i,
     wb_clk_i           => wb_clk_i,
     wb_adr_i           => wb_adr_i,
@@ -58,7 +61,7 @@ begin
     wb_stb_i           => wb_stb_i,
     wb_ack_o           => wb_ack_o,
     wb_dat_o           => wb_dat_o,
-    adc_data_clk       => adc_data_clk,
+    adc_clk            => adc_clk,
     adc_data           => adc_data,
     vita_muxed_data    => vita_muxed_data,
     vita_muxed_vld     => vita_muxed_vld,
@@ -112,18 +115,18 @@ begin
   	for phys in 0 to 0 loop
   		-- write the phase increments for the NCO's
   		for demod in 0 to 1 loop
-  			wb_write(8192 + phys*256 + 16 + demod, (2*phys+demod+1)* 671088);
+  			wb_write(8192 + phys*256 + 16 + demod, (2*phys+demod+1) * 671088);
   		end loop;
 
       --Write record length
       wb_write(8192 + phys*256 + 63, RECORD_LENGTH); -- recordLength
+
   		-- write frame sizes and stream IDs
   		wb_write(8192 + phys*256, RECORD_LENGTH/4/2);
-  		-- wb_write(8192 + phys*256 + 32, 65536 + 256*(phys+1));
-  		-- for demod in 1 to 2 loop
-  		-- 	wb_write(8192 + phys*256 + demod, 2*FRAME_SIZE/DECIMATION_FACTOR+8); --factor of 2 for complex demod stream
-  		-- 	wb_write(8192 + phys*256 + 32 + demod, 65536 + 256*(phys+1) + 16*demod);
-  		-- end loop;
+  		wb_write(8192 + phys*256 + 32, 65536 + 256*(phys+1));
+  		for demod in 1 to 2 loop
+  			wb_write(8192 + phys*256 + 32 + demod, 65536 + 256*(phys+1) + 16*demod);
+  		end loop;
       --
       --
   		-- --write integration kernels
@@ -132,8 +135,12 @@ begin
   		-- end loop;
   	end loop;
 
+    --Enable test mode and set trigger interval to 2500 clocks (10us)
+    wb_write(8192 + 1, 65536 + 2500);
+
     testbench_state <= RUNNING;
-    wait for 10us;
+
+    wait for 1000us;
 
     testBench_state <= FINISHED;
     stop_the_clocks <= true;
@@ -156,7 +163,7 @@ begin
   end process ; -- trigPro
 
   -- Drive test data
-  dataDriver : process( adc_data_clk )
+  dataDriver : process( adc_clk )
     constant DATA_SCALE : real := real(2 ** 11) - 1.0;
   	variable ct : natural := 0;
   	variable wfct : natural := 0;
@@ -164,7 +171,7 @@ begin
   	variable driverState : DATA_DRIVER_STATE_t;
     variable phase : real;
   begin
-  	if rising_edge(adc_data_clk) then
+  	if rising_edge(adc_clk) then
   		if (rst = '1') or (testbench_state /= RUNNING) then
   			adc_data <= (others => '0');
   			driverState := WAITING;
@@ -204,7 +211,21 @@ begin
   	end if;
   end process ; -- adc01_data
 
+  --output vita packet stream to file
+  vita2file : process( sys_clk )
+  file FID : text open write_mode is "vitastream.out";
+  variable ln : line;
+  begin
+  	if rising_edge(sys_clk) then
+  		--Write vita stream to file
+  		if vita_muxed_vld = '1' then
+				hwrite(ln, vita_muxed_data);
+				writeline(FID, ln);
+  		end if;
+  	end if ;
+  end process ; -- vita2stream
+
   --clocking
-  adc_data_clk <= not adc_data_clk after ADC_CLK_PERIOD / 2 when not stop_the_clocks;
+  adc_clk <= not adc_clk after ADC_CLK_PERIOD / 2 when not stop_the_clocks;
   sys_clk <= not sys_clk after SYS_CLK_PERIOD /2 when not stop_the_clocks;
 end;

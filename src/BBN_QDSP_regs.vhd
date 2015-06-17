@@ -28,7 +28,8 @@ entity BBN_QDSP_regs is
     wb_dat_o             : out std_logic_vector(31 downto 0);
 
     -- User registers
-    record_length        : out std_logic_vector(15 downto 0) ;
+    test_settings        : out std_logic_vector(31 downto 0);
+    record_length        : out std_logic_vector(15 downto 0);
     stream_enable        : out std_logic_vector(31 downto 0);
 
     stream_id            : out width_32_array_t(num_vita_streams-1 downto 0);
@@ -121,6 +122,7 @@ architecture arch of BBN_QDSP_regs is
   -- required register map.
 
   -- register map:
+  -- 1        : test settings (interval/enable)
   -- 15       : stream_enable
   -- 16 to 23 : phase_inc
   -- 24 to 31 : kernel_len
@@ -130,6 +132,9 @@ architecture arch of BBN_QDSP_regs is
   -- 56 to 62 : threshold
   -- 63 record length in samples
 
+  test_settings  <= wb_reg_o(1);
+  wb_reg_i(63)   <= wb_reg_o(63);
+  wb_reg_init(0) <= (others => '0');
 
   -- mapping of streams to stream_enable reg:
   -- 0     : raw
@@ -146,7 +151,7 @@ architecture arch of BBN_QDSP_regs is
     --------------------------------------------------------------------------
   end generate;
 
-  record_length              <= wb_reg_o(63)(15 downto 0);
+  record_length             <= wb_reg_o(63)(15 downto 0);
   wb_reg_i(63)(15 downto 0) <= wb_reg_o(63)(15 downto 0);
 
   -- stream ID initial values
