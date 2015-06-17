@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<wave_config>
+   <wave_state>
+   </wave_state>
+   <db_ref_list>
+      <db_ref path="TestPattern_tb_behav.wdb" id="1">
+         <top_modules>
+            <top_module name="TestPattern_tb" />
+         </top_modules>
+      </db_ref>
+   </db_ref_list>
+   <WVObjectSize size="22" />
+   <wvobject db_ref_id="1" type="logic" fp_name="/TestPattern_tb/clk">
+      <obj_property name="ElementShortName">clk</obj_property>
+      <obj_property name="ObjectShortName">clk</obj_property>
+   </wvobject>
+   <wvobject db_ref_id="1" type="logic" fp_name="/TestPattern_tb/rst">
+      <obj_property name="ElementShortName">rst</obj_property>
+      <obj_property name="ObjectShortName">rst</obj_property>
+   </wvobject>
+   <wvobject db_ref_id="1" type="logic" fp_name="/TestPattern_tb/trigger">
+      <obj_property name="ElementShortName">trigger</obj_property>
+      <obj_property name="ObjectShortName">trigger</obj_property>
+   </wvobject>
+   <wvobject db_ref_id="1" type="array" fp_name="/TestPattern_tb/pattern_data_re">
+      <obj_property name="ElementShortName">pattern_data_re[47:0]</obj_property>
+      <obj_property name="ObjectShortName">pattern_data_re[47:0]</obj_property>
+      <obj_property name="Radix">HEXRADIX</obj_property>
+   </wvobject>
+   <wvobject db_ref_id="1" type="array" fp_name="/TestPattern_tb/pattern_data_im">
+      <obj_property name="ElementShortName">pattern_data_im[47:0]</obj_property>
+      <obj_property name="ObjectShortName">pattern_data_im[47:0]</obj_property>
+      <obj_property name="Radix">HEXRADIX</obj_property>
+   </wvobject>
+   <wvobject db_ref_id="1" type="array" fp_name="/TestPattern_tb/fast_pattern_re">
+      <obj_property name="ElementShortName">fast_pattern_re[11:0]</obj_property>
+      <obj_property name="ObjectShortName">fast_pattern_re[11:0]</obj_property>
+      <obj_property name="Radix">SIGNEDDECRADIX</obj_property>
+      <obj_property name="WaveformStyle">STYLE_ANALOG</obj_property>
+      <obj_property name="CellHeight">40</obj_property>
+      <obj_property name="AnalogYRangeType">ANALOG_YRANGETYPE_AUTO</obj_property>
+      <obj_property name="AnalogYRangeMin">0.000000</obj_property>
+      <obj_property name="AnalogYRRangeMax">0.000000</obj_property>
+      <obj_property name="AnalogInterpolation">ANALOG_INTERPOLATION_HOLD</obj_property>
+      <obj_property name="AnalogOffscale">ANALOG_OFFSCALE_HIDE</obj_property>
+      <obj_property name="AnalogHorizLine">0.000000</obj_property>
+   </wvobject>
+   <wvobject db_ref_id="1" type="other" fp_name="/TestPattern_tb/testBench_state">
+      <obj_property name="ElementShortName">testBench_state</obj_property>
+      <obj_property name="ObjectShortName">testBench_state</obj_property>
+   </wvobject>
+   <wvobject db_ref_id="1" type="other" fp_name="/TestPattern_tb/stop_the_clocks">
+      <obj_property name="ElementShortName">stop_the_clocks</obj_property>
+      <obj_property name="ObjectShortName">stop_the_clocks</obj_property>
+   </wvobject>
+   <wvobject db_ref_id="1" type="other" fp_name="/TestPattern_tb/SAMPLE_WIDTH">
+      <obj_property name="ElementShortName">SAMPLE_WIDTH</obj_property>
+      <obj_property name="ObjectShortName">SAMPLE_WIDTH</obj_property>
+   </wvobject>
+   <wvobject db_ref_id="1" type="other" fp_name="/TestPattern_tb/CLK_PERIOD">
+      <obj_property name="ElementShortName">CLK_PERIOD</obj_property>
+      <obj_property name="ObjectShortName">CLK_PERIOD</obj_property>
+   </wvobject>
+   <wvobject db_ref_id="1" type="logic" fp_name="/TestPattern_tb/uut/rst_SSB">
+      <obj_property name="ElementShortName">rst_SSB</obj_property>
+      <obj_property name="ObjectShortName">rst_SSB</obj_property>
+   </wvobject>
+   <wvobject db_ref_id="1" type="array" fp_name="/TestPattern_tb/uut/phinc">
+      <obj_property name="ElementShortName">phinc[23:0]</obj_property>
+      <obj_property name="ObjectShortName">phinc[23:0]</obj_property>
+      <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
+   </wvobject>
+   <wvobject db_ref_id="1" type="array" fp_name="/TestPattern_tb/uut/recordct">
+      <obj_property name="ElementShortName">recordct[5:0]</obj_property>
+      <obj_property name="ObjectShortName">recordct[5:0]</obj_property>
+      <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
+   </wvobject>
+   <wvobject db_ref_id="1" type="array" fp_name="/TestPattern_tb/uut/samplect">
+      <obj_property name="ElementShortName">samplect[10:0]</obj_property>
+      <obj_property name="ObjectShortName">samplect[10:0]</obj_property>
+      <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
+   </wvobject>
+   <wvobject db_ref_id="1" type="array" fp_name="/TestPattern_tb/uut/samp_base_re">
+      <obj_property name="ElementShortName">samp_base_re[7:0]</obj_property>
+      <obj_property name="ObjectShortName">samp_base_re[7:0]</obj_property>
+      <obj_property name="Radix">SIGNEDDECRADIX</obj_property>
+   </wvobject>
+   <wvobject db_ref_id="1" type="array" fp_name="/TestPattern_tb/uut/samp_base_im">
+      <obj_property name="ElementShortName">samp_base_im[7:0]</obj_property>
+      <obj_property name="ObjectShortName">samp_base_im[7:0]</obj_property>
+      <obj_property name="Radix">SIGNEDDECRADIX</obj_property>
+   </wvobject>
+   <wvobject db_ref_id="1" type="array" fp_name="/TestPattern_tb/uut/out_ssb_re">
+      <obj_property name="ElementShortName">out_ssb_re[47:0]</obj_property>
+      <obj_property name="ObjectShortName">out_ssb_re[47:0]</obj_property>
+      <obj_property name="Radix">HEXRADIX</obj_property>
+   </wvobject>
+   <wvobject db_ref_id="1" type="array" fp_name="/TestPattern_tb/uut/out_ssb_im">
+      <obj_property name="ElementShortName">out_ssb_im[47:0]</obj_property>
+      <obj_property name="ObjectShortName">out_ssb_im[47:0]</obj_property>
+      <obj_property name="Radix">HEXRADIX</obj_property>
+   </wvobject>
+   <wvobject db_ref_id="1" type="other" fp_name="/TestPattern_tb/uut/SAMPLE_WIDTH">
+      <obj_property name="ElementShortName">SAMPLE_WIDTH</obj_property>
+      <obj_property name="ObjectShortName">SAMPLE_WIDTH</obj_property>
+      <obj_property name="Radix">SIGNEDDECRADIX</obj_property>
+   </wvobject>
+   <wvobject db_ref_id="1" type="array" fp_name="/TestPattern_tb/uut/BASE_PHASE_INC">
+      <obj_property name="ElementShortName">BASE_PHASE_INC[17:0]</obj_property>
+      <obj_property name="ObjectShortName">BASE_PHASE_INC[17:0]</obj_property>
+      <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
+   </wvobject>
+   <wvobject db_ref_id="1" type="array" fp_name="/TestPattern_tb/uut/MAX_VAL_SLV">
+      <obj_property name="ElementShortName">MAX_VAL_SLV[11:0]</obj_property>
+      <obj_property name="ObjectShortName">MAX_VAL_SLV[11:0]</obj_property>
+      <obj_property name="Radix">SIGNEDDECRADIX</obj_property>
+   </wvobject>
+   <wvobject db_ref_id="1" type="logic" fp_name="/TestPattern_tb/uut/polyphaseSSB/out_vld">
+      <obj_property name="ElementShortName">out_vld</obj_property>
+      <obj_property name="ObjectShortName">out_vld</obj_property>
+   </wvobject>
+</wave_config>
