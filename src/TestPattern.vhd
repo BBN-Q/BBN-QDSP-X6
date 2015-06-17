@@ -15,7 +15,8 @@ entity TestPattern is
   port (
     clk : in std_logic;
     rst : in std_logic;
-    trigger : in std_logic;
+    trig_interval : in std_logic_vector(15 downto 0); --trigger interval in clocks
+    trigger : buffer std_logic;
 
     pattern_data_re : out std_logic_vector(4*SAMPLE_WIDTH-1 downto 0);
     pattern_data_im : out std_logic_vector(4*SAMPLE_WIDTH-1 downto 0)
@@ -42,6 +43,25 @@ signal ssb_vld : std_logic := '0';
 begin
 
 phinc <= recordct * BASE_PHASE_INC;
+
+triggerPro : process(clk)
+variable ct : unsigned(16 downto 0);
+begin
+  if rising_edge(clk) then
+    if rst = '1' then
+      ct := unsigned('0' & trig_interval)-2;
+      trigger <= '0';
+    else
+      if ct(ct'high) = '1' then
+        trigger <= '1';
+        ct := unsigned('0' & trig_interval)-2;
+      else
+        ct := ct - 1;
+        trigger <= '0';
+      end if;
+    end if;
+  end if;
+end process;
 
 main : process(clk)
 type STATE_t is (IDLE, RESETTING, ALIGN_MARKER, WAIT_FOR_VALID, PLAYING);

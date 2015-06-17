@@ -13,6 +13,7 @@ architecture bench of TestPattern_tb is
   signal clk : std_logic := '0';
   signal rst : std_logic := '0';
   signal trigger : std_logic := '0';
+  signal trig_interval : std_logic_vector(15 downto 0) := std_logic_vector(to_unsigned(2500, 16));
   signal pattern_data_re : std_logic_vector(4*SAMPLE_WIDTH-1 downto 0) := (others => '0');
   signal pattern_data_im : std_logic_vector(4*SAMPLE_WIDTH-1 downto 0) := (others => '0');
   signal fast_pattern_re : std_logic_vector(SAMPLE_WIDTH-1 downto 0);
@@ -29,6 +30,7 @@ begin
     port map (
       clk             => clk,
       rst             => rst,
+      trig_interval   => trig_interval,
       trigger         => trigger,
       pattern_data_re => pattern_data_re,
       pattern_data_im => pattern_data_im
@@ -59,21 +61,6 @@ begin
     testBench_state <= RUNNING;
     wait;
   end process;
-
-  trigPro : process
-  begin
-  	--pump the trigger every 10us
-  	while true loop
-  		if testBench_state = RUNNING then
-  			trigger <= '1';
-  			wait for 10ns;
-  			trigger <= '0';
-  			wait for 9.99 us;
-  		else
-  			wait for 1 us;
-  		end if;
-  	end loop;
-  end process ; -- trigPro
 
   --clocking
   clk <= not clk after CLK_PERIOD /2 when not stop_the_clocks;

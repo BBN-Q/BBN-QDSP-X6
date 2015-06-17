@@ -9,7 +9,7 @@
          </top_modules>
       </db_ref>
    </db_ref_list>
-   <WVObjectSize size="22" />
+   <WVObjectSize size="23" />
    <wvobject db_ref_id="1" type="logic" fp_name="/TestPattern_tb/clk">
       <obj_property name="ElementShortName">clk</obj_property>
       <obj_property name="ObjectShortName">clk</obj_property>
@@ -118,5 +118,10 @@
    <wvobject db_ref_id="1" type="logic" fp_name="/TestPattern_tb/uut/polyphaseSSB/out_vld">
       <obj_property name="ElementShortName">out_vld</obj_property>
       <obj_property name="ObjectShortName">out_vld</obj_property>
+   </wvobject>
+   <wvobject db_ref_id="1" type="array" fp_name="/TestPattern_tb/uut/trig_interval">
+      <obj_property name="ElementShortName">trig_interval[15:0]</obj_property>
+      <obj_property name="ObjectShortName">trig_interval[15:0]</obj_property>
+      <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
    </wvobject>
 </wave_config>
