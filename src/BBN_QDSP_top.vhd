@@ -56,6 +56,7 @@ end entity;
 
 architecture arch of BBN_QDSP_top is
 
+--Data streams
 signal in_data : std_logic_vector(47 downto 0) := (others => '0');
 signal in_vld, in_last : std_logic := '0';
 
@@ -68,34 +69,43 @@ signal decimated_sysclk_vld, decimated_sysclk_last, decimated_sysclk_rdy : std_l
 signal channelized_data_re, channelized_data_im : width_16_array_t(NUM_DEMOD_CH-1 downto 0) := (others => (others => '0'));
 signal channelized_vld, channelized_last : std_logic_vector(NUM_DEMOD_CH-1 downto 0) := (others => '0');
 
-signal rst_adc_clk : std_logic := '1';
-
-signal trigger, trig_test    : std_logic := '0';
-
-signal test_pattern_re, test_pattern_im : std_logic_vector(47 downto 0) := (others => '0');
+signal result_demod_re, result_demod_im : width_32_array_t(NUM_DEMOD_CH-1 downto 0) := (others => (others => '0'));
+signal result_demod_vld, result_demod_last : std_logic_vector(NUM_DEMOD_CH-1 downto 0) := (others => '0');
 
 --WB registers
-signal test_settings         : std_logic_vector(31 downto 0) := (others => '0');
-alias  test_enable           : std_logic is test_settings(16);
+signal test_settings      : std_logic_vector(31 downto 0) := (others => '0');
+alias  test_enable        : std_logic is test_settings(16);
 alias  test_trig_interval : std_logic_vector(15 downto 0) is test_settings(15 downto 0);
-signal record_length  : std_logic_vector(15 downto 0) := (others => '0');
-signal stream_enable  : std_logic_vector(31 downto 0) := (others => '0');
-signal stream_id      : width_32_array_t(num_vita_streams-1 downto 0) := (others => (others => '0'));
-signal phase_inc      : width_24_array_t(NUM_DEMOD_CH-1 downto 0) := (others => (others => '0'));
+signal record_length      : std_logic_vector(15 downto 0) := (others => '0');
+signal stream_enable      : std_logic_vector(31 downto 0) := (others => '0');
+signal stream_id          : width_32_array_t(num_vita_streams-1 downto 0) := (others => (others => '0'));
+signal phase_inc          : width_24_array_t(NUM_DEMOD_CH-1 downto 0) := (others => (others => '0'));
 
 --Kernel memory
-signal kernel_addr, kernel_wr_addr  : kernel_addr_array(NUM_DEMOD_CH-1 downto 0) := (others => (others => '0'));
-signal kernel_data, kernel_wr_data  : width_32_array_t(NUM_DEMOD_CH-1 downto 0) := (others => (others => '0'));
-signal kernel_len                   : kernel_addr_array(NUM_DEMOD_CH-1 downto 0) := (others => (others => '0'));
-signal threshold        : width_32_array_t(NUM_DEMOD_CH-1 downto 0) := (others => (others => '0'));
-signal kernel_we        : std_logic_vector(NUM_DEMOD_CH-1 downto 0) := (others => '0');
+signal kernel_len        : kernel_addr_array(NUM_DEMOD_CH-1 downto 0) := (others => (others => '0'));
+signal kernel_rdwr_addr  : kernel_addr_array(NUM_DEMOD_CH-1 downto 0) := (others => (others => '0'));
+signal kernel_rd_data, kernel_wr_data  : width_32_array_t(NUM_DEMOD_CH-1 downto 0) := (others => (others => '0'));
+signal kernel_we         : std_logic_vector(NUM_DEMOD_CH-1 downto 0) := (others => '0');
 
+--Decision Engine thresholds
+signal threshold        : width_32_array_t(NUM_DEMOD_CH-1 downto 0) := (others => (others => '0'));
+
+--Vita streams
 signal vita_raw_data : std_logic_vector(31 downto 0) := (others => '0');
 signal vita_raw_vld, vita_raw_last, vita_raw_rdy : std_logic := '0';
 
 signal vita_demod_data : width_32_array_t(NUM_DEMOD_CH-1 downto 0) := (others => (others => '0'));
 signal vita_demod_vld, vita_demod_last, vita_demod_rdy : std_logic_vector(NUM_DEMOD_CH-1 downto 0) := (others => '0');
 
+signal vita_result_demod_data : width_32_array_t(NUM_DEMOD_CH-1 downto 0) := (others => (others => '0'));
+signal vita_result_demod_vld, vita_result_demod_last, vita_result_demod_rdy : std_logic_vector(NUM_DEMOD_CH-1 downto 0) := (others => '0');
+
+--Misc.
+signal rst_adc_clk : std_logic := '1';
+
+signal trigger, trig_test    : std_logic := '0';
+
+signal test_pattern_re, test_pattern_im : std_logic_vector(47 downto 0) := (others => '0');
 
 begin
 
@@ -121,7 +131,7 @@ begin
     phase_inc            => phase_inc,
     kernel_len           => kernel_len,
     threshold            => threshold,
-    kernel_addr          => kernel_wr_addr,
+    kernel_addr          => kernel_rdwr_addr,
     kernel_data          => kernel_wr_data,
     kernel_we            => kernel_we
   );
@@ -231,7 +241,7 @@ begin
     out_last => vita_raw_last
   );
 
-  -- For each demod channel demodulate and frame
+  -- For each demod channel demodulate, integrate and frame both
   demodGenLoop : for ct in 0 to NUM_DEMOD_CH-1 generate
     genChannelizer: entity work.Channelizer
       generic map (
@@ -275,6 +285,49 @@ begin
         out_last => vita_demod_last(ct)
       );
 
+      demodIntegrator : entity work.KernelIntegrator
+      port map (
+        clk => sys_clk,
+        rst => rst,
+
+        data_re   => channelized_data_re(ct),
+        data_im   => channelized_data_im(ct),
+        data_vld  => channelized_vld(ct),
+        data_last => channelized_last(ct),
+
+        kernel_len     => kernel_len(ct),
+        kernel_wr_addr => kernel_rdwr_addr(ct),
+        kernel_wr_data => kernel_wr_data(ct),
+        kernel_we      => kernel_we(ct),
+        kernel_wr_clk  => sys_clk,
+
+        result_re      =>  result_demod_re(ct),
+        result_im      =>  result_demod_im(ct),
+        result_vld     =>  result_demod_vld(ct)
+      );
+
+      --Package the decimated data into a vita frame
+      demodResultFramer : entity work.VitaFramer
+      generic map (INPUT_BYTE_WIDTH => 8)
+      port map (
+        clk => sys_clk,
+        rst => rst,
+
+        stream_id => stream_id(ct+1)(15 downto 0),
+        payload_size => x"0004", --minimum size
+        pad_bytes => x"8", -- two words padding = 8 bytes
+
+        in_data => result_demod_re(ct) & result_demod_im(ct),
+        in_vld  => result_demod_vld(ct),
+        in_last => result_demod_vld(ct),
+        in_rdy  => open,
+
+        out_data => vita_result_demod_data(ct),
+        out_vld  => vita_result_demod_vld(ct),
+        out_rdy  => vita_result_demod_rdy(ct),
+        out_last => vita_result_demod_last(ct)
+      );
+
   end generate;
 
   --Mux together all the vita channels
@@ -292,6 +345,11 @@ begin
     vita_demod_vld   => vita_demod_vld,
     vita_demod_rdy   => vita_demod_rdy,
     vita_demod_last  => vita_demod_last,
+
+    vita_result_demod_data  => vita_result_demod_data,
+    vita_result_demod_vld   => vita_result_demod_vld,
+    vita_result_demod_rdy   => vita_result_demod_rdy,
+    vita_result_demod_last  => vita_result_demod_last,
 
     vita_muxed_data  => vita_muxed_data,
     vita_muxed_vld   => vita_muxed_vld,

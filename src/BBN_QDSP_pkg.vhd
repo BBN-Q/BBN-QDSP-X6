@@ -74,7 +74,7 @@ package BBN_QDSP_pkg is
     );
   end component;
 
-  component axis_arb_mux_2_32
+  component axis_arb_mux_2
     generic (
       DATA_WIDTH : natural := 8;
       ARB_TYPE : string := "PRIORITY"; --"PRIORITY" or "ROUND_ROBIN"
@@ -103,5 +103,48 @@ package BBN_QDSP_pkg is
       output_axis_tuser   : out std_logic
     );
   end component;
+
+  component axis_arb_mux_4
+    generic (
+      DATA_WIDTH : natural := 8;
+      ARB_TYPE : string := "PRIORITY"; --"PRIORITY" or "ROUND_ROBIN"
+      LSB_PRIORITY : string := "HIGH" --"LOW" or "HIGH"
+    );
+    port (
+      clk         : in std_logic;
+      rst         : in std_logic;
+
+      input_0_axis_tdata   : in std_logic_vector(DATA_WIDTH-1 downto 0);
+      input_0_axis_tvalid  : in std_logic;
+      input_0_axis_tready  : out std_logic;
+      input_0_axis_tlast   : in std_logic;
+      input_0_axis_tuser   : in std_logic;
+
+      input_1_axis_tdata   : in std_logic_vector(DATA_WIDTH-1 downto 0);
+      input_1_axis_tvalid  : in std_logic;
+      input_1_axis_tready  : out std_logic;
+      input_1_axis_tlast   : in std_logic;
+      input_1_axis_tuser   : in std_logic;
+
+      input_2_axis_tdata   : in std_logic_vector(DATA_WIDTH-1 downto 0);
+      input_2_axis_tvalid  : in std_logic;
+      input_2_axis_tready  : out std_logic;
+      input_2_axis_tlast   : in std_logic;
+      input_2_axis_tuser   : in std_logic;
+
+      input_3_axis_tdata   : in std_logic_vector(DATA_WIDTH-1 downto 0);
+      input_3_axis_tvalid  : in std_logic;
+      input_3_axis_tready  : out std_logic;
+      input_3_axis_tlast   : in std_logic;
+      input_3_axis_tuser   : in std_logic;
+
+      output_axis_tdata   : out std_logic_vector(DATA_WIDTH-1 downto 0);
+      output_axis_tvalid  : out std_logic;
+      output_axis_tready  : in std_logic;
+      output_axis_tlast   : out std_logic;
+      output_axis_tuser   : out std_logic
+    );
+  end component;
+
 
 end BBN_QDSP_pkg;

@@ -7,6 +7,8 @@ use std.textio.all;
 use ieee.std_logic_textio.all;
 
 use work.BBN_QDSP_pkg.NUM_DEMOD_CH;
+use work.TestVectors.KERNEL_ARRAY_t;
+use work.TestVectors.create_ramp_kernel;
 
 entity BBN_QDSP_tb is
 end;
@@ -38,9 +40,12 @@ architecture bench of BBN_QDSP_tb is
   signal stop_the_clocks: boolean := false;
 
   constant RECORD_LENGTH : natural := 5120;
+  constant DEMOD_LENGTH  : natural := RECORD_LENGTH/32;
 
   type TestBenchState_t is (RESET, WB_WRITES, RUNNING, FINISHED);
   signal testBench_state : TestBenchState_t;
+
+  constant RAMP_KERNEL : KERNEL_ARRAY_t(0 to DEMOD_LENGTH-1) := create_ramp_kernel(DEMOD_LENGTH);
 
 begin
 
@@ -102,6 +107,20 @@ begin
     wb_write(std_logic_vector(to_unsigned(addr, 16)), data);
   end procedure;
 
+  procedure write_kernel(
+		phys : in natural;
+		demod : in natural;
+		dataArray : in KERNEL_ARRAY_t) is
+
+	variable wbOffset : natural := 8192 + phys*256 + 48 + 2*demod;
+	begin
+		wb_write(8192 + phys*256 + 24 + demod, dataArray'length);
+		for ct in dataArray'range loop
+			wb_write(wbOffset, ct);
+			wb_write(wbOffset+1, dataArray(ct));
+		end loop;
+	end procedure;
+
   begin
 
     --Initial reset
@@ -127,12 +146,11 @@ begin
   		for demod in 1 to 2 loop
   			wb_write(8192 + phys*256 + 32 + demod, 65536 + 256*(phys+1) + 16*demod);
   		end loop;
-      --
-      --
-  		-- --write integration kernels
-  		-- for demod in 0 to 1 loop
-  		-- 	write_kernel(phys, demod, allOnes);
-  		-- end loop;
+
+  		--write integration kernels
+  		for demod in 0 to 1 loop
+  			write_kernel(phys, demod, RAMP_KERNEL);
+  		end loop;
   	end loop;
 
     --Enable test mode and set trigger interval to 2500 clocks (10us)
