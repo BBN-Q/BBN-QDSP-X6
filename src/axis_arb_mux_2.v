@@ -29,7 +29,7 @@ THE SOFTWARE.
 /*
  * AXI4-Stream 2 port arbitrated multiplexer
  */
-module axis_arb_mux_2_32 #
+module axis_arb_mux_2 #
 (
     parameter DATA_WIDTH = 8,
     // arbitration type: "PRIORITY" or "ROUND_ROBIN"
