@@ -22,7 +22,8 @@ use work.BBN_QDSP_pkg.all;
 
 entity BBN_QDSP_top is
   generic (
-    WB_OFFSET       : std_logic_vector(15 downto 0)
+    WB_OFFSET       : std_logic_vector(15 downto 0);
+    STREAM_ID_OFFSET : std_logic_vector(3 downto 0)
   );
   port (
     -- Reset and Clock
@@ -80,7 +81,6 @@ alias  test_enable        : std_logic is test_settings(16);
 alias  test_trig_interval : std_logic_vector(15 downto 0) is test_settings(15 downto 0);
 signal record_length      : std_logic_vector(15 downto 0) := (others => '0');
 signal stream_enable      : std_logic_vector(31 downto 0) := (others => '0');
-signal stream_id          : width_32_array_t(num_vita_streams-1 downto 0) := (others => (others => '0'));
 signal phase_inc          : width_24_array_t(NUM_DEMOD_CH-1 downto 0) := (others => (others => '0'));
 
 --Kernel memory
@@ -134,7 +134,6 @@ begin
     record_length        => record_length,
     stream_enable        => stream_enable,
 
-    stream_id            => stream_id,
     phase_inc            => phase_inc,
     kernel_len           => kernel_len,
     threshold            => threshold,
@@ -252,14 +251,14 @@ begin
     output_axis_tuser => open
   );
 
-  --Package the decimated data into a vita frame
+  --Package the decimated raw data into a vita frame
   rawFramer : entity work.VitaFramer
   generic map (INPUT_BYTE_WIDTH => 2)
   port map (
     clk => sys_clk,
     rst => rst,
 
-    stream_id => stream_id(0)(15 downto 0),
+    stream_id => x"0" & STREAM_ID_OFFSET & x"00",
     payload_size => "000" & record_length(15 downto 3),  --divide by four for decimation and two samples per word
     pad_bytes => (others => '0'),
 
@@ -303,14 +302,14 @@ begin
         data_out_last     => channelized_last(ct)
       );
 
-      --Package the decimated data into a vita frame
+      --Package the channelized data into the vita frame
       demodFramer : entity work.VitaFramer
       generic map (INPUT_BYTE_WIDTH => 4)
       port map (
         clk => sys_clk,
         rst => rst,
 
-        stream_id => stream_id(ct+1)(15 downto 0),
+        stream_id => x"0" & STREAM_ID_OFFSET & std_logic_vector(to_unsigned(ct+1,4)) & x"0",
         payload_size => "00000" & record_length(15 downto 5), --total decimation factor of 32
         pad_bytes => (others => '0'),
 
@@ -368,7 +367,7 @@ begin
         clk => sys_clk,
         rst => rst,
 
-        stream_id => stream_id(ct+1)(15 downto 1) & '1',
+        stream_id => x"0" & STREAM_ID_OFFSET & std_logic_vector(to_unsigned(ct+1,4)) & x"1",
         payload_size => x"0004", --minimum size
         pad_bytes => x"8", -- two words padding = 8 bytes
 

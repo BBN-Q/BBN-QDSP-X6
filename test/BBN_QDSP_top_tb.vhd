@@ -53,7 +53,7 @@ begin
   wb_rst_i <= rst;
 
   uut: entity work.BBN_QDSP_top
-  generic map ( WB_OFFSET => x"2000" )
+  generic map ( WB_OFFSET => x"2000", STREAM_ID_OFFSET => x"1" )
   port map (
     sys_clk            => sys_clk,
     rst                => rst,
@@ -139,13 +139,6 @@ begin
 
       --Write record length
       wb_write(8192 + phys*256 + 63, RECORD_LENGTH); -- recordLength
-
-  		-- write frame sizes and stream IDs
-  		wb_write(8192 + phys*256, RECORD_LENGTH/4/2);
-  		wb_write(8192 + phys*256 + 32, 65536 + 256*(phys+1));
-  		for demod in 1 to 2 loop
-  			wb_write(8192 + phys*256 + 32 + demod, 65536 + 256*(phys+1) + 16*demod);
-  		end loop;
 
   		--write integration kernels
   		for demod in 0 to 1 loop

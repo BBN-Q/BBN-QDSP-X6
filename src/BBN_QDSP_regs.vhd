@@ -32,7 +32,6 @@ entity BBN_QDSP_regs is
     record_length        : out std_logic_vector(15 downto 0);
     stream_enable        : out std_logic_vector(31 downto 0);
 
-    stream_id            : out width_32_array_t(num_vita_streams-1 downto 0);
     phase_inc            : out width_24_array_t(NUM_DEMOD_CH-1 downto 0);
 
     kernel_len           : out kernel_addr_array(NUM_DEMOD_CH-1 downto 0);
@@ -126,7 +125,6 @@ architecture arch of BBN_QDSP_regs is
   -- 15       : stream_enable
   -- 16 to 23 : phase_inc
   -- 24 to 31 : kernel_len
-  -- 32 to 47 : stream_id
   -- 48 to 55 (even) : kernel_addr
   -- 48 to 55 (odd) : kernel_data
   -- 56 to 62 : threshold
@@ -146,20 +144,12 @@ architecture arch of BBN_QDSP_regs is
 
   gen_out_params : for i in 0 to num_vita_streams-1 generate
     --------------------------------------------------------------------------
-    stream_id(i)             <= wb_reg_o(32+i);
     wb_reg_i(32+i)           <= wb_reg_o(32+i);
     --------------------------------------------------------------------------
   end generate;
 
   record_length             <= wb_reg_o(63)(15 downto 0);
   wb_reg_i(63)(15 downto 0) <= wb_reg_o(63)(15 downto 0);
-
-  -- stream ID initial values
-  wb_reg_init(32)            <= X"00020100";
-  wb_reg_init(33)            <= X"00020110";
-  wb_reg_init(34)            <= X"00020120";
-  wb_reg_init(35)            <= X"00020130";
-  wb_reg_init(36)            <= X"00020140";
 
   gen_demod_regs : for i in 0 to NUM_DEMOD_CH-1 generate
     phase_inc(i)                <= wb_reg_o(16+i)(23 downto 0);
