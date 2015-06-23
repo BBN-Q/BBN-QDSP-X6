@@ -1,6 +1,7 @@
 -- AXI stream digital down-conversion and channel selection via 2 stage FIR filter
 -- Selected channel is returned decimated by a factor of 8.
 -- For AXI packet framing to work initial packet must be multiple of 8.
+-- Does not apply back pressure and needs a continuous valid data flow to keep up with DDS
 --
 -- Fixed point scaling details:
 -- Complex Multiplier : Output should be DATA_IN_WIDTH + 16 + 1
@@ -32,8 +33,9 @@ entity Channelizer is
   clk : in std_logic;
   rst : in std_logic;
 
-  dds_phase_inc : in std_logic_vector(23 downto 0);
+  dds_phase_inc     : in std_logic_vector(23 downto 0);
   dds_phase_inc_vld : in std_logic;
+  dds_vld           : out std_logic;
 
   data_in_re : in std_logic_vector(DATA_IN_WIDTH-1 downto 0);
   data_in_im : in std_logic_vector(DATA_IN_WIDTH-1 downto 0);
@@ -50,7 +52,7 @@ end entity;
 
 architecture arch of Channelizer is
 
-signal dds_vld : std_logic := '0';
+signal dds_vld_int : std_logic := '0';
 signal dds_cos, dds_sin : std_logic_vector(15 downto 0) := (others => '0');
 
 signal mult_re, mult_im : std_logic_vector(23 downto 0) := (others => '0');
@@ -64,13 +66,15 @@ signal stage2_re_vld, stage2_re_last, stage2_im_vld, stage2_im_last : std_logic 
 
 begin
 
+  dds_vld <= dds_vld_int;
+
   DDS : entity work.DDS_Channelizer
     port map (
       aclk => clk,
       aresetn => not rst,
       s_axis_config_tvalid => dds_phase_inc_vld,
       s_axis_config_tdata => dds_phase_inc,
-      m_axis_data_tvalid => dds_vld,
+      m_axis_data_tvalid => dds_vld_int,
       m_axis_data_tdata(31 downto 16) => dds_sin,
       m_axis_data_tdata(15 downto 0) => dds_cos
     );
@@ -93,7 +97,7 @@ begin
 
     b_data_re => dds_cos,
     b_data_im => dds_sin,
-    b_vld => dds_vld,
+    b_vld => dds_vld_int,
     b_last => '0',
 
     prod_data_re => mult_re,

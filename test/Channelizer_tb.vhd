@@ -18,6 +18,7 @@ architecture bench of Channelizer_tb is
   signal rst: std_logic := '0';
   signal dds_phase_inc: std_logic_vector(23 downto 0) := (others => '0');
   signal dds_phase_inc_vld: std_logic := '0';
+  signal dds_vld : std_logic;
   signal data_in_re, data_in_im : std_logic_vector(DATA_IN_WIDTH-1 downto 0) := (others => '0');
   signal data_in_vld: std_logic := '0';
   signal data_in_last: std_logic := '0';
@@ -40,6 +41,7 @@ begin
       rst               => rst,
       dds_phase_inc     => dds_phase_inc,
       dds_phase_inc_vld => dds_phase_inc_vld,
+      dds_vld           => dds_vld,
       data_in_re        => data_in_re,
       data_in_im        => data_in_im,
       data_in_vld       => data_in_vld,
