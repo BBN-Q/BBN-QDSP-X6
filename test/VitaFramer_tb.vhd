@@ -8,6 +8,7 @@ end;
 architecture bench of VitaFramer_tb is
 
   constant INPUT_BYTE_WIDTH : natural := 2;
+  constant INPUT_FIFO_DEPTH : natural := 8;
   signal clk : std_logic := '0';
   signal rst : std_logic := '0';
   signal payload_size : std_logic_vector(15 downto 0) := (others => '0');
@@ -60,7 +61,8 @@ begin
 
   uut: entity work.VitaFramer
     generic map (
-      INPUT_BYTE_WIDTH => INPUT_BYTE_WIDTH
+      INPUT_BYTE_WIDTH => INPUT_BYTE_WIDTH,
+      INPUT_FIFO_DEPTH => INPUT_FIFO_DEPTH
     )
     port map (
       clk          => clk,

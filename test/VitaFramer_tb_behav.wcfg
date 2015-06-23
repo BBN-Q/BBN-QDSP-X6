@@ -11,7 +11,7 @@
          </top_modules>
       </db_ref>
    </db_ref_list>
-   <WVObjectSize size="30" />
+   <WVObjectSize size="34" />
    <wvobject db_ref_id="1" type="other" fp_name="/VitaFramer_tb/CLK_PERIOD">
       <obj_property name="ElementShortName">CLK_PERIOD</obj_property>
       <obj_property name="ObjectShortName">CLK_PERIOD</obj_property>
@@ -31,11 +31,6 @@
    <wvobject db_ref_id="1" type="other" fp_name="/VitaFramer_tb/testBench_state">
       <obj_property name="ElementShortName">testBench_state</obj_property>
       <obj_property name="ObjectShortName">testBench_state</obj_property>
-   </wvobject>
-   <wvobject db_ref_id="1" type="array" fp_name="/VitaFramer_tb/frame_size">
-      <obj_property name="ElementShortName">frame_size[15:0]</obj_property>
-      <obj_property name="ObjectShortName">frame_size[15:0]</obj_property>
-      <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
    </wvobject>
    <wvobject db_ref_id="1" type="array" fp_name="/VitaFramer_tb/stream_id">
       <obj_property name="ElementShortName">stream_id[15:0]</obj_property>
@@ -92,6 +87,27 @@
       <obj_property name="ElementShortName">vita_tail[31:0]</obj_property>
       <obj_property name="ObjectShortName">vita_tail[31:0]</obj_property>
       <obj_property name="Radix">HEXRADIX</obj_property>
+   </wvobject>
+   <wvobject db_ref_id="1" type="array" fp_name="/VitaFramer_tb/uut/in_pf_data">
+      <obj_property name="ElementShortName">in_pf_data[15:0]</obj_property>
+      <obj_property name="ObjectShortName">in_pf_data[15:0]</obj_property>
+   </wvobject>
+   <wvobject db_ref_id="1" type="logic" fp_name="/VitaFramer_tb/uut/in_pf_vld">
+      <obj_property name="ElementShortName">in_pf_vld</obj_property>
+      <obj_property name="ObjectShortName">in_pf_vld</obj_property>
+   </wvobject>
+   <wvobject db_ref_id="1" type="logic" fp_name="/VitaFramer_tb/uut/in_pf_last">
+      <obj_property name="ElementShortName">in_pf_last</obj_property>
+      <obj_property name="ObjectShortName">in_pf_last</obj_property>
+   </wvobject>
+   <wvobject db_ref_id="1" type="logic" fp_name="/VitaFramer_tb/uut/in_pf_rdy">
+      <obj_property name="ElementShortName">in_pf_rdy</obj_property>
+      <obj_property name="ObjectShortName">in_pf_rdy</obj_property>
+   </wvobject>
+   <wvobject db_ref_id="1" type="array" fp_name="/VitaFramer_tb/uut/in_fifo_count">
+      <obj_property name="ElementShortName">in_fifo_count[3:0]</obj_property>
+      <obj_property name="ObjectShortName">in_fifo_count[3:0]</obj_property>
+      <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
    </wvobject>
    <wvobject db_ref_id="1" type="array" fp_name="/VitaFramer_tb/uut/in_vww_data">
       <obj_property name="ElementShortName">in_vww_data[31:0]</obj_property>

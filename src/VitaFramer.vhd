@@ -1,5 +1,5 @@
 -- Vita framer for packetized AXI streams
--- Exhibits back presssure while applying header
+-- Exhibits back presssure while applying header but can be mitigated with input FIFO
 -- Currently works at VITA word width (4 bytes) with adapters as necessary
 -- This could be a performance bottleneck for continuous wide input streams
 -- However because of the 7 word VITA header it makes life much easier
@@ -11,12 +11,14 @@
 library ieee;
 use ieee.std_logic_1164.all;
 use ieee.numeric_std.all;
+use ieee.math_real.all;
 
 use work.VitaFramer_pkg.all;
 
 entity VitaFramer is
   generic (
-    INPUT_BYTE_WIDTH : natural := 4
+    INPUT_BYTE_WIDTH : natural := 4;
+    INPUT_FIFO_DEPTH : natural := 8
   );
   port (
   clk : in std_logic;
@@ -44,6 +46,10 @@ type VITA_HEADER_ARRAY_t is array(0 to 6) of std_logic_vector(31 downto 0);
 signal vita_header_array : VITA_HEADER_ARRAY_t;
 
 signal vita_tail : std_logic_vector(31 downto 0) := (others => '0');
+
+signal in_pf_data : std_logic_vector(8*INPUT_BYTE_WIDTH-1 downto 0) := (others => '0');
+signal in_pf_vld, in_pf_last, in_pf_rdy : std_logic := '0';
+signal in_fifo_count : std_logic_vector(integer(ceil(log2(real(INPUT_FIFO_DEPTH+1))))-1 downto 0);
 
 --vww = Vita Word Wide
 signal in_vww_data : std_logic_vector(31 downto 0) := (others => '0');
@@ -73,6 +79,33 @@ vita_header_array(6) <= (others => '0'); -- timestamp fraction seconds low TODO
 
 vita_tail <= x"00f00" & pad_bytes & X"00";
 
+
+--Buffer the input data in a small srl FIFO
+inputFIFO: axis_srl_fifo
+generic map (
+  DATA_WIDTH => 8*INPUT_BYTE_WIDTH,
+  DEPTH => INPUT_FIFO_DEPTH
+)
+port map (
+  clk => clk,
+  rst => rst,
+
+  input_axis_tdata  => in_data,
+  input_axis_tvalid => in_vld,
+  input_axis_tready => in_rdy,
+  input_axis_tlast  => in_last,
+  input_axis_tuser  => '0',
+
+  output_axis_tdata  => in_pf_data,
+  output_axis_tvalid => in_pf_vld,
+  output_axis_tready => in_pf_rdy,
+  output_axis_tlast  => in_pf_last,
+  output_axis_tuser  => open,
+
+  count => in_fifo_count
+);
+
+
 --Bring the width to 32 bits using an adaptor
 --TODO: if-block if already at 32bit
 input_width_adapter : axis_adapter
@@ -87,11 +120,11 @@ port map (
   rst => rst,
 
   --AXI input
-  input_axis_tdata  => in_data,
+  input_axis_tdata  => in_pf_data,
   input_axis_tkeep  => (others => '1'),
-  input_axis_tvalid => in_vld,
-  input_axis_tready => in_rdy,
-  input_axis_tlast  => in_last,
+  input_axis_tvalid => in_pf_vld,
+  input_axis_tready => in_pf_rdy,
+  input_axis_tlast  => in_pf_last,
   input_axis_tuser  => '0',
 
   --AXI input
@@ -176,7 +209,7 @@ pkt_vld <= in_vww_vld when state = RUN else meta_vld;
 in_vww_rdy <= pkt_rdy when state = RUN else '0';
 
 --Output register
-pktFIFO : axis_srl_register
+pktFIFO : axis_register
 generic map (
   DATA_WIDTH => 32
 )
