@@ -16,6 +16,8 @@ library ieee;
 use ieee.std_logic_1164.all;
 use ieee.numeric_std.all;
 
+use ieee.std_logic_misc.and_reduce; --just use and in VHDL-2008
+
 use work.BBN_QDSP_pkg.all;
 
 entity BBN_QDSP_top is
@@ -101,9 +103,14 @@ signal vita_result_demod_data : width_32_array_t(NUM_DEMOD_CH-1 downto 0) := (ot
 signal vita_result_demod_vld, vita_result_demod_last, vita_result_demod_rdy : std_logic_vector(NUM_DEMOD_CH-1 downto 0) := (others => '0');
 
 --Misc.
-signal rst_adc_clk : std_logic := '1';
+signal rst_adc_clk, rst_chan : std_logic := '1';
 
-signal trigger, trig_test    : std_logic := '0';
+signal channelizer_dds_vld : std_logic_vector(NUM_DEMOD_CH-1 downto 0) := (others => '0');
+signal raw_framer_vld, raw_framer_rdy : std_logic := '0';
+
+signal result_demod_vld_re : std_logic_vector(NUM_DEMOD_CH-1 downto 0) := (others => '0');
+
+signal trigger, trig_test, trig_sysclk : std_logic := '0';
 
 signal test_pattern_re, test_pattern_im : std_logic_vector(47 downto 0) := (others => '0');
 
@@ -141,6 +148,32 @@ begin
   rst_sync_adc : entity work.synchronizer
   generic map(G_INIT_VALUE => '1', G_NUM_GUARD_FFS => 1)
   port map(reset => rst, clk => adc_clk, i_data => '0', o_data => rst_adc_clk);
+
+  --Generate channelizer reset pulse on system clock
+  --DDS and FIR in channlizer need two clock high reset
+  sync_trig_sys : entity work.synchronizer
+  port map(reset => rst, clk => sys_clk, i_data => trigger, o_data => trig_sysclk);
+
+  channelizerResetPulse : process(sys_clk)
+  variable trig_d : std_logic;
+  variable reset_line : std_logic_vector(1 downto 0);
+  begin
+    if rising_edge(sys_clk) then
+      if rst = '1' then
+        trig_d := '0';
+        reset_line := (others => '1');
+      else
+        --Check for rising_edge of trigger
+        if trig_sysclk = '1' and trig_d = '0' then
+          reset_line := (others => '1');
+        else
+          reset_line := reset_line(reset_line'high-1 downto 0) & '0';
+        end if;
+        trig_d := trig_sysclk;
+      end if;
+      rst_chan <= reset_line(reset_line'high);
+    end if;
+  end process;
 
   --Hold valid high for the record length amount of time
   --TODO: add a trigger delay state
@@ -231,15 +264,21 @@ begin
     pad_bytes => (others => '0'),
 
     in_data => std_logic_vector(resize(signed(decimated_sysclk_data),16)),
-    in_vld  => decimated_sysclk_vld,
+    in_vld  => raw_framer_vld,
     in_last => decimated_sysclk_last,
-    in_rdy  => decimated_sysclk_rdy,
+    in_rdy  => raw_framer_rdy,
 
     out_data => vita_raw_data,
     out_vld  => vita_raw_vld,
     out_rdy  => vita_raw_rdy,
     out_last => vita_raw_last
   );
+
+  --Wait until channelizer comes out of reset before letting framer control flow
+  --We still let framer control to get the right size vita packets but of course the channlizer
+  --needs continuous data because it does not apply back pressure to DDS
+  raw_framer_vld <= decimated_sysclk_vld when and_reduce(channelizer_dds_vld) = '1' else '0';
+  decimated_sysclk_rdy <= raw_framer_rdy when and_reduce(channelizer_dds_vld) = '1' else '0';
 
   -- For each demod channel demodulate, integrate and frame both
   demodGenLoop : for ct in 0 to NUM_DEMOD_CH-1 generate
@@ -250,9 +289,10 @@ begin
       )
       port map (
         clk               => sys_clk,
-        rst               => rst,
+        rst               => rst_chan,
         dds_phase_inc     => phase_inc(ct),
         dds_phase_inc_vld => '1',
+        dds_vld           => channelizer_dds_vld(ct),
         data_in_re        => decimated_sysclk_data,
         data_in_im        => (others => '0'),
         data_in_vld       => decimated_sysclk_vld and decimated_sysclk_rdy,
@@ -288,7 +328,7 @@ begin
       demodIntegrator : entity work.KernelIntegrator
       port map (
         clk => sys_clk,
-        rst => rst,
+        rst => rst_chan,
 
         data_re   => channelized_data_re(ct),
         data_im   => channelized_data_im(ct),
@@ -306,20 +346,35 @@ begin
         result_vld     =>  result_demod_vld(ct)
       );
 
-      --Package the decimated data into a vita frame
+      --Package the result data into a vita frame
+      --We want a single clock cycle valid high to use rising edge as valid
+      result_demod_vld_re_detector : process( sys_clk )
+      variable result_demod_vld_d : std_logic := '0';
+      begin
+        if rising_edge(sys_clk) then
+          if rst = '1' then
+            result_demod_vld_d := '0';
+            result_demod_vld_re(ct) <= '0';
+          else
+            result_demod_vld_re(ct) <= result_demod_vld(ct) and not result_demod_vld_d;
+            result_demod_vld_d := result_demod_vld(ct);
+          end if;
+        end if;
+      end process;
+
       demodResultFramer : entity work.VitaFramer
       generic map (INPUT_BYTE_WIDTH => 8)
       port map (
         clk => sys_clk,
         rst => rst,
 
-        stream_id => stream_id(ct+1)(15 downto 0),
+        stream_id => stream_id(ct+1)(15 downto 1) & '1',
         payload_size => x"0004", --minimum size
         pad_bytes => x"8", -- two words padding = 8 bytes
 
         in_data => result_demod_re(ct) & result_demod_im(ct),
-        in_vld  => result_demod_vld(ct),
-        in_last => result_demod_vld(ct),
+        in_vld  => result_demod_vld_re(ct),
+        in_last => result_demod_vld_re(ct),
         in_rdy  => open,
 
         out_data => vita_result_demod_data(ct),
