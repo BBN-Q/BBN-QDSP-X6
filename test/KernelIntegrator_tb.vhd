@@ -69,7 +69,7 @@ begin
     memoryWriter : for ct in 1 to to_integer(unsigned(kernel_len)) loop
       kernel_rdwr_addr <= std_logic_vector(to_unsigned(ct-1, KERNEL_ADDR_WIDTH));
       --For now load ramp
-      kernel_wr_data <= std_logic_vector(to_signed(256*ct-1, 16)) & std_logic_vector(to_signed(ct, 16));
+      kernel_wr_data <= std_logic_vector(to_signed(ct, 16)) & std_logic_vector(to_signed(256*ct-1, 16));
       kernel_we <= '1';
       wait until rising_edge(kernel_wr_clk);
       kernel_we <= '0';
@@ -82,7 +82,7 @@ begin
     kernel_rdwr_addr <= std_logic_vector(to_unsigned(27, KERNEL_ADDR_WIDTH));
     wait until rising_edge(kernel_wr_clk);
     wait until rising_edge(kernel_wr_clk);
-    assert kernel_rd_data = std_logic_vector(to_signed(256*28-1, 16)) & std_logic_vector(to_signed(28, 16))
+    assert kernel_rd_data = std_logic_vector(to_signed(28, 16)) & std_logic_vector(to_signed(256*28-1, 16))
       report "Failed to read kernel memory";
 
     --Clock in the data

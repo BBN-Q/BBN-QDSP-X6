@@ -314,7 +314,7 @@ begin
         payload_size => "00000" & record_length(15 downto 5), --total decimation factor of 32
         pad_bytes => (others => '0'),
 
-        in_data => channelized_data_re(ct) & channelized_data_im(ct),
+        in_data => channelized_data_im(ct) & channelized_data_re(ct),
         in_vld  => channelized_vld(ct),
         in_last => channelized_last(ct),
         in_rdy  => open,
@@ -373,7 +373,7 @@ begin
         payload_size => x"0004", --minimum size
         pad_bytes => x"8", -- two words padding = 8 bytes
 
-        in_data => result_demod_re(ct) & result_demod_im(ct),
+        in_data => result_demod_im(ct) & result_demod_re(ct),
         in_vld  => result_demod_vld_re(ct),
         in_last => result_demod_vld_re(ct),
         in_rdy  => open,

@@ -4,9 +4,9 @@ typealias VitaStreamDict Dict{Uint16, Vector{VitaPacket}}
 import Base.convert
 
 #Stream ID lives in the bottom 16 bits of the second word
-streamID(packet::VitaPacket) = packet[2] % UInt16
+streamID(packet::VitaPacket) = UInt16(packet[2] & 0xffff)
 
-padding_bytes(packet::VitaPacket) = ((packet[end] & 0x0f00) >> 8) % UInt8
+padding_bytes(packet::VitaPacket) = UInt8((packet[end] & 0x0f00) >> 8)
 
 #Strip 7 header words and 1 tail
 payload(packet::VitaPacket) = packet[8:end-1]
@@ -18,7 +18,7 @@ function convert(::Type{Vector{Int16}}, packet::VitaPacket)
 	#	W5	W4
 	data = Array(Int16, 2*(length(packet)-8))
 	for (ct,word) in enumerate(payload(packet))
-		data[2*ct-1] = word % Int16
+		data[2*ct-1] = (word & 0xffff) % Int16
 		data[2*ct] = ((word & 0xffff0000) >> 16) % Int16
 	end
 	data
@@ -27,7 +27,7 @@ end
 function convert(::Type{Vector{Complex{Int16}}}, packet::VitaPacket)
 	data = Array(Complex{Int16}, (length(packet)-8))
 	for (ct,word) in enumerate(payload(packet))
-		data[ct] = ((word & 0xffff0000) >> 16) % Int16 + 1im*(word % Int16)
+		data[ct] = 1im*(((word & 0xffff0000) >> 16) % Int16)  + (word & 0xffff) % Int16;
 	end
 	data
 end
@@ -69,13 +69,13 @@ function VitaStreamDict(fileName::String)
 		#Peak at the packet header to pull out the length and stream ID
 		idx = 1
 		while (idx < length(rawData))
-			packetLength = rawData[idx] & 0xffff
-			streamID = UInt16(rawData[idx+1] & 0xffff)
-			if (!haskey(vitaDict, streamID))
-				vitaDict[streamID] = VitaPacket[]
+			pktLength = rawData[idx] & 0xffff
+			pktID = UInt16(rawData[idx+1] & 0xffff)
+			if (!haskey(vitaDict, pktID))
+				vitaDict[pktID] = VitaPacket[]
 			end
-			push!(vitaDict[streamID], rawData[idx:idx+packetLength-1])
-			idx += packetLength
+			push!(vitaDict[pktID], rawData[idx:idx+pktLength-1])
+			idx += pktLength
 		end
 	end
 	vitaDict

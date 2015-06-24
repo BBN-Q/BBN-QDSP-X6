@@ -54,7 +54,8 @@ attribute use_dsp48 of accum_re : signal is "yes";
 attribute use_dsp48 of accum_im : signal is "yes";
 
 signal kernel_data : std_logic_vector(31 downto 0);
-signal kernel_re, kernel_im : std_logic_vector(15 downto 0);
+alias kernel_re : std_logic_vector(15 downto 0) is kernel_data(15 downto 0);
+alias kernel_im : std_logic_vector(15 downto 0) is kernel_data(31 downto 16);
 
 signal data_vld_d : std_logic := '0';
 signal kernel_last, kernel_last_d : std_logic := '0';
@@ -144,9 +145,6 @@ begin
   port map(clk => clk, rst => rst, data_in => data_im, data_out => data_im_d);
 
   --Complex multiplier and pipelining
-  kernel_re <= kernel_data(31 downto 16);
-  kernel_im <= kernel_data(15 downto 0);
-
   multiplier : entity work.ComplexMultiplier
   generic map(
   A_WIDTH => 16,
