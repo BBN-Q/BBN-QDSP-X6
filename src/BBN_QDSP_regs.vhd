@@ -37,7 +37,8 @@ entity BBN_QDSP_regs is
     kernel_len           : out kernel_addr_array(NUM_DEMOD_CH-1 downto 0);
     threshold            : out width_32_array_t(NUM_DEMOD_CH-1 downto 0);
     kernel_addr          : out kernel_addr_array(NUM_DEMOD_CH-1 downto 0);
-    kernel_data          : out width_32_array_t(NUM_DEMOD_CH-1 downto 0);
+    kernel_wr_data       : out width_32_array_t(NUM_DEMOD_CH-1 downto 0);
+    kernel_rd_data       : in width_32_array_t(NUM_DEMOD_CH-1 downto 0);
     kernel_we            : out std_logic_vector(NUM_DEMOD_CH-1 downto 0)
   );
 end BBN_QDSP_regs;
@@ -126,7 +127,7 @@ architecture arch of BBN_QDSP_regs is
   -- 16 to 23 : phase_inc
   -- 24 to 31 : kernel_len
   -- 48 to 55 (even) : kernel_addr
-  -- 48 to 55 (odd) : kernel_data
+  -- 48 to 55 (odd) : kernel write/read data
   -- 56 to 62 : threshold
   -- 63 record length in samples
 
@@ -160,9 +161,9 @@ architecture arch of BBN_QDSP_regs is
     wb_reg_i(24+i)(15 downto 0) <= wb_reg_o(24+i)(15 downto 0);
 
     kernel_addr(i) <= wb_reg_o(48+2*i)(KERNEL_ADDR_WIDTH-1 downto 0);
-    kernel_data(i) <= wb_reg_o(48+2*i+1);
     wb_reg_i(48+2*i) <= wb_reg_o(48+2*i);
-    wb_reg_i(48+2*i+1) <= wb_reg_o(48+2*i+1);
+    kernel_wr_data(i) <= wb_reg_o(48+2*i+1);
+    wb_reg_i(48+2*i+1) <= kernel_rd_data(i);
 
     -- Use write strobe from data to write to kernel memory
     kernel_we(i) <= wr_stb(48+2*i+1);

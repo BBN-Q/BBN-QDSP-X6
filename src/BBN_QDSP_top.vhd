@@ -138,7 +138,8 @@ begin
     kernel_len           => kernel_len,
     threshold            => threshold,
     kernel_addr          => kernel_rdwr_addr,
-    kernel_data          => kernel_wr_data,
+    kernel_wr_data       => kernel_wr_data,
+    kernel_rd_data       => kernel_rd_data,
     kernel_we            => kernel_we
   );
 
@@ -334,11 +335,12 @@ begin
         data_vld  => channelized_vld(ct),
         data_last => channelized_last(ct),
 
-        kernel_len     => kernel_len(ct),
-        kernel_wr_addr => kernel_rdwr_addr(ct),
-        kernel_wr_data => kernel_wr_data(ct),
-        kernel_we      => kernel_we(ct),
-        kernel_wr_clk  => sys_clk,
+        kernel_len       => kernel_len(ct),
+        kernel_rdwr_addr => kernel_rdwr_addr(ct),
+        kernel_wr_data   => kernel_wr_data(ct),
+        kernel_rd_data   => kernel_rd_data(ct),
+        kernel_we        => kernel_we(ct),
+        kernel_wr_clk    => sys_clk,
 
         result_re      =>  result_demod_re(ct),
         result_im      =>  result_demod_im(ct),

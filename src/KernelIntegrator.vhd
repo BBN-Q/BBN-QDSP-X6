@@ -22,8 +22,9 @@ entity KernelIntegrator is
 
   --Wishbone kernel memory writes
 	kernel_len : in std_logic_vector(KERNEL_ADDR_WIDTH-1 downto 0);
-  kernel_wr_addr : in std_logic_vector(KERNEL_ADDR_WIDTH-1 downto 0);
+  kernel_rdwr_addr : in std_logic_vector(KERNEL_ADDR_WIDTH-1 downto 0);
   kernel_wr_data : in std_logic_vector(31 downto 0);
+  kernel_rd_data : out std_logic_vector(31 downto 0);
   kernel_we : in std_logic;
   kernel_wr_clk : in std_logic;
 
@@ -65,7 +66,6 @@ signal accum_last, accum_last_d  : std_logic := '0';
 constant KERNEL_RAM_SIZE : natural := 2**KERNEL_ADDR_WIDTH;
 type RAM_ARRAY_t is array(KERNEL_RAM_SIZE-1 downto 0) of std_logic_vector(31 downto 0);
 signal kernel_RAM : RAM_ARRAY_t := (others => (others => '0'));
-signal kernel_addr_d : unsigned(KERNEL_ADDR_WIDTH-1 downto 0);
 
 begin
 
@@ -74,19 +74,23 @@ begin
 
   --Kernel memory write/read processes
   kernel_mem_wr : process(kernel_wr_clk)
+  variable addr_d : natural;
   begin
     if rising_edge(kernel_wr_clk) then
+      kernel_rd_data <= kernel_RAM(addr_d);
       if kernel_we = '1' then
-        kernel_RAM(to_integer(unsigned(kernel_wr_addr))) <= kernel_wr_data;
+        kernel_RAM(addr_d) <= kernel_wr_data;
       end if;
     end if;
+    addr_d := to_integer(unsigned(kernel_rdwr_addr));
   end process;
 
   kernel_mem_read : process(clk)
+  variable addr_d : natural;
   begin
     if rising_edge(clk) then
-      kernel_addr_d <= kernel_addr;
-      kernel_data <= kernel_RAM(to_integer(kernel_addr_d));
+      kernel_data <= kernel_RAM(addr_d);
+      addr_d := to_integer(kernel_addr);
     end if;
   end process;
 
