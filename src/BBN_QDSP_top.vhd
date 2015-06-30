@@ -109,7 +109,7 @@ signal vita_result_demod_data : width_32_array_t(NUM_DEMOD_CH-1 downto 0) := (ot
 signal vita_result_demod_vld, vita_result_demod_last, vita_result_demod_rdy : std_logic_vector(NUM_DEMOD_CH-1 downto 0) := (others => '0');
 
 --Misc.
-signal rst_adc_clk, rst_chan : std_logic := '1';
+signal rst_adc_clk, rst_chan, rst_rawKI : std_logic := '1';
 
 signal channelizer_dds_vld : std_logic_vector(NUM_DEMOD_CH-1 downto 0) := (others => '0');
 signal raw_framer_vld, raw_framer_rdy : std_logic := '0';
@@ -237,11 +237,27 @@ begin
     out_last => decimated_last);
 
   --Raw kernel integrators and framers
+
+  --Reset integrator on rising edge of trigger
+  rawIntegratorReset : process( adc_clk )
+  variable trig_d : std_logic := '0';
+  begin
+    if rising_edge(adc_clk) then
+      if rst_adc_clk = '1' then
+        trig_d := '0';
+        rst_rawKI <= '1';
+      else
+        rst_rawKI <= trigger and not trig_d;
+        trig_d := trigger;
+      end if;
+    end if;
+  end process;
+
   rawKIgen : for ct in 0 to NUM_RAW_KI_CH-1 generate
     rawIntegrator : entity work.KernelIntegrator
     port map (
       clk => adc_clk,
-      rst => rst_adc_clk,
+      rst => rst_rawKI,
 
       --TODO make KernelIntegrator data width generic
       data_re   => std_logic_vector(resize(signed(decimated_sysclk_data),16)),
@@ -286,7 +302,7 @@ begin
       clk => sys_clk,
       rst => rst,
 
-      stream_id => x"0" & STREAM_ID_OFFSET & x"01",
+      stream_id => x"0" & STREAM_ID_OFFSET & x"0" & std_logic_vector(to_unsigned(ct+1,4)),
       payload_size => x"0004", --minimum size
       pad_bytes => x"8", -- two words padding = 8 bytes
 

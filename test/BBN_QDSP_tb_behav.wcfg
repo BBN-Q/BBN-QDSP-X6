@@ -13,7 +13,7 @@
          </top_modules>
       </db_ref>
    </db_ref_list>
-   <WVObjectSize size="25" />
+   <WVObjectSize size="26" />
    <wvobject db_ref_id="1" type="logic" fp_name="/BBN_QDSP_tb/sys_clk">
       <obj_property name="ElementShortName">sys_clk</obj_property>
       <obj_property name="ObjectShortName">sys_clk</obj_property>
@@ -113,11 +113,6 @@
             <obj_property name="ObjectShortName">stream_enable[31:0]</obj_property>
             <obj_property name="Radix">HEXRADIX</obj_property>
          </wvobject>
-         <wvobject db_ref_id="1" type="array" fp_name="/BBN_QDSP_tb/uut/stream_id">
-            <obj_property name="ElementShortName">stream_id[3:0][31:0]</obj_property>
-            <obj_property name="ObjectShortName">stream_id[3:0][31:0]</obj_property>
-            <obj_property name="Radix">HEXRADIX</obj_property>
-         </wvobject>
          <wvobject db_ref_id="1" type="array" fp_name="/BBN_QDSP_tb/uut/phase_inc">
             <obj_property name="ElementShortName">phase_inc[1:0][23:0]</obj_property>
             <obj_property name="ObjectShortName">phase_inc[1:0][23:0]</obj_property>
@@ -134,38 +129,18 @@
             </wvobject>
          </wvobject>
          <wvobject db_ref_id="1" type="array" fp_name="/BBN_QDSP_tb/uut/kernel_rdwr_addr">
-            <obj_property name="ElementShortName">kernel_rdwr_addr[1:0][11:0]</obj_property>
-            <obj_property name="ObjectShortName">kernel_rdwr_addr[1:0][11:0]</obj_property>
+            <obj_property name="ElementShortName">kernel_rdwr_addr[3:0][11:0]</obj_property>
+            <obj_property name="ObjectShortName">kernel_rdwr_addr[3:0][11:0]</obj_property>
             <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
-            <wvobject db_ref_id="1" type="array" fp_name="/BBN_QDSP_tb/uut/kernel_rdwr_addr[1]">
-               <obj_property name="ElementShortName">[1][11:0]</obj_property>
-               <obj_property name="ObjectShortName">kernel_rdwr_addr[1][11:0]</obj_property>
-               <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
-            </wvobject>
-            <wvobject db_ref_id="1" type="array" fp_name="/BBN_QDSP_tb/uut/kernel_rdwr_addr[0]">
-               <obj_property name="ElementShortName">[0][11:0]</obj_property>
-               <obj_property name="ObjectShortName">kernel_rdwr_addr[0][11:0]</obj_property>
-               <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
-            </wvobject>
          </wvobject>
          <wvobject db_ref_id="1" type="array" fp_name="/BBN_QDSP_tb/uut/kernel_wr_data">
-            <obj_property name="ElementShortName">kernel_wr_data[1:0][31:0]</obj_property>
-            <obj_property name="ObjectShortName">kernel_wr_data[1:0][31:0]</obj_property>
+            <obj_property name="ElementShortName">kernel_wr_data[3:0][31:0]</obj_property>
+            <obj_property name="ObjectShortName">kernel_wr_data[3:0][31:0]</obj_property>
             <obj_property name="Radix">HEXRADIX</obj_property>
-            <wvobject db_ref_id="1" type="array" fp_name="/BBN_QDSP_tb/uut/kernel_wr_data[1]">
-               <obj_property name="ElementShortName">[1][31:0]</obj_property>
-               <obj_property name="ObjectShortName">kernel_wr_data[1][31:0]</obj_property>
-               <obj_property name="Radix">HEXRADIX</obj_property>
-            </wvobject>
-            <wvobject db_ref_id="1" type="array" fp_name="/BBN_QDSP_tb/uut/kernel_wr_data[0]">
-               <obj_property name="ElementShortName">[0][31:0]</obj_property>
-               <obj_property name="ObjectShortName">kernel_wr_data[0][31:0]</obj_property>
-               <obj_property name="Radix">HEXRADIX</obj_property>
-            </wvobject>
          </wvobject>
          <wvobject db_ref_id="1" type="array" fp_name="/BBN_QDSP_tb/uut/kernel_len">
-            <obj_property name="ElementShortName">kernel_len[1:0][11:0]</obj_property>
-            <obj_property name="ObjectShortName">kernel_len[1:0][11:0]</obj_property>
+            <obj_property name="ElementShortName">kernel_len[3:0][11:0]</obj_property>
+            <obj_property name="ObjectShortName">kernel_len[3:0][11:0]</obj_property>
             <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
          </wvobject>
          <wvobject db_ref_id="1" type="array" fp_name="/BBN_QDSP_tb/uut/threshold">
@@ -174,8 +149,8 @@
             <obj_property name="Radix">HEXRADIX</obj_property>
          </wvobject>
          <wvobject db_ref_id="1" type="array" fp_name="/BBN_QDSP_tb/uut/kernel_we">
-            <obj_property name="ElementShortName">kernel_we[1:0]</obj_property>
-            <obj_property name="ObjectShortName">kernel_we[1:0]</obj_property>
+            <obj_property name="ElementShortName">kernel_we[3:0]</obj_property>
+            <obj_property name="ObjectShortName">kernel_we[3:0]</obj_property>
             <obj_property name="Radix">BINARYRADIX</obj_property>
          </wvobject>
       </wvobject>
@@ -602,6 +577,33 @@
          <obj_property name="ElementShortName">vita_muxed_result_demod_vld</obj_property>
          <obj_property name="ObjectShortName">vita_muxed_result_demod_vld</obj_property>
       </wvobject>
+      <wvobject db_ref_id="1" type="array" fp_name="/BBN_QDSP_tb/uut/vitaMuxer/vita_result_raw_data">
+         <obj_property name="ElementShortName">vita_result_raw_data[1:0][31:0]</obj_property>
+         <obj_property name="ObjectShortName">vita_result_raw_data[1:0][31:0]</obj_property>
+         <obj_property name="Radix">HEXRADIX</obj_property>
+         <wvobject db_ref_id="1" type="array" fp_name="/BBN_QDSP_tb/uut/vitaMuxer/vita_result_raw_data[1]">
+            <obj_property name="ElementShortName">[1][31:0]</obj_property>
+            <obj_property name="ObjectShortName">vita_result_raw_data[1][31:0]</obj_property>
+            <obj_property name="Radix">HEXRADIX</obj_property>
+         </wvobject>
+         <wvobject db_ref_id="1" type="array" fp_name="/BBN_QDSP_tb/uut/vitaMuxer/vita_result_raw_data[0]">
+            <obj_property name="ElementShortName">[0][31:0]</obj_property>
+            <obj_property name="ObjectShortName">vita_result_raw_data[0][31:0]</obj_property>
+            <obj_property name="Radix">HEXRADIX</obj_property>
+         </wvobject>
+      </wvobject>
+      <wvobject db_ref_id="1" type="array" fp_name="/BBN_QDSP_tb/uut/vitaMuxer/vita_result_raw_vld">
+         <obj_property name="ElementShortName">vita_result_raw_vld[1:0]</obj_property>
+         <obj_property name="ObjectShortName">vita_result_raw_vld[1:0]</obj_property>
+      </wvobject>
+      <wvobject db_ref_id="1" type="array" fp_name="/BBN_QDSP_tb/uut/vitaMuxer/vita_result_raw_rdy">
+         <obj_property name="ElementShortName">vita_result_raw_rdy[1:0]</obj_property>
+         <obj_property name="ObjectShortName">vita_result_raw_rdy[1:0]</obj_property>
+      </wvobject>
+      <wvobject db_ref_id="1" type="array" fp_name="/BBN_QDSP_tb/uut/vitaMuxer/vita_result_raw_last">
+         <obj_property name="ElementShortName">vita_result_raw_last[1:0]</obj_property>
+         <obj_property name="ObjectShortName">vita_result_raw_last[1:0]</obj_property>
+      </wvobject>
       <wvobject db_ref_id="1" type="array" fp_name="/BBN_QDSP_tb/uut/vitaMuxer/vita_result_demod_data">
          <obj_property name="ElementShortName">vita_result_demod_data[1:0][31:0]</obj_property>
          <obj_property name="ObjectShortName">vita_result_demod_data[1:0][31:0]</obj_property>
@@ -820,10 +822,6 @@
          <obj_property name="ObjectShortName">kernel_len[11:0]</obj_property>
          <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
       </wvobject>
-      <wvobject db_ref_id="1" type="array" fp_name="/BBN_QDSP_tb/uut/\demodGenLoop(0)\/demodIntegrator/kernel_wr_addr">
-         <obj_property name="ElementShortName">kernel_wr_addr[11:0]</obj_property>
-         <obj_property name="ObjectShortName">kernel_wr_addr[11:0]</obj_property>
-      </wvobject>
       <wvobject db_ref_id="1" type="array" fp_name="/BBN_QDSP_tb/uut/\demodGenLoop(0)\/demodIntegrator/kernel_wr_data">
          <obj_property name="ElementShortName">kernel_wr_data[31:0]</obj_property>
          <obj_property name="ObjectShortName">kernel_wr_data[31:0]</obj_property>
@@ -891,16 +889,6 @@
          <obj_property name="ObjectShortName">kernel_data[31:0]</obj_property>
          <obj_property name="Radix">HEXRADIX</obj_property>
       </wvobject>
-      <wvobject db_ref_id="1" type="array" fp_name="/BBN_QDSP_tb/uut/\demodGenLoop(0)\/demodIntegrator/kernel_re">
-         <obj_property name="ElementShortName">kernel_re[15:0]</obj_property>
-         <obj_property name="ObjectShortName">kernel_re[15:0]</obj_property>
-         <obj_property name="Radix">SIGNEDDECRADIX</obj_property>
-      </wvobject>
-      <wvobject db_ref_id="1" type="array" fp_name="/BBN_QDSP_tb/uut/\demodGenLoop(0)\/demodIntegrator/kernel_im">
-         <obj_property name="ElementShortName">kernel_im[15:0]</obj_property>
-         <obj_property name="ObjectShortName">kernel_im[15:0]</obj_property>
-         <obj_property name="Radix">SIGNEDDECRADIX</obj_property>
-      </wvobject>
       <wvobject db_ref_id="1" type="logic" fp_name="/BBN_QDSP_tb/uut/\demodGenLoop(0)\/demodIntegrator/data_vld_d">
          <obj_property name="ElementShortName">data_vld_d</obj_property>
          <obj_property name="ObjectShortName">data_vld_d</obj_property>
@@ -929,15 +917,148 @@
          <obj_property name="ElementShortName">accum_last_d</obj_property>
          <obj_property name="ObjectShortName">accum_last_d</obj_property>
       </wvobject>
-      <wvobject db_ref_id="1" type="array" fp_name="/BBN_QDSP_tb/uut/\demodGenLoop(0)\/demodIntegrator/kernel_addr_d">
-         <obj_property name="ElementShortName">kernel_addr_d[11:0]</obj_property>
-         <obj_property name="ObjectShortName">kernel_addr_d[11:0]</obj_property>
-         <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
-      </wvobject>
       <wvobject db_ref_id="1" type="other" fp_name="/BBN_QDSP_tb/uut/\demodGenLoop(0)\/demodIntegrator/KERNEL_RAM_SIZE">
          <obj_property name="ElementShortName">KERNEL_RAM_SIZE</obj_property>
          <obj_property name="ObjectShortName">KERNEL_RAM_SIZE</obj_property>
          <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
+      </wvobject>
+   </wvobject>
+   <wvobject type="group" fp_name="group841">
+      <obj_property name="label">Raw Integrator 0</obj_property>
+      <obj_property name="DisplayName">label</obj_property>
+      <wvobject db_ref_id="1" type="logic" fp_name="/BBN_QDSP_tb/uut/\rawKIgen(0)\/rawIntegrator/clk">
+         <obj_property name="ElementShortName">clk</obj_property>
+         <obj_property name="ObjectShortName">clk</obj_property>
+      </wvobject>
+      <wvobject db_ref_id="1" type="logic" fp_name="/BBN_QDSP_tb/uut/\rawKIgen(0)\/rawIntegrator/rst">
+         <obj_property name="ElementShortName">rst</obj_property>
+         <obj_property name="ObjectShortName">rst</obj_property>
+      </wvobject>
+      <wvobject db_ref_id="1" type="other" fp_name="/BBN_QDSP_tb/uut/\rawKIgen(0)\/rawIntegrator/KERNEL_RAM_SIZE">
+         <obj_property name="ElementShortName">KERNEL_RAM_SIZE</obj_property>
+         <obj_property name="ObjectShortName">KERNEL_RAM_SIZE</obj_property>
+         <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
+      </wvobject>
+      <wvobject db_ref_id="1" type="array" fp_name="/BBN_QDSP_tb/uut/\rawKIgen(0)\/rawIntegrator/accum_im">
+         <obj_property name="ElementShortName">accum_im[44:0]</obj_property>
+         <obj_property name="ObjectShortName">accum_im[44:0]</obj_property>
+         <obj_property name="Radix">SIGNEDDECRADIX</obj_property>
+      </wvobject>
+      <wvobject db_ref_id="1" type="logic" fp_name="/BBN_QDSP_tb/uut/\rawKIgen(0)\/rawIntegrator/accum_last">
+         <obj_property name="ElementShortName">accum_last</obj_property>
+         <obj_property name="ObjectShortName">accum_last</obj_property>
+      </wvobject>
+      <wvobject db_ref_id="1" type="logic" fp_name="/BBN_QDSP_tb/uut/\rawKIgen(0)\/rawIntegrator/accum_last_d">
+         <obj_property name="ElementShortName">accum_last_d</obj_property>
+         <obj_property name="ObjectShortName">accum_last_d</obj_property>
+      </wvobject>
+      <wvobject db_ref_id="1" type="array" fp_name="/BBN_QDSP_tb/uut/\rawKIgen(0)\/rawIntegrator/accum_re">
+         <obj_property name="ElementShortName">accum_re[44:0]</obj_property>
+         <obj_property name="ObjectShortName">accum_re[44:0]</obj_property>
+         <obj_property name="Radix">SIGNEDDECRADIX</obj_property>
+      </wvobject>
+      <wvobject db_ref_id="1" type="array" fp_name="/BBN_QDSP_tb/uut/\rawKIgen(0)\/rawIntegrator/data_im">
+         <obj_property name="ElementShortName">data_im[15:0]</obj_property>
+         <obj_property name="ObjectShortName">data_im[15:0]</obj_property>
+         <obj_property name="Radix">SIGNEDDECRADIX</obj_property>
+      </wvobject>
+      <wvobject db_ref_id="1" type="array" fp_name="/BBN_QDSP_tb/uut/\rawKIgen(0)\/rawIntegrator/data_im_d">
+         <obj_property name="ElementShortName">data_im_d[15:0]</obj_property>
+         <obj_property name="ObjectShortName">data_im_d[15:0]</obj_property>
+         <obj_property name="Radix">SIGNEDDECRADIX</obj_property>
+      </wvobject>
+      <wvobject db_ref_id="1" type="logic" fp_name="/BBN_QDSP_tb/uut/\rawKIgen(0)\/rawIntegrator/data_last">
+         <obj_property name="ElementShortName">data_last</obj_property>
+         <obj_property name="ObjectShortName">data_last</obj_property>
+      </wvobject>
+      <wvobject db_ref_id="1" type="array" fp_name="/BBN_QDSP_tb/uut/\rawKIgen(0)\/rawIntegrator/data_re">
+         <obj_property name="ElementShortName">data_re[15:0]</obj_property>
+         <obj_property name="ObjectShortName">data_re[15:0]</obj_property>
+         <obj_property name="Radix">SIGNEDDECRADIX</obj_property>
+      </wvobject>
+      <wvobject db_ref_id="1" type="array" fp_name="/BBN_QDSP_tb/uut/\rawKIgen(0)\/rawIntegrator/data_re_d">
+         <obj_property name="ElementShortName">data_re_d[15:0]</obj_property>
+         <obj_property name="ObjectShortName">data_re_d[15:0]</obj_property>
+         <obj_property name="Radix">SIGNEDDECRADIX</obj_property>
+      </wvobject>
+      <wvobject db_ref_id="1" type="logic" fp_name="/BBN_QDSP_tb/uut/\rawKIgen(0)\/rawIntegrator/data_vld">
+         <obj_property name="ElementShortName">data_vld</obj_property>
+         <obj_property name="ObjectShortName">data_vld</obj_property>
+      </wvobject>
+      <wvobject db_ref_id="1" type="logic" fp_name="/BBN_QDSP_tb/uut/\rawKIgen(0)\/rawIntegrator/data_vld_d">
+         <obj_property name="ElementShortName">data_vld_d</obj_property>
+         <obj_property name="ObjectShortName">data_vld_d</obj_property>
+      </wvobject>
+      <wvobject db_ref_id="1" type="array" fp_name="/BBN_QDSP_tb/uut/\rawKIgen(0)\/rawIntegrator/kernel_addr">
+         <obj_property name="ElementShortName">kernel_addr[11:0]</obj_property>
+         <obj_property name="ObjectShortName">kernel_addr[11:0]</obj_property>
+         <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
+      </wvobject>
+      <wvobject db_ref_id="1" type="array" fp_name="/BBN_QDSP_tb/uut/\rawKIgen(0)\/rawIntegrator/kernel_data">
+         <obj_property name="ElementShortName">kernel_data[31:0]</obj_property>
+         <obj_property name="ObjectShortName">kernel_data[31:0]</obj_property>
+         <obj_property name="Radix">HEXRADIX</obj_property>
+      </wvobject>
+      <wvobject db_ref_id="1" type="logic" fp_name="/BBN_QDSP_tb/uut/\rawKIgen(0)\/rawIntegrator/kernel_last">
+         <obj_property name="ElementShortName">kernel_last</obj_property>
+         <obj_property name="ObjectShortName">kernel_last</obj_property>
+      </wvobject>
+      <wvobject db_ref_id="1" type="logic" fp_name="/BBN_QDSP_tb/uut/\rawKIgen(0)\/rawIntegrator/kernel_last_d">
+         <obj_property name="ElementShortName">kernel_last_d</obj_property>
+         <obj_property name="ObjectShortName">kernel_last_d</obj_property>
+      </wvobject>
+      <wvobject db_ref_id="1" type="array" fp_name="/BBN_QDSP_tb/uut/\rawKIgen(0)\/rawIntegrator/kernel_len">
+         <obj_property name="ElementShortName">kernel_len[11:0]</obj_property>
+         <obj_property name="ObjectShortName">kernel_len[11:0]</obj_property>
+         <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
+      </wvobject>
+      <wvobject db_ref_id="1" type="array" fp_name="/BBN_QDSP_tb/uut/\rawKIgen(0)\/rawIntegrator/kernel_rd_data">
+         <obj_property name="ElementShortName">kernel_rd_data[31:0]</obj_property>
+         <obj_property name="ObjectShortName">kernel_rd_data[31:0]</obj_property>
+      </wvobject>
+      <wvobject db_ref_id="1" type="array" fp_name="/BBN_QDSP_tb/uut/\rawKIgen(0)\/rawIntegrator/kernel_rdwr_addr">
+         <obj_property name="ElementShortName">kernel_rdwr_addr[11:0]</obj_property>
+         <obj_property name="ObjectShortName">kernel_rdwr_addr[11:0]</obj_property>
+      </wvobject>
+      <wvobject db_ref_id="1" type="logic" fp_name="/BBN_QDSP_tb/uut/\rawKIgen(0)\/rawIntegrator/kernel_we">
+         <obj_property name="ElementShortName">kernel_we</obj_property>
+         <obj_property name="ObjectShortName">kernel_we</obj_property>
+      </wvobject>
+      <wvobject db_ref_id="1" type="logic" fp_name="/BBN_QDSP_tb/uut/\rawKIgen(0)\/rawIntegrator/kernel_wr_clk">
+         <obj_property name="ElementShortName">kernel_wr_clk</obj_property>
+         <obj_property name="ObjectShortName">kernel_wr_clk</obj_property>
+      </wvobject>
+      <wvobject db_ref_id="1" type="array" fp_name="/BBN_QDSP_tb/uut/\rawKIgen(0)\/rawIntegrator/kernel_wr_data">
+         <obj_property name="ElementShortName">kernel_wr_data[31:0]</obj_property>
+         <obj_property name="ObjectShortName">kernel_wr_data[31:0]</obj_property>
+      </wvobject>
+      <wvobject db_ref_id="1" type="logic" fp_name="/BBN_QDSP_tb/uut/\rawKIgen(0)\/rawIntegrator/mult_last">
+         <obj_property name="ElementShortName">mult_last</obj_property>
+         <obj_property name="ObjectShortName">mult_last</obj_property>
+      </wvobject>
+      <wvobject db_ref_id="1" type="logic" fp_name="/BBN_QDSP_tb/uut/\rawKIgen(0)\/rawIntegrator/mult_vld">
+         <obj_property name="ElementShortName">mult_vld</obj_property>
+         <obj_property name="ObjectShortName">mult_vld</obj_property>
+      </wvobject>
+      <wvobject db_ref_id="1" type="array" fp_name="/BBN_QDSP_tb/uut/\rawKIgen(0)\/rawIntegrator/prod_im">
+         <obj_property name="ElementShortName">prod_im[32:0]</obj_property>
+         <obj_property name="ObjectShortName">prod_im[32:0]</obj_property>
+      </wvobject>
+      <wvobject db_ref_id="1" type="array" fp_name="/BBN_QDSP_tb/uut/\rawKIgen(0)\/rawIntegrator/prod_re">
+         <obj_property name="ElementShortName">prod_re[32:0]</obj_property>
+         <obj_property name="ObjectShortName">prod_re[32:0]</obj_property>
+      </wvobject>
+      <wvobject db_ref_id="1" type="array" fp_name="/BBN_QDSP_tb/uut/\rawKIgen(0)\/rawIntegrator/result_im">
+         <obj_property name="ElementShortName">result_im[31:0]</obj_property>
+         <obj_property name="ObjectShortName">result_im[31:0]</obj_property>
+      </wvobject>
+      <wvobject db_ref_id="1" type="array" fp_name="/BBN_QDSP_tb/uut/\rawKIgen(0)\/rawIntegrator/result_re">
+         <obj_property name="ElementShortName">result_re[31:0]</obj_property>
+         <obj_property name="ObjectShortName">result_re[31:0]</obj_property>
+      </wvobject>
+      <wvobject db_ref_id="1" type="logic" fp_name="/BBN_QDSP_tb/uut/\rawKIgen(0)\/rawIntegrator/result_vld">
+         <obj_property name="ElementShortName">result_vld</obj_property>
+         <obj_property name="ObjectShortName">result_vld</obj_property>
       </wvobject>
    </wvobject>
 </wave_config>
