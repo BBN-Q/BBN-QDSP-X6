@@ -34,12 +34,13 @@ entity BBN_QDSP_regs is
 
     phase_inc            : out width_24_array_t(NUM_DEMOD_CH-1 downto 0);
 
-    kernel_len           : out kernel_addr_array(NUM_DEMOD_CH-1 downto 0);
-    threshold            : out width_32_array_t(NUM_DEMOD_CH-1 downto 0);
-    kernel_addr          : out kernel_addr_array(NUM_DEMOD_CH-1 downto 0);
-    kernel_wr_data       : out width_32_array_t(NUM_DEMOD_CH-1 downto 0);
-    kernel_rd_data       : in width_32_array_t(NUM_DEMOD_CH-1 downto 0);
-    kernel_we            : out std_logic_vector(NUM_DEMOD_CH-1 downto 0)
+    kernel_len           : out kernel_addr_array_t(NUM_KI_CH-1 downto 0);
+    kernel_addr          : out kernel_addr_array_t(NUM_KI_CH-1 downto 0);
+    kernel_wr_data       : out width_32_array_t(NUM_KI_CH-1 downto 0);
+    kernel_rd_data       : in width_32_array_t(NUM_KI_CH-1 downto 0);
+    kernel_we            : out std_logic_vector(NUM_KI_CH-1 downto 0);
+
+    threshold            : out width_32_array_t(NUM_RAW_KI_CH-1 downto 0)
   );
 end BBN_QDSP_regs;
 
@@ -122,55 +123,64 @@ architecture arch of BBN_QDSP_regs is
   -- required register map.
 
   -- register map:
-  -- 1        : test settings (interval/enable)
-  -- 15       : stream_enable
-  -- 16 to 23 : phase_inc
-  -- 24 to 31 : kernel_len
-  -- 48 to 55 (even) : kernel_addr
-  -- 48 to 55 (odd) : kernel write/read data
-  -- 56 to 62 : threshold
-  -- 63 record length in samples
+  -- 1  : test settings (interval/enable)
+  -- 2  : record length in samples
+  -- 3  : stream_enable
+  -- 16 to 19 : kernel_len for raw integrators
+  -- 20 to 23 : kernel_len for demod integrators
+  -- 32 to 39 (even) : kernel_addr for raw integrators
+  -- 32 to 39 (odd)  : kernel write/read data for raw integrators
+  -- 40 to 47 (even) : kernel_addr for demod integrators
+  -- 40 to 47 (odd)  : kernel write/read data for demod integrators
+  -- 48 to 51 : thresholds
+  -- 52 to 55 : phase_inc
 
-  test_settings  <= wb_reg_o(1);
-  wb_reg_i(63)   <= wb_reg_o(63);
-  wb_reg_init(0) <= (others => '0');
+  test_settings <= wb_reg_o(1);
+  wb_reg_i(1)   <= wb_reg_o(1);
+
+  record_length <= wb_reg_o(2)(15 downto 0);
+  wb_reg_i(2)   <= wb_reg_o(2);
 
   -- mapping of streams to stream_enable reg:
   -- 0     : raw
   -- 1-15  : demod
   -- 16-31 : results
-  stream_enable   <= wb_reg_o(15);
-  wb_reg_init(15) <= X"ffffffff";
-  wb_reg_i(15)    <= wb_reg_o(15);
+  stream_enable   <= wb_reg_o(3);
+  wb_reg_i(3)    <= wb_reg_o(3);
+  wb_reg_init(3) <= X"ffffffff"; --default everything enable
 
-  gen_out_params : for i in 0 to num_vita_streams-1 generate
-    --------------------------------------------------------------------------
-    wb_reg_i(32+i)           <= wb_reg_o(32+i);
-    --------------------------------------------------------------------------
-  end generate;
+  gen_raw_regs : for ct in 0 to NUM_RAW_KI_CH-1 generate
+    kernel_len(ct)  <= wb_reg_o(16+ct)(KERNEL_ADDR_WIDTH-1 downto 0);
+    wb_reg_i(16+ct) <= wb_reg_o(16+ct);
 
-  record_length             <= wb_reg_o(63)(15 downto 0);
-  wb_reg_i(63)(15 downto 0) <= wb_reg_o(63)(15 downto 0);
-
-  gen_demod_regs : for i in 0 to NUM_DEMOD_CH-1 generate
-    phase_inc(i)                <= wb_reg_o(16+i)(23 downto 0);
-    wb_reg_i(16+i)(23 downto 0) <= wb_reg_o(16+i)(23 downto 0);
-    wb_reg_init(16+i)           <= x"00000000";
-
-    kernel_len(i)               <= wb_reg_o(24+i)(KERNEL_ADDR_WIDTH-1 downto 0);
-    wb_reg_i(24+i)(15 downto 0) <= wb_reg_o(24+i)(15 downto 0);
-
-    kernel_addr(i) <= wb_reg_o(48+2*i)(KERNEL_ADDR_WIDTH-1 downto 0);
-    wb_reg_i(48+2*i) <= wb_reg_o(48+2*i);
-    kernel_wr_data(i) <= wb_reg_o(48+2*i+1);
-    wb_reg_i(48+2*i+1) <= kernel_rd_data(i);
+    kernel_addr(ct)     <= wb_reg_o(32+2*ct)(KERNEL_ADDR_WIDTH-1 downto 0);
+    wb_reg_i(32+2*ct)   <= wb_reg_o(32+2*ct);
+    kernel_wr_data(ct)  <= wb_reg_o(32+2*ct+1);
+    wb_reg_i(32+2*ct+1) <= kernel_rd_data(ct);
 
     -- Use write strobe from data to write to kernel memory
-    kernel_we(i) <= wr_stb(48+2*i+1);
+    kernel_we(ct) <= wr_stb(32+2*ct+1);
 
-    threshold(i)    <= wb_reg_o(56+i);
-    wb_reg_i(56+i)  <= wb_reg_o(56+i);
+    threshold(ct)    <= wb_reg_o(48+ct);
+    wb_reg_i(48+ct)  <= wb_reg_o(48+ct);
 
+  end generate;
+
+
+  gen_demod_regs : for ct in 0 to NUM_DEMOD_CH-1 generate
+    phase_inc(ct)      <= wb_reg_o(52+ct)(23 downto 0);
+    wb_reg_i(52+ct)    <= wb_reg_o(52+ct);
+
+    kernel_len(NUM_RAW_KI_CH+ct)  <= wb_reg_o(20+ct)(KERNEL_ADDR_WIDTH-1 downto 0);
+    wb_reg_i(20+ct)     <= wb_reg_o(20+ct);
+
+    kernel_addr(NUM_RAW_KI_CH+ct) <= wb_reg_o(40+2*ct)(KERNEL_ADDR_WIDTH-1 downto 0);
+    wb_reg_i(40+2*ct) <= wb_reg_o(40+2*ct);
+    kernel_wr_data(NUM_RAW_KI_CH+ct) <= wb_reg_o(40+2*ct+1);
+    wb_reg_i(40+2*ct+1) <= kernel_rd_data(NUM_RAW_KI_CH+ct);
+
+    -- Use write strobe from data to write to kernel memory
+    kernel_we(ct) <= wr_stb(40+2*ct+1);
   end generate;
 
 end arch;

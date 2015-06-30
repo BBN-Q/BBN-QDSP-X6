@@ -72,6 +72,9 @@ signal decimated_sysclk_vld, decimated_sysclk_last, decimated_sysclk_rdy : std_l
 signal channelized_data_re, channelized_data_im : width_16_array_t(NUM_DEMOD_CH-1 downto 0) := (others => (others => '0'));
 signal channelized_vld, channelized_last : std_logic_vector(NUM_DEMOD_CH-1 downto 0) := (others => '0');
 
+signal result_raw_re, result_raw_im : width_32_array_t(NUM_RAW_KI_CH-1 downto 0) := (others => (others => '0'));
+signal result_raw_vld, result_raw_last : std_logic_vector(NUM_RAW_KI_CH-1 downto 0) := (others => '0');
+
 signal result_demod_re, result_demod_im : width_32_array_t(NUM_DEMOD_CH-1 downto 0) := (others => (others => '0'));
 signal result_demod_vld, result_demod_last : std_logic_vector(NUM_DEMOD_CH-1 downto 0) := (others => '0');
 
@@ -84,17 +87,20 @@ signal stream_enable      : std_logic_vector(31 downto 0) := (others => '0');
 signal phase_inc          : width_24_array_t(NUM_DEMOD_CH-1 downto 0) := (others => (others => '0'));
 
 --Kernel memory
-signal kernel_len        : kernel_addr_array(NUM_DEMOD_CH-1 downto 0) := (others => (others => '0'));
-signal kernel_rdwr_addr  : kernel_addr_array(NUM_DEMOD_CH-1 downto 0) := (others => (others => '0'));
-signal kernel_rd_data, kernel_wr_data  : width_32_array_t(NUM_DEMOD_CH-1 downto 0) := (others => (others => '0'));
-signal kernel_we         : std_logic_vector(NUM_DEMOD_CH-1 downto 0) := (others => '0');
+signal kernel_len        : kernel_addr_array_t(NUM_KI_CH-1 downto 0) := (others => (others => '0'));
+signal kernel_rdwr_addr  : kernel_addr_array_t(NUM_KI_CH-1 downto 0) := (others => (others => '0'));
+signal kernel_rd_data, kernel_wr_data  : width_32_array_t(NUM_KI_CH-1 downto 0) := (others => (others => '0'));
+signal kernel_we         : std_logic_vector(NUM_KI_CH-1 downto 0) := (others => '0');
 
 --Decision Engine thresholds
-signal threshold        : width_32_array_t(NUM_DEMOD_CH-1 downto 0) := (others => (others => '0'));
+signal threshold        : width_32_array_t(NUM_RAW_KI_CH-1 downto 0) := (others => (others => '0'));
 
 --Vita streams
 signal vita_raw_data : std_logic_vector(31 downto 0) := (others => '0');
 signal vita_raw_vld, vita_raw_last, vita_raw_rdy : std_logic := '0';
+
+signal vita_result_raw_data : width_32_array_t(NUM_RAW_KI_CH-1 downto 0) := (others => (others => '0'));
+signal vita_result_raw_vld, vita_result_raw_last, vita_result_raw_rdy : std_logic_vector(NUM_RAW_KI_CH-1 downto 0) := (others => '0');
 
 signal vita_demod_data : width_32_array_t(NUM_DEMOD_CH-1 downto 0) := (others => (others => '0'));
 signal vita_demod_vld, vita_demod_last, vita_demod_rdy : std_logic_vector(NUM_DEMOD_CH-1 downto 0) := (others => '0');
@@ -108,6 +114,8 @@ signal rst_adc_clk, rst_chan : std_logic := '1';
 signal channelizer_dds_vld : std_logic_vector(NUM_DEMOD_CH-1 downto 0) := (others => '0');
 signal raw_framer_vld, raw_framer_rdy : std_logic := '0';
 
+signal result_raw_vld_sys  : std_logic_vector(NUM_RAW_KI_CH-1 downto 0) := (others => '0');
+signal result_raw_vld_re   : std_logic_vector(NUM_RAW_KI_CH-1 downto 0) := (others => '0');
 signal result_demod_vld_re : std_logic_vector(NUM_DEMOD_CH-1 downto 0) := (others => '0');
 
 signal trigger, trig_test, trig_sysclk : std_logic := '0';
@@ -228,7 +236,73 @@ begin
     out_vld => decimated_vld,
     out_last => decimated_last);
 
-  --Get the data onto the system clock for raw stream and further demodulation
+  --Raw kernel integrators and framers
+  rawKIgen : for ct in 0 to NUM_RAW_KI_CH-1 generate
+    rawIntegrator : entity work.KernelIntegrator
+    port map (
+      clk => adc_clk,
+      rst => rst_adc_clk,
+
+      --TODO make KernelIntegrator data width generic
+      data_re   => std_logic_vector(resize(signed(decimated_sysclk_data),16)),
+      data_im   => (others => '0'),
+      data_vld  => decimated_vld,
+      data_last => decimated_last,
+
+      kernel_len       => kernel_len(ct),
+      kernel_rdwr_addr => kernel_rdwr_addr(ct),
+      kernel_wr_data   => kernel_wr_data(ct),
+      kernel_rd_data   => kernel_rd_data(ct),
+      kernel_we        => kernel_we(ct),
+      kernel_wr_clk    => sys_clk,
+
+      result_re      =>  result_raw_re(ct),
+      result_im      =>  result_raw_im(ct),
+      result_vld     =>  result_raw_vld(ct)
+    );
+
+    --Package the result data into a vita frame
+    --We want a single clock cycle valid high to use rising edge as valid
+    sync_result_raw_vld_sys : entity work.synchronizer
+    port map(reset => rst, clk => sys_clk, i_data => result_raw_vld(ct), o_data => result_raw_vld_sys(ct));
+
+    result_raw_vld_re_detector : process( sys_clk )
+    variable result_raw_vld_d : std_logic := '0';
+    begin
+      if rising_edge(sys_clk) then
+        if rst = '1' then
+          result_raw_vld_d := '0';
+          result_raw_vld_re(ct) <= '0';
+        else
+          result_raw_vld_re(ct) <= result_raw_vld_sys(ct) and not result_raw_vld_d;
+          result_raw_vld_d := result_raw_vld_sys(ct);
+        end if;
+      end if;
+    end process;
+
+    rawResultFramer : entity work.VitaFramer
+    generic map (INPUT_BYTE_WIDTH => 8)
+    port map (
+      clk => sys_clk,
+      rst => rst,
+
+      stream_id => x"0" & STREAM_ID_OFFSET & x"01",
+      payload_size => x"0004", --minimum size
+      pad_bytes => x"8", -- two words padding = 8 bytes
+
+      in_data => result_raw_im(ct) & result_raw_re(ct),
+      in_vld  => result_raw_vld_re(ct),
+      in_last => result_raw_vld_re(ct),
+      in_rdy  => open,
+
+      out_data => vita_result_raw_data(ct),
+      out_vld  => vita_result_raw_vld(ct),
+      out_rdy  => vita_result_raw_rdy(ct),
+      out_last => vita_result_raw_last(ct)
+    );
+  end generate;
+
+  --Get the data onto the system clock for framing and further demodulation
   adc2sys_CDC : axis_async_fifo
   generic map (
     ADDR_WIDTH => 12,
@@ -335,11 +409,11 @@ begin
         data_vld  => channelized_vld(ct),
         data_last => channelized_last(ct),
 
-        kernel_len       => kernel_len(ct),
-        kernel_rdwr_addr => kernel_rdwr_addr(ct),
-        kernel_wr_data   => kernel_wr_data(ct),
-        kernel_rd_data   => kernel_rd_data(ct),
-        kernel_we        => kernel_we(ct),
+        kernel_len       => kernel_len(NUM_RAW_KI_CH+ct),
+        kernel_rdwr_addr => kernel_rdwr_addr(NUM_RAW_KI_CH+ct),
+        kernel_wr_data   => kernel_wr_data(NUM_RAW_KI_CH+ct),
+        kernel_rd_data   => kernel_rd_data(NUM_RAW_KI_CH+ct),
+        kernel_we        => kernel_we(NUM_RAW_KI_CH+ct),
         kernel_wr_clk    => sys_clk,
 
         result_re      =>  result_demod_re(ct),
@@ -396,6 +470,11 @@ begin
     vita_raw_vld   => vita_raw_vld,
     vita_raw_rdy   => vita_raw_rdy,
     vita_raw_last  => vita_raw_last,
+
+    vita_result_raw_data  => vita_result_raw_data,
+    vita_result_raw_vld   => vita_result_raw_vld,
+    vita_result_raw_rdy   => vita_result_raw_rdy,
+    vita_result_raw_last  => vita_result_raw_last,
 
     vita_demod_data  => vita_demod_data,
     vita_demod_vld   => vita_demod_vld,

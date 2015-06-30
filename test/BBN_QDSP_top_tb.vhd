@@ -107,14 +107,28 @@ begin
     wb_write(std_logic_vector(to_unsigned(addr, 16)), data);
   end procedure;
 
-  procedure write_kernel(
+  procedure write_kernel_raw(
+		phys : in natural;
+		rawch : in natural;
+		dataArray : in KERNEL_ARRAY_t) is
+
+	variable wbOffset : natural := 8192 + phys*256 + 32 + 2*rawch;
+	begin
+		wb_write(8192 + phys*256 + 16 + rawch, dataArray'length);
+		for ct in dataArray'range loop
+			wb_write(wbOffset, ct);
+			wb_write(wbOffset+1, dataArray(ct));
+		end loop;
+	end procedure;
+
+  procedure write_kernel_demod(
 		phys : in natural;
 		demod : in natural;
 		dataArray : in KERNEL_ARRAY_t) is
 
-	variable wbOffset : natural := 8192 + phys*256 + 48 + 2*demod;
+	variable wbOffset : natural := 8192 + phys*256 + 40 + 2*demod;
 	begin
-		wb_write(8192 + phys*256 + 24 + demod, dataArray'length);
+		wb_write(8192 + phys*256 + 20 + demod, dataArray'length);
 		for ct in dataArray'range loop
 			wb_write(wbOffset, ct);
 			wb_write(wbOffset+1, dataArray(ct));
@@ -132,18 +146,22 @@ begin
 
     testbench_state <= WB_WRITES;
   	for phys in 0 to 0 loop
-  		-- write the phase increments for the NCO's
+  		-- write the phase increments for the demodulator NCO's
   		for demod in 0 to 1 loop
-  			wb_write(8192 + phys*256 + 16 + demod, (2*phys+demod+1) * 671088);
+  			wb_write(8192 + phys*256 + 52 + demod, (2*phys+demod+1) * 671088);
   		end loop;
 
       --Write record length
-      wb_write(8192 + phys*256 + 63, RECORD_LENGTH); -- recordLength
+      wb_write(8192 + phys*256 + 2, RECORD_LENGTH); -- recordLength
 
   		--write integration kernels
   		for demod in 0 to 1 loop
-  			write_kernel(phys, demod, RAMP_KERNEL);
+  			write_kernel_demod(phys, demod, RAMP_KERNEL);
   		end loop;
+      --write raw integration kernels
+      for rawch in 0 to 1 loop
+        write_kernel_raw(phys, rawch, RAMP_KERNEL);
+      end loop;
   	end loop;
 
     --Enable test mode and set trigger interval to 2500 clocks (10us)
