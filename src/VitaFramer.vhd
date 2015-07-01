@@ -105,7 +105,6 @@ port map (
   count => in_fifo_count
 );
 
-
 --Bring the width to 32 bits using an adaptor
 --TODO: if-block if already at 32bit
 input_width_adapter : axis_adapter
@@ -119,7 +118,6 @@ port map (
   clk => clk,
   rst => rst,
 
-  --AXI input
   input_axis_tdata  => in_pf_data,
   input_axis_tkeep  => (others => '1'),
   input_axis_tvalid => in_pf_vld,
@@ -127,7 +125,6 @@ port map (
   input_axis_tlast  => in_pf_last,
   input_axis_tuser  => '0',
 
-  --AXI input
   output_axis_tdata  => in_vww_data,
   output_axis_tkeep  => open,
   output_axis_tvalid => in_vww_vld,
