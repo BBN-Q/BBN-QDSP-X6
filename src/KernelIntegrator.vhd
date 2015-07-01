@@ -7,9 +7,8 @@ library ieee;
 use ieee.std_logic_1164.all;
 use ieee.numeric_std.all;
 
-use work.BBN_QDSP_pkg.KERNEL_ADDR_WIDTH;
-
 entity KernelIntegrator is
+  generic ( KERNEL_ADDR_WIDTH : natural );
   port (
 	rst : in std_logic;
 	clk : in std_logic;
@@ -32,7 +31,7 @@ entity KernelIntegrator is
 	result_re : out std_logic_vector(31 downto 0);
 	result_im : out std_logic_vector(31 downto 0);
   result_vld : out std_logic
-  ) ;
+  );
 
 end entity ; -- KernelIntegrator
 

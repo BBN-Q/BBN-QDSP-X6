@@ -44,8 +44,8 @@ architecture bench of BBN_QDSP_tb is
 
   type TestBenchState_t is (RESET, WB_WRITES, RUNNING, FINISHED);
   signal testBench_state : TestBenchState_t;
-
-  constant RAMP_KERNEL : KERNEL_ARRAY_t(0 to DEMOD_LENGTH-1) := create_ramp_kernel(DEMOD_LENGTH);
+  constant RAMP_KERNEL_RAW : KERNEL_ARRAY_t(0 to RECORD_LENGTH/16-1) := create_ramp_kernel(RECORD_LENGTH/16);
+  constant RAMP_KERNEL_DEMOD : KERNEL_ARRAY_t(0 to DEMOD_LENGTH-1) := create_ramp_kernel(DEMOD_LENGTH);
 
 begin
 
@@ -156,11 +156,11 @@ begin
 
   		--write integration kernels
   		for demod in 0 to 1 loop
-  			write_kernel_demod(phys, demod, RAMP_KERNEL);
+  			write_kernel_demod(phys, demod, RAMP_KERNEL_DEMOD);
   		end loop;
       --write raw integration kernels
       for rawch in 0 to 1 loop
-        write_kernel_raw(phys, rawch, RAMP_KERNEL);
+        write_kernel_raw(phys, rawch, RAMP_KERNEL_RAW);
       end loop;
   	end loop;
 

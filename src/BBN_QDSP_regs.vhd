@@ -150,10 +150,10 @@ architecture arch of BBN_QDSP_regs is
   wb_reg_init(3) <= X"ffffffff"; --default everything enable
 
   gen_raw_regs : for ct in 0 to NUM_RAW_KI_CH-1 generate
-    kernel_len(ct)  <= wb_reg_o(16+ct)(KERNEL_ADDR_WIDTH-1 downto 0);
+    kernel_len(ct)  <= wb_reg_o(16+ct)(RAW_KERNEL_ADDR_WIDTH-1 downto 0);
     wb_reg_i(16+ct) <= wb_reg_o(16+ct);
 
-    kernel_addr(ct)     <= wb_reg_o(32+2*ct)(KERNEL_ADDR_WIDTH-1 downto 0);
+    kernel_addr(ct)     <= wb_reg_o(32+2*ct)(RAW_KERNEL_ADDR_WIDTH-1 downto 0);
     wb_reg_i(32+2*ct)   <= wb_reg_o(32+2*ct);
     kernel_wr_data(ct)  <= wb_reg_o(32+2*ct+1);
     wb_reg_i(32+2*ct+1) <= kernel_rd_data(ct);
@@ -171,10 +171,10 @@ architecture arch of BBN_QDSP_regs is
     phase_inc(ct)      <= wb_reg_o(52+ct)(23 downto 0);
     wb_reg_i(52+ct)    <= wb_reg_o(52+ct);
 
-    kernel_len(NUM_RAW_KI_CH+ct)  <= wb_reg_o(20+ct)(KERNEL_ADDR_WIDTH-1 downto 0);
+    kernel_len(NUM_RAW_KI_CH+ct)  <= wb_reg_o(20+ct)(RAW_KERNEL_ADDR_WIDTH-1 downto 0);
     wb_reg_i(20+ct)     <= wb_reg_o(20+ct);
 
-    kernel_addr(NUM_RAW_KI_CH+ct) <= wb_reg_o(40+2*ct)(KERNEL_ADDR_WIDTH-1 downto 0);
+    kernel_addr(NUM_RAW_KI_CH+ct) <= wb_reg_o(40+2*ct)(RAW_KERNEL_ADDR_WIDTH-1 downto 0);
     wb_reg_i(40+2*ct) <= wb_reg_o(40+2*ct);
     kernel_wr_data(NUM_RAW_KI_CH+ct) <= wb_reg_o(40+2*ct+1);
     wb_reg_i(40+2*ct+1) <= kernel_rd_data(NUM_RAW_KI_CH+ct);

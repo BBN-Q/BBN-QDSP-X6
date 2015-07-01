@@ -15,7 +15,7 @@ package BBN_QDSP_pkg is
   constant NUM_RAW_KI_CH : natural := 2; -- number of raw kernel integrators
   constant NUM_KI_CH     : natural := NUM_DEMOD_CH + NUM_RAW_KI_CH; -- total number of kernel integrators
 
-  constant KERNEL_ADDR_WIDTH : natural := 12; --width of the kernel memory
+  constant RAW_KERNEL_ADDR_WIDTH : natural := 12; --maximum address space of the raw integrator kernel
 
 --------------------------------------------------------------------------------
 -- Data type declarations
@@ -24,7 +24,7 @@ package BBN_QDSP_pkg is
   type width_24_array_t is array (natural range <>) of std_logic_vector(23 downto 0);
   type width_32_array_t is array (natural range <>) of std_logic_vector(31 downto 0);
 
-  type kernel_addr_array_t is array (natural range <>) of std_logic_vector(KERNEL_ADDR_WIDTH-1 downto 0) ;
+  type kernel_addr_array_t is array (natural range <>) of std_logic_vector(RAW_KERNEL_ADDR_WIDTH-1 downto 0) ;
 
   component axis_async_fifo
     generic (

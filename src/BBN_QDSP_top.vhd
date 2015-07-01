@@ -255,6 +255,7 @@ begin
 
   rawKIgen : for ct in 0 to NUM_RAW_KI_CH-1 generate
     rawIntegrator : entity work.KernelIntegrator
+    generic map ( KERNEL_ADDR_WIDTH => RAW_KERNEL_ADDR_WIDTH)
     port map (
       clk => adc_clk,
       rst => rst_rawKI,
@@ -416,6 +417,7 @@ begin
       );
 
       demodIntegrator : entity work.KernelIntegrator
+      generic map ( KERNEL_ADDR_WIDTH => RAW_KERNEL_ADDR_WIDTH-3) -- demod length is / 8
       port map (
         clk => sys_clk,
         rst => rst_chan,
@@ -425,8 +427,8 @@ begin
         data_vld  => channelized_vld(ct),
         data_last => channelized_last(ct),
 
-        kernel_len       => kernel_len(NUM_RAW_KI_CH+ct),
-        kernel_rdwr_addr => kernel_rdwr_addr(NUM_RAW_KI_CH+ct),
+        kernel_len       => kernel_len(NUM_RAW_KI_CH+ct)(RAW_KERNEL_ADDR_WIDTH-4 downto 0),
+        kernel_rdwr_addr => kernel_rdwr_addr(NUM_RAW_KI_CH+ct)(RAW_KERNEL_ADDR_WIDTH-4 downto 0),
         kernel_wr_data   => kernel_wr_data(NUM_RAW_KI_CH+ct),
         kernel_rd_data   => kernel_rd_data(NUM_RAW_KI_CH+ct),
         kernel_we        => kernel_we(NUM_RAW_KI_CH+ct),
