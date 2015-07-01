@@ -52,8 +52,8 @@ entity BBN_QDSP_top is
     vita_muxed_last   : out std_logic;
 
     -- Decision Engine outputs
-    state                : out std_logic_vector(NUM_DEMOD_CH-1 downto 0);
-    state_vld            : out std_logic_vector(NUM_DEMOD_CH-1 downto 0)
+    state        : out std_logic_vector(NUM_DEMOD_CH-1 downto 0) := (others => '0');
+    state_vld    : out std_logic_vector(NUM_DEMOD_CH-1 downto 0) := (others => '0')
   );
 end entity;
 
@@ -278,8 +278,27 @@ begin
       result_vld     =>  result_raw_vld(ct)
     );
 
+    --Drive state decision lines
+    thresholding : process(adc_clk)
+    begin
+      if rising_edge(adc_clk) then
+        if rst_adc_clk = '1' then
+          state(ct) <= '0';
+          state_vld(ct) <= '0';
+        else
+          if signed(result_raw_re(ct)) > signed(threshold(ct)) then
+            state(ct) <= '1';
+          else
+            state(ct) <= '0';
+          end if;
+          state_vld(ct) <= result_raw_vld(ct);
+        end if;
+      end if;
+    end process;
+
     --Package the result data into a vita frame
-    --We want a single clock cycle valid high to use rising edge as valid
+    --We want a single clock cycle valid high so use rising edge as valid
+    --First get back onto the system clock
     sync_result_raw_vld_sys : entity work.synchronizer
     port map(reset => rst, clk => sys_clk, i_data => result_raw_vld(ct), o_data => result_raw_vld_sys(ct));
 
