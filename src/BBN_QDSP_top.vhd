@@ -27,29 +27,29 @@ entity BBN_QDSP_top is
   );
   port (
     -- Reset and Clock
-    sys_clk              : in  std_logic;
-    rst                  : in  std_logic; --reset synchronous to sys_clk
-    trig_ext             : in  std_logic; --trigger synchronous to adc_clk
+    sys_clk        : in  std_logic;
+    rst            : in  std_logic; --reset synchronous to sys_clk
+    trig_ext       : in  std_logic; --trigger synchronous to adc_clk
 
     -- Slave Wishbone Interface
-    wb_rst_i             : in  std_logic;
-    wb_clk_i             : in  std_logic;
-    wb_adr_i             : in  std_logic_vector(15 downto 0);
-    wb_dat_i             : in  std_logic_vector(31 downto 0);
-    wb_we_i              : in  std_logic;
-    wb_stb_i             : in  std_logic;
-    wb_ack_o             : out std_logic;
-    wb_dat_o             : out std_logic_vector(31 downto 0);
+    wb_rst_i       : in  std_logic;
+    wb_clk_i       : in  std_logic;
+    wb_adr_i       : in  std_logic_vector(15 downto 0);
+    wb_dat_i       : in  std_logic_vector(31 downto 0);
+    wb_we_i        : in  std_logic;
+    wb_stb_i       : in  std_logic;
+    wb_ack_o       : out std_logic;
+    wb_dat_o       : out std_logic_vector(31 downto 0);
 
     --ADC data interface
-    adc_clk         : in std_logic;
-    adc_data             : in std_logic_vector(47 downto 0) ;
+    adc_clk        : in std_logic;
+    adc_data       : in std_logic_vector(47 downto 0) ;
 
     -- VITA-49 Output FIFO Interfaces
-    vita_muxed_data      : out std_logic_vector(31 downto 0);
-    vita_muxed_vld       : out std_logic;
-    vita_muxed_rdy       : in std_logic;
-    vita_muxed_last      : out std_logic;
+    vita_muxed_data   : out std_logic_vector(31 downto 0);
+    vita_muxed_vld    : out std_logic;
+    vita_muxed_rdy    : in std_logic;
+    vita_muxed_last   : out std_logic;
 
     -- Decision Engine outputs
     state                : out std_logic_vector(NUM_DEMOD_CH-1 downto 0);
