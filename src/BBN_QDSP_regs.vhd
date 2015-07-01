@@ -143,8 +143,9 @@ architecture arch of BBN_QDSP_regs is
 
   -- mapping of streams to stream_enable reg:
   -- 0     : raw
-  -- 1-15  : demod
-  -- 16-31 : results
+  -- 1-4   : raw results
+  -- 16-19 : demod
+  -- 20-23 : demod results
   stream_enable   <= wb_reg_o(3);
   wb_reg_i(3)    <= wb_reg_o(3);
   wb_reg_init(3) <= X"ffffffff"; --default everything enable

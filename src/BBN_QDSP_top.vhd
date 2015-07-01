@@ -308,7 +308,7 @@ begin
       pad_bytes => x"8", -- two words padding = 8 bytes
 
       in_data => result_raw_im(ct) & result_raw_re(ct),
-      in_vld  => result_raw_vld_re(ct),
+      in_vld  => result_raw_vld_re(ct) and stream_enable(ct+1),
       in_last => result_raw_vld_re(ct),
       in_rdy  => open,
 
@@ -355,7 +355,7 @@ begin
     pad_bytes => (others => '0'),
 
     in_data => std_logic_vector(resize(signed(decimated_sysclk_data),16)),
-    in_vld  => raw_framer_vld,
+    in_vld  => raw_framer_vld and stream_enable(0),
     in_last => decimated_sysclk_last,
     in_rdy  => raw_framer_rdy,
 
@@ -406,7 +406,7 @@ begin
         pad_bytes => (others => '0'),
 
         in_data => channelized_data_im(ct) & channelized_data_re(ct),
-        in_vld  => channelized_vld(ct),
+        in_vld  => channelized_vld(ct) and stream_enable(16+ct),
         in_last => channelized_last(ct),
         in_rdy  => open,
 
@@ -466,7 +466,7 @@ begin
         pad_bytes => x"8", -- two words padding = 8 bytes
 
         in_data => result_demod_im(ct) & result_demod_re(ct),
-        in_vld  => result_demod_vld_re(ct),
+        in_vld  => result_demod_vld_re(ct) and stream_enable(20+ct),
         in_last => result_demod_vld_re(ct),
         in_rdy  => open,
 
