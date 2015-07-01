@@ -181,7 +181,7 @@ architecture arch of BBN_QDSP_regs is
     wb_reg_i(40+2*ct+1) <= kernel_rd_data(NUM_RAW_KI_CH+ct);
 
     -- Use write strobe from data to write to kernel memory
-    kernel_we(ct) <= wr_stb(40+2*ct+1);
+    kernel_we(NUM_RAW_KI_CH+ct) <= wr_stb(40+2*ct+1);
   end generate;
 
 end arch;
