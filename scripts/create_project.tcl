@@ -1,8 +1,7 @@
-#Create a new ISE project for the BBN x6 firmware
+#Create a new ISE project for the BBN X6 firmware
 
 # Initial author: Colm Ryan (cryan@bbn.com)
-# Date started: 30 April, 2015
-
+# Copyright 2015, Raytheon BBN Technologies
 
 # Helpful to start with Project->Generate Tcl Script....
 # Many of the function below modified from that starting point
@@ -10,8 +9,12 @@
 
 # Modify the variables below as necessary
 set MY_PROJECT "X6-Test"
-set PROJECTS_DIR "C:/Users/qlab/Documents/Xilinx Projects"
-set II_X6_DIR "C:/Innovative/X6-1000M/Hardware/FrameWork Logic/X6_1000M_r1.6"
+set PROJECTS_DIR "/home/cryan/Programming/FPGA"
+set II_X6_DIR "/home/cryan/Downloads/II/X6_1000M_r1.6"
+
+#Run at the tcl console with
+# source create_project.tcl
+# create_project
 
 set DEV "sx315t"
 set PKG "ff1156"
@@ -115,6 +118,8 @@ proc add_source_files {} {
 
 	global II_X6_DIR
 	global REPO_ROOT
+	global PROJECTS_DIR
+	global MY_PROJECT
 
 	puts "X6 create_project.tcl: Adding sources to project..."
 
@@ -156,8 +161,6 @@ proc add_source_files {} {
 	xfile add $II_LIB_COMMON/ii_packetizer_regs.vhd
 
 	xfile add $II_LIB_COMMON/ii_vita_mvr_nx1.vhd
-	xfile add $II_LIB_COMMON/ii_vita_framer.vhd
-	xfile add $II_LIB_COMMON/ii_stacker_128.vhd
 
 	xfile add $II_LIB_COMMON/ii_unsign_sat.vhd
 
@@ -184,38 +187,53 @@ proc add_source_files {} {
 	xfile add $REPO_ROOT/ii_mods/ii_dac5682z_intf_top.vhd
 	xfile add $REPO_ROOT/ii_mods/ii_dac5682z_intf.vhd
 	xfile add $X6_1000_LOGIC/src/ii_dac5682z_spi.vhd
-	xfile add $REPO_ROOT/dac_offgain.vhd
 	xfile add $X6_1000_LOGIC/src/ii_dac_test_gen.vhd
 
 	xfile add $REPO_ROOT/ii_mods/ii_ads5400_intf_top.vhd
 	xfile add $REPO_ROOT/ii_mods/ii_ads5400_intf.vhd
 	xfile add $X6_1000_LOGIC/src/ii_sample_sort.vhd
 
-	xfile add $REPO_ROOT/PulseGenerator.vhd
-	xfile add $REPO_ROOT/pg_wb_regs.vhd
+	xfile add $REPO_ROOT/src/PulseGenerator.vhd
+	xfile add $REPO_ROOT/src/pg_wb_regs.vhd
+	xfile add $REPO_ROOT/src/dac_offgain.vhd
 
-	xfile add $REPO_ROOT/ii_dsp_top.vhd
-	xfile add $REPO_ROOT/ii_dsp_framer_regs.vhd
-	xfile add $REPO_ROOT/channelizer/*.vhd
-	xfile add $REPO_ROOT/DecisionEngine.vhd
-	xfile add $REPO_ROOT/ii_dsp_vita_framer.vhd
-	xfile add $REPO_ROOT/ii_dsp_pkg.vhd
+	xfile add $REPO_ROOT/src/ADCDecimator.vhd
+	xfile add $REPO_ROOT/src/axis_arb_mux_2.v
+	xfile add $REPO_ROOT/src/axis_mux_2.v
+	xfile add $REPO_ROOT/src/BBN_QDSP_pkg.vhd
+	xfile add $REPO_ROOT/src/BBN_QDSP_regs.vhd
+	xfile add $REPO_ROOT/src/BBN_QDSP_top.vhd
+	xfile add $REPO_ROOT/src/BBN_QDSP_VitaMuxer.vhd
+	xfile add $REPO_ROOT/src/Channelizer.vhd
+	xfile add $REPO_ROOT/src/KernelIntegrator.vhd
+	xfile add $REPO_ROOT/src/TestPattern.vhd
+	xfile add $REPO_ROOT/src/VitaFramer.vhd
+	xfile add $REPO_ROOT/src/VitaFramer_pkg.vhd
 
-	xfile add $REPO_ROOT/Synchronizer.vhd
+	xfile add $REPO_ROOT/deps/verilog-axis/rtl/arbiter.v
+	xfile add $REPO_ROOT/deps/verilog-axis/rtl/priority_encoder.v
+	xfile add $REPO_ROOT/deps/verilog-axis/rtl/axis_arb_mux_4.v
+	xfile add $REPO_ROOT/deps/verilog-axis/rtl/axis_mux_4.v
+	xfile add $REPO_ROOT/deps/verilog-axis/rtl/axis_adapter.v
+	xfile add $REPO_ROOT/deps/verilog-axis/rtl/axis_register.v
+	xfile add $REPO_ROOT/deps/verilog-axis/rtl/axis_srl_fifo.v
+	xfile add $REPO_ROOT/deps/verilog-axis/rtl/axis_fifo.v
+	xfile add $REPO_ROOT/deps/verilog-axis/rtl/axis_async_fifo.v
 
-	xfile add $REPO_ROOT/x6_1000m_top.vhd
-	xfile add $REPO_ROOT/x6_1000m_pkg.vhd
+	xfile add $REPO_ROOT/deps/VHDL-Components/src/ComplexMultiplier.vhd
+	xfile add $REPO_ROOT/deps/VHDL-Components/src/DelayLine.vhd
+	xfile add $REPO_ROOT/deps/VHDL-Components/src/PolyphaseSSB.vhd
+	xfile add $REPO_ROOT/deps/VHDL-Components/src/Synchronizer.vhd
+
+	xfile add $REPO_ROOT/ii_mods/x6_1000m_top.vhd
+	xfile add $REPO_ROOT/ii_mods/x6_1000m_pkg.vhd
 
 	#Add IP cores with copy so when we generate them they don't barf files all over the repo
 	#First II ones
 	set ii_xco_files [list \
-		$II_LIB_COMMON/coregen/sfifo_32x128_dist.xco \
 		$II_LIB_COMMON/coregen/sfifo_32x48_ft.xco \
-		$II_LIB_COMMON/coregen/sfifo_512x128_bltin.xco \
 		$II_LIB_COMMON/coregen/sfifo_512x128_bram.xco \
-		$II_LIB_COMMON/coregen/afifo_256x128.xco \
 		$II_X6_DIR/1000M/logic/rev_a/coregen/afifo_512x64_bram.xco \
-		$II_X6_DIR/1000M/logic/rev_a/coregen/dds_16b.xco \
 	]
 	foreach xcoFile $ii_xco_files {
 		xfile add -copy $xcoFile
@@ -223,10 +241,13 @@ proc add_source_files {} {
 
 	#Now BBN ones
 	xfile add -copy $REPO_ROOT/ip/*.xco
+	foreach coeFile [glob $REPO_ROOT/ip/*.coe] {
+		file copy $coeFile $PROJECTS_DIR/$MY_PROJECT/ipcore_dir/
+	}
+	xfile add -copy $REPO_ROOT/deps/VHDL-Components/ip/DDS_SSB.xco
 
 	#set the top module
 	project set top "arch" "x6_1000m_top"
-
 }
 
 proc regenerate_ip {} {
