@@ -139,7 +139,7 @@ samp_base_re <= to_signed(127, 8);
 samp_base_im <= to_signed(0, 8);
 
 --Polyphase SSB module to generate waveforms
-polyphaseSSB : entity work.Polyphase_SSB
+polyphaseSSB : entity work.PolyphaseSSB
   generic map (
     IN_DATA_WIDTH => 8,
     OUT_DATA_WIDTH => SAMPLE_WIDTH
