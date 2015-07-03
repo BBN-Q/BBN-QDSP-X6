@@ -42,8 +42,6 @@ signal ssb_vld : std_logic := '0';
 
 begin
 
-phinc <= recordct * BASE_PHASE_INC;
-
 triggerPro : process(clk)
 variable ct : unsigned(16 downto 0);
 begin
@@ -70,6 +68,7 @@ variable resetct : natural range 0 to 3 := 0;
 variable alignct :natural range 0 to 3 := 0;
 begin
   if rising_edge(clk) then
+    phinc <= recordct * BASE_PHASE_INC;
     if rst = '1' then
       state := IDLE;
       rst_SSB <= '1';

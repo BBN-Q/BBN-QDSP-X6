@@ -81,8 +81,8 @@ begin
       if kernel_we = '1' then
         kernel_RAM(addr_d) <= kernel_wr_data;
       end if;
+      addr_d := to_integer(unsigned(kernel_rdwr_addr));
     end if;
-    addr_d := to_integer(unsigned(kernel_rdwr_addr));
   end process;
 
   kernel_mem_read : process(clk)
