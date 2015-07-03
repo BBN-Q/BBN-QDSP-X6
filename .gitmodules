@@ -4,6 +4,3 @@
 [submodule "deps/verilog-axis"]
 	path = deps/verilog-axis
 	url = git@github.com:caryan/verilog-axis.git
-[submodule "deps/PolyphaseSSB"]
-	path = deps/PolyphaseSSB
-	url = git@qiplab.bbn.com:buq-lab/PolyphaseSSB.git
