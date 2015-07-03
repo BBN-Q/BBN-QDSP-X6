@@ -234,6 +234,7 @@ proc add_source_files {} {
 		$II_LIB_COMMON/coregen/sfifo_32x48_ft.xco \
 		$II_LIB_COMMON/coregen/sfifo_512x128_bram.xco \
 		$II_X6_DIR/1000M/logic/rev_a/coregen/afifo_512x64_bram.xco \
+		$II_X6_DIR/1000M/logic/rev_a/coregen/dds_16b.xco \
 	]
 	foreach xcoFile $ii_xco_files {
 		xfile add -copy $xcoFile
