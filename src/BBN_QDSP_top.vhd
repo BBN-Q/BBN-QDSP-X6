@@ -22,8 +22,8 @@ use work.BBN_QDSP_pkg.all;
 
 entity BBN_QDSP_top is
   generic (
-    WB_OFFSET       : std_logic_vector(15 downto 0);
-    STREAM_ID_OFFSET : std_logic_vector(3 downto 0)
+    WB_OFFSET       : std_logic_vector(15 downto 0) := x"0000";
+    STREAM_ID_OFFSET : std_logic_vector(3 downto 0) := x"0"
   );
   port (
     -- Reset and Clock
