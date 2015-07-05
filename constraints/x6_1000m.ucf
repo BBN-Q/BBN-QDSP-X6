@@ -203,9 +203,20 @@ TIMESPEC "TS_SYS2REF_ADC_TIG" = FROM "TNM_sys_clk" TO "TNM_REF_ADC_CLK" TIG;
 TIMESPEC "TS_REF_ADC2SYS_TIG" = FROM "TNM_REF_ADC_CLK" TO "TNM_sys_clk" TIG;
 
 
-## Anything from the WB should be slow in the dsp control registers.  With the exception of kernel memory writes maybe
-INST "inst_dsp*/inst_dsp_regs/inst_core/wb_reg_o*" TNM = "TNM_wb_dps_reg_o";
-TIMESPEC "TS_dsp_wb_TIG" = FROM "TNM_wb_dps_reg_o" TO "FFS" TIG;
+## Anything to/from the WB should be slow in the dsp control registers.  With the exception of kernel memory writes maybe
+INST "inst_dsp*/inst_BBN_QDSP_regs/inst_core/app_data_read*" TNM = "TNM_wb_qdsp_app_data_read";
+TIMESPEC "TS_qdsp_reg_i_mcycle" = FROM "FFS" TO "TNM_wb_qdsp_app_data_read" "TS_sys_clk" * 4;
+
+INST "inst_dsp*/inst_BBN_QDSP_regs/inst_core/app_wr_en*" TNM = "TNM_wb_qdsp_app_wr_en";
+TIMESPEC "TS_qdsp_reg_en_o_mcycle" = FROM "TNM_wb_qdsp_app_wr_en" TO "FFS" "TS_sys_clk" * 2;
+
+INST "inst_dsp*/inst_BBN_QDSP_regs/inst_core/wb_reg_o*" TNM = "TNM_wb_qdsp_wb_reg_o";
+TIMESPEC "TS_qdsp_reg_o_mcycle" = FROM "TNM_wb_qdsp_wb_reg_o" TO "FFS" "TS_sys_clk" * 2;
+
+#INST "inst_dsp*/inst_BBN_QDSP_regs/inst_core/wb_reg_o*" TNM = "TNM_wb_qdsp_reg_o";
+#INST "inst_dsp*/inst_BBN_QDSP_regs/inst_core/wb_reg_i_core" TNM = "TNM_wb_qdsp_reg_i";
+#TIMESPEC "TS_qdsp_wb_o_TIG" = FROM "TNM_wb_qdsp_reg_o" TO "FFS" TIG;
+#TIMESPEC "TS_qdsp_wb_i_TIG" = FROM "FFS" TO "TNM_wb_qdsp_reg_i" TIG;
 
 
 ################################################################################
