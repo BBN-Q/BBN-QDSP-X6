@@ -534,7 +534,7 @@ begin
   generic map ( SAMPLE_WIDTH => 12)
   port map (
     clk => adc_clk,
-    rst => not test_enable,
+    rst => (not test_enable) or rst,
 
     trig_interval => test_trig_interval,
     trigger       => trig_test,
