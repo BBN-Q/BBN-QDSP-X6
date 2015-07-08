@@ -28,6 +28,9 @@ entity VitaFramer is
   payload_size : in std_logic_vector(15 downto 0);
   pad_bytes : in std_logic_vector(3 downto 0);
 
+  ts_seconds : in std_logic_vector(31 downto 0);
+  ts_frac_seconds : in std_logic_vector(31 downto 0);
+
   in_data : in std_logic_vector(INPUT_BYTE_WIDTH*8 - 1 downto 0);
   in_vld : in std_logic;
   in_last : in std_logic;
@@ -58,6 +61,11 @@ signal in_vww_vld, in_vww_last, in_vww_rdy : std_logic := '0';
 signal pkt_data, meta_data : std_logic_vector(31 downto 0) := (others => '0');
 signal pkt_vld, pkt_last, pkt_rdy, meta_vld : std_logic := '0';
 
+signal pkt_cnt : unsigned(3 downto 0) := (others => '0');
+
+signal ts_seconds_l, ts_frac_seconds_l : std_logic_vector(31 downto 0);
+signal latch_timeStamp : std_logic := '0';
+
 type STATE_t is (IDLE, WRITE_HEADER, RUN, HOLDOFF, PAD_FRAME, WRITE_TAIL);
 signal state : STATE_t;
 
@@ -67,18 +75,17 @@ begin
 vita_header_array(0) <= "0001" & "1100" --set by II
                         & "11" --timestamping integer seconds format = other
                         & "11" --timestamping fractional seconds format = other
-                        & "0000" -- packet count
+                        & std_logic_vector(pkt_cnt) -- packet count
                         & std_logic_vector(unsigned(payload_size) + 8);
 
 vita_header_array(1) <= x"0001" & stream_id;
 vita_header_array(2) <= (others => '0'); --Class OUI apparently not used
 vita_header_array(3) <= x"00030000"; --Class Info word -- II puts some partial packet info in here; here we put eof and sof high; see ii_vita_framer.vhd
-vita_header_array(4) <= (others => '0'); -- timestamp integer seconds TODO
-vita_header_array(5) <= (others => '0'); -- timestamp fraction seconds high TODO
-vita_header_array(6) <= (others => '0'); -- timestamp fraction seconds low TODO
+vita_header_array(4) <= ts_seconds_l; -- timestamp integer seconds
+vita_header_array(5) <= (others => '0'); -- timestamp fraction seconds high - we never exceed 32 bits
+vita_header_array(6) <= ts_frac_seconds_l; -- timestamp fraction seconds low
 
 vita_tail <= x"00f00" & pad_bytes & X"00";
-
 
 --Buffer the input data in a small srl FIFO
 inputFIFO: axis_srl_fifo
@@ -133,6 +140,21 @@ port map (
   output_axis_tuser  => open
 );
 
+latchTimeStamp : process(clk)
+begin
+  if rising_edge(clk) then
+    if rst = '1' then
+      ts_seconds_l <= (others => '0');
+      ts_frac_seconds_l <= (others => '0');
+    else
+      if latch_timeStamp = '1' then
+        ts_seconds_l <= ts_seconds;
+        ts_frac_seconds_l <= ts_frac_seconds;
+      end if;
+    end if;
+  end if;
+end process;
+
 main : process(clk)
 variable headerct : natural range 0 to 7 := 0;
 variable wordct : unsigned(16 downto 0) := (others => '0');
@@ -140,10 +162,15 @@ begin
   if rising_edge(clk) then
     if rst = '1' then
       state <= IDLE;
+      latch_timeStamp <= '0';
       meta_vld <= '0';
       pkt_last <= '0';
+      pkt_cnt <= (others => '0');
       headerct := 0;
     else
+      --defaults
+      latch_timeStamp <= '0';
+
       case( state ) is
 
         when IDLE =>
@@ -154,6 +181,7 @@ begin
           --Wait until in_vld is asserted
           if in_vld = '1' then
             state <= WRITE_HEADER;
+            latch_timeStamp <= '1';
           end if;
 
         when WRITE_HEADER =>
@@ -193,6 +221,7 @@ begin
           meta_vld <= '1';
           meta_data <= vita_tail;
           pkt_last <= '1';
+          pkt_cnt <= pkt_cnt + 1;
           state <= IDLE;
 
       end case;

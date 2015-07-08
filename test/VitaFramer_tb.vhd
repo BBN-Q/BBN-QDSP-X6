@@ -22,6 +22,8 @@ architecture bench of VitaFramer_tb is
   signal out_vld : std_logic := '0';
   signal out_last : std_logic := '0';
   signal out_rdy : std_logic := '0';
+  signal ts_seconds : std_logic_vector(31 downto 0) := (others => '0');
+  signal ts_frac_seconds : std_logic_vector(31 downto 0) := (others => '0');
 
   signal test_data : std_logic_vector(15 downto 0) := (others => '0');
   signal test_vld, test_last : std_logic := '0';
@@ -59,25 +61,37 @@ architecture bench of VitaFramer_tb is
 
 begin
 
+  timeStamper : entity work.VitaTimeStamp
+    generic map (CLK_FREQ => 200)
+    port map (
+      clk => clk,
+      rst => rst,
+
+      ts_seconds => ts_seconds,
+      ts_frac_seconds => ts_frac_seconds
+    );
+
   uut: entity work.VitaFramer
     generic map (
       INPUT_BYTE_WIDTH => INPUT_BYTE_WIDTH,
       INPUT_FIFO_DEPTH => INPUT_FIFO_DEPTH
     )
     port map (
-      clk          => clk,
-      rst          => rst,
-      stream_id    => stream_id,
-      payload_size => payload_size,
-      pad_bytes    => pad_bytes,
-      in_data      => in_data,
-      in_vld       => in_vld,
-      in_last      => in_last,
-      in_rdy       => in_rdy,
-      out_data     => out_data,
-      out_vld      => out_vld,
-      out_last     => out_last,
-      out_rdy      => out_rdy
+      clk             => clk,
+      rst             => rst,
+      stream_id       => stream_id,
+      payload_size    => payload_size,
+      pad_bytes       => pad_bytes,
+      ts_seconds      => ts_seconds,
+      ts_frac_seconds => ts_frac_seconds,
+      in_data         => in_data,
+      in_vld          => in_vld,
+      in_last         => in_last,
+      in_rdy          => in_rdy,
+      out_data        => out_data,
+      out_vld         => out_vld,
+      out_last        => out_last,
+      out_rdy         => out_rdy
     );
 
   --Little FIFO so we don't have to worry about stream rdy handshaking
@@ -181,10 +195,12 @@ begin
     wait until rising_edge(clk) and out_vld = '1';
     assert out_data = x"00030000" report "Vita header class info. incorrect";
 
-    for ct in 1 to 3 loop
+    for ct in 1 to 2 loop
       wait until rising_edge(clk) and out_vld = '1';
       assert out_data = x"00000000" report "Vita timestamp incorrect";
     end loop;
+    wait until rising_edge(clk) and out_vld = '1';
+    assert out_data = x"00000005" report "Vita timestamp incorrect";
 
     --16 bit samples are packed in sample1sample0
     for ct in 1 to 64 loop
@@ -200,7 +216,7 @@ begin
     wait until testBench_state = SHORT_FRAME;
 
     wait until rising_edge(clk) and out_vld = '1';
-    assert out_data = x"1cf0" & std_logic_vector(unsigned(payload_size)+8) report "Vita header IF word incorrect";
+    assert out_data = x"1cf1" & std_logic_vector(unsigned(payload_size)+8) report "Vita header IF word incorrect";
 
     wait until rising_edge(clk) and out_vld = '1';
     assert out_data = x"0001" & stream_id report "Vita header SID word incorrect";
@@ -211,10 +227,12 @@ begin
     wait until rising_edge(clk) and out_vld = '1';
     assert out_data = x"00030000" report "Vita header class info. incorrect";
 
-    for ct in 1 to 3 loop
+    for ct in 1 to 2 loop
       wait until rising_edge(clk) and out_vld = '1';
       assert out_data = x"00000000" report "Vita timestamp incorrect";
     end loop;
+    wait until rising_edge(clk) and out_vld = '1';
+    assert out_data = x"00000098" report "Vita timestamp incorrect";
 
     --16 bit samples are packed in sample1sample0
     wait until rising_edge(clk) and out_vld = '1';

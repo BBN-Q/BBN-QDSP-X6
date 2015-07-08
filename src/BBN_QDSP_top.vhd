@@ -22,8 +22,9 @@ use work.BBN_QDSP_pkg.all;
 
 entity BBN_QDSP_top is
   generic (
-    WB_OFFSET       : std_logic_vector(15 downto 0) := x"0000";
-    STREAM_ID_OFFSET : std_logic_vector(3 downto 0) := x"0"
+    WB_OFFSET        : std_logic_vector(15 downto 0) := x"0000";
+    STREAM_ID_OFFSET : std_logic_vector(3 downto 0) := x"0";
+    SYS_CLK_FREQ     : natural := 200 -- system clock frequency in MHz
   );
   port (
     -- Reset and Clock
@@ -96,6 +97,8 @@ signal kernel_we         : std_logic_vector(NUM_KI_CH-1 downto 0) := (others => 
 signal threshold        : width_32_array_t(NUM_RAW_KI_CH-1 downto 0) := (others => (others => '0'));
 
 --Vita streams
+signal ts_seconds, ts_frac_seconds : std_logic_vector(31 downto 0);
+
 signal vita_raw_data : std_logic_vector(31 downto 0) := (others => '0');
 signal vita_raw_vld, vita_raw_last, vita_raw_rdy : std_logic := '0';
 
@@ -150,6 +153,16 @@ begin
     kernel_rd_data       => kernel_rd_data,
     kernel_we            => kernel_we
   );
+
+  timeStamper : entity work.VitaTimeStamp
+    generic map (CLK_FREQ => SYS_CLK_FREQ)
+    port map (
+      clk => sys_clk,
+      rst => rst,
+
+      ts_seconds => ts_seconds,
+      ts_frac_seconds => ts_frac_seconds
+    );
 
   --Synchronize the reset from the system clock to the adc_clk
   --See https://github.com/noasic/noasic/blob/master/components/reset_synchronizer.vhd
@@ -325,6 +338,8 @@ begin
       stream_id => x"0" & STREAM_ID_OFFSET & x"0" & std_logic_vector(to_unsigned(ct+1,4)),
       payload_size => x"0004", --minimum size
       pad_bytes => x"8", -- two words padding = 8 bytes
+      ts_seconds => ts_seconds,
+      ts_frac_seconds => ts_frac_seconds,
 
       in_data => result_raw_im(ct) & result_raw_re(ct),
       in_vld  => result_raw_vld_re(ct) and stream_enable(ct+1),
@@ -372,6 +387,8 @@ begin
     stream_id => x"0" & STREAM_ID_OFFSET & x"00",
     payload_size => "000" & record_length(15 downto 3),  --divide by four for decimation and two samples per word
     pad_bytes => (others => '0'),
+    ts_seconds => ts_seconds,
+    ts_frac_seconds => ts_frac_seconds,
 
     in_data => std_logic_vector(resize(signed(decimated_sysclk_data),16)),
     in_vld  => raw_framer_vld and stream_enable(0),
@@ -423,6 +440,8 @@ begin
         stream_id => x"0" & STREAM_ID_OFFSET & std_logic_vector(to_unsigned(ct+1,4)) & x"0",
         payload_size => "00000" & record_length(15 downto 5), --total decimation factor of 32
         pad_bytes => (others => '0'),
+        ts_seconds => ts_seconds,
+        ts_frac_seconds => ts_frac_seconds,
 
         in_data => channelized_data_im(ct) & channelized_data_re(ct),
         in_vld  => channelized_vld(ct) and stream_enable(16+ct),
@@ -483,6 +502,8 @@ begin
         stream_id => x"0" & STREAM_ID_OFFSET & std_logic_vector(to_unsigned(ct+1,4)) & x"1",
         payload_size => x"0004", --minimum size
         pad_bytes => x"8", -- two words padding = 8 bytes
+        ts_seconds => ts_seconds,
+        ts_frac_seconds => ts_frac_seconds,
 
         in_data => result_demod_im(ct) & result_demod_re(ct),
         in_vld  => result_demod_vld_re(ct) and stream_enable(20+ct),

@@ -11,15 +11,7 @@
          </top_modules>
       </db_ref>
    </db_ref_list>
-   <WVObjectSize size="34" />
-   <wvobject db_ref_id="1" type="other" fp_name="/VitaFramer_tb/CLK_PERIOD">
-      <obj_property name="ElementShortName">CLK_PERIOD</obj_property>
-      <obj_property name="ObjectShortName">CLK_PERIOD</obj_property>
-   </wvobject>
-   <wvobject db_ref_id="1" type="other" fp_name="/VitaFramer_tb/INPUT_BYTE_WIDTH">
-      <obj_property name="ElementShortName">INPUT_BYTE_WIDTH</obj_property>
-      <obj_property name="ObjectShortName">INPUT_BYTE_WIDTH</obj_property>
-   </wvobject>
+   <WVObjectSize size="36" />
    <wvobject db_ref_id="1" type="logic" fp_name="/VitaFramer_tb/clk">
       <obj_property name="ElementShortName">clk</obj_property>
       <obj_property name="ObjectShortName">clk</obj_property>
@@ -28,9 +20,18 @@
       <obj_property name="ElementShortName">rst</obj_property>
       <obj_property name="ObjectShortName">rst</obj_property>
    </wvobject>
+   <wvobject db_ref_id="1" type="other" fp_name="/VitaFramer_tb/stop_the_clock">
+      <obj_property name="ElementShortName">stop_the_clock</obj_property>
+      <obj_property name="ObjectShortName">stop_the_clock</obj_property>
+   </wvobject>
    <wvobject db_ref_id="1" type="other" fp_name="/VitaFramer_tb/testBench_state">
       <obj_property name="ElementShortName">testBench_state</obj_property>
       <obj_property name="ObjectShortName">testBench_state</obj_property>
+   </wvobject>
+   <wvobject db_ref_id="1" type="array" fp_name="/VitaFramer_tb/payload_size">
+      <obj_property name="ElementShortName">payload_size[15:0]</obj_property>
+      <obj_property name="ObjectShortName">payload_size[15:0]</obj_property>
+      <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
    </wvobject>
    <wvobject db_ref_id="1" type="array" fp_name="/VitaFramer_tb/stream_id">
       <obj_property name="ElementShortName">stream_id[15:0]</obj_property>
@@ -71,9 +72,20 @@
       <obj_property name="ElementShortName">out_vld</obj_property>
       <obj_property name="ObjectShortName">out_vld</obj_property>
    </wvobject>
-   <wvobject db_ref_id="1" type="other" fp_name="/VitaFramer_tb/stop_the_clock">
-      <obj_property name="ElementShortName">stop_the_clock</obj_property>
-      <obj_property name="ObjectShortName">stop_the_clock</obj_property>
+   <wvobject db_ref_id="1" type="array" fp_name="/VitaFramer_tb/timeStamper/seconds_cnt">
+      <obj_property name="ElementShortName">seconds_cnt[31:0]</obj_property>
+      <obj_property name="ObjectShortName">seconds_cnt[31:0]</obj_property>
+      <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
+   </wvobject>
+   <wvobject db_ref_id="1" type="array" fp_name="/VitaFramer_tb/ts_seconds">
+      <obj_property name="ElementShortName">ts_seconds[31:0]</obj_property>
+      <obj_property name="ObjectShortName">ts_seconds[31:0]</obj_property>
+      <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
+   </wvobject>
+   <wvobject db_ref_id="1" type="array" fp_name="/VitaFramer_tb/ts_frac_seconds">
+      <obj_property name="ElementShortName">ts_frac_seconds[31:0]</obj_property>
+      <obj_property name="ObjectShortName">ts_frac_seconds[31:0]</obj_property>
+      <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
    </wvobject>
    <wvobject db_ref_id="1" type="array" fp_name="/VitaFramer_tb/uut/vita_header_array">
       <obj_property name="ElementShortName">vita_header_array[0:6][31:0]</obj_property>
@@ -134,6 +146,7 @@
    <wvobject db_ref_id="1" type="array" fp_name="/VitaFramer_tb/uut/meta_data">
       <obj_property name="ElementShortName">meta_data[31:0]</obj_property>
       <obj_property name="ObjectShortName">meta_data[31:0]</obj_property>
+      <obj_property name="Radix">HEXRADIX</obj_property>
    </wvobject>
    <wvobject db_ref_id="1" type="logic" fp_name="/VitaFramer_tb/uut/pkt_vld">
       <obj_property name="ElementShortName">pkt_vld</obj_property>
