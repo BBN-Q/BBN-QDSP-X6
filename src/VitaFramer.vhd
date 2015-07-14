@@ -201,7 +201,7 @@ begin
           if in_vww_vld = '1' and in_vww_rdy = '1' then
             wordct := wordct - 1;
           end if;
-          if in_vww_last = '1' and in_vww_rdy = '1' then
+          if in_vww_vld = '1' and in_vww_last = '1' and in_vww_rdy = '1' then
             state <= PAD_FRAME;
           end if;
 
