@@ -112,7 +112,7 @@ signal vita_result_demod_data : width_32_array_t(NUM_DEMOD_CH-1 downto 0) := (ot
 signal vita_result_demod_vld, vita_result_demod_last, vita_result_demod_rdy : std_logic_vector(NUM_DEMOD_CH-1 downto 0) := (others => '0');
 
 --Misc.
-signal rst_adc_clk, rst_chan, rst_rawKI : std_logic := '1';
+signal srst, rst_adc_clk, rst_chan, rst_rawKI : std_logic := '1';
 
 signal channelizer_dds_vld : std_logic_vector(NUM_DEMOD_CH-1 downto 0) := (others => '0');
 signal raw_framer_vld, raw_framer_rdy : std_logic := '0';
@@ -154,11 +154,19 @@ begin
     kernel_we            => kernel_we
   );
 
+  --Register synchronous reset; doesn't matter if we come of of reset one clock cycle later and helps timing closure getting the reset signal everywhere
+  rstReg : process( sys_clk )
+   begin
+    if rising_edge(sys_clk) then
+      srst <= rst;
+    end if ;
+   end process ; -- rstReg
+
   timeStamper : entity work.VitaTimeStamp
     generic map (CLK_FREQ => SYS_CLK_FREQ)
     port map (
       clk => sys_clk,
-      rst => rst,
+      rst => srst,
 
       ts_seconds => ts_seconds,
       ts_frac_seconds => ts_frac_seconds
@@ -168,19 +176,19 @@ begin
   --See https://github.com/noasic/noasic/blob/master/components/reset_synchronizer.vhd
   rst_sync_adc : entity work.synchronizer
   generic map(G_INIT_VALUE => '1', G_NUM_GUARD_FFS => 1)
-  port map(reset => rst, clk => adc_clk, i_data => '0', o_data => rst_adc_clk);
+  port map(reset => srst, clk => adc_clk, i_data => '0', o_data => rst_adc_clk);
 
   --Generate channelizer reset pulse on system clock
   --DDS and FIR in channlizer need two clock high reset
   sync_trig_sys : entity work.synchronizer
-  port map(reset => rst, clk => sys_clk, i_data => trigger, o_data => trig_sysclk);
+  port map(reset => srst, clk => sys_clk, i_data => trigger, o_data => trig_sysclk);
 
   channelizerResetPulse : process(sys_clk)
   variable trig_d : std_logic;
   variable reset_line : std_logic_vector(1 downto 0);
   begin
     if rising_edge(sys_clk) then
-      if rst = '1' then
+      if srst = '1' then
         trig_d := '0';
         reset_line := (others => '1');
       else
@@ -239,7 +247,7 @@ begin
   generic map (ADC_DATA_WIDTH => 12)
   port map (
     clk => adc_clk,
-    rst => rst,
+    rst => srst,
 
     in_data => in_data,
     in_vld => in_vld,
@@ -313,13 +321,13 @@ begin
     --We want a single clock cycle valid high so use rising edge as valid
     --First get back onto the system clock
     sync_result_raw_vld_sys : entity work.synchronizer
-    port map(reset => rst, clk => sys_clk, i_data => result_raw_vld(ct), o_data => result_raw_vld_sys(ct));
+    port map(reset => srst, clk => sys_clk, i_data => result_raw_vld(ct), o_data => result_raw_vld_sys(ct));
 
     result_raw_vld_re_detector : process( sys_clk )
     variable result_raw_vld_d : std_logic := '0';
     begin
       if rising_edge(sys_clk) then
-        if rst = '1' then
+        if srst = '1' then
           result_raw_vld_d := '0';
           result_raw_vld_re(ct) <= '0';
         else
@@ -333,7 +341,7 @@ begin
     generic map (INPUT_BYTE_WIDTH => 8)
     port map (
       clk => sys_clk,
-      rst => rst,
+      rst => srst,
 
       stream_id => x"0" & STREAM_ID_OFFSET & x"0" & std_logic_vector(to_unsigned(ct+1,4)),
       payload_size => x"0004", --minimum size
@@ -369,7 +377,7 @@ begin
     input_axis_tuser => '0',
 
     output_clk => sys_clk,
-    output_rst => rst,
+    output_rst => srst,
     output_axis_tdata => decimated_sysclk_data,
     output_axis_tvalid => decimated_sysclk_vld,
     output_axis_tready => decimated_sysclk_rdy,
@@ -382,7 +390,7 @@ begin
   generic map (INPUT_BYTE_WIDTH => 2)
   port map (
     clk => sys_clk,
-    rst => rst,
+    rst => srst,
 
     stream_id => x"0" & STREAM_ID_OFFSET & x"00",
     payload_size => "000" & record_length(15 downto 3),  --divide by four for decimation and two samples per word
@@ -435,7 +443,7 @@ begin
       generic map (INPUT_BYTE_WIDTH => 4)
       port map (
         clk => sys_clk,
-        rst => rst,
+        rst => srst,
 
         stream_id => x"0" & STREAM_ID_OFFSET & std_logic_vector(to_unsigned(ct+1,4)) & x"0",
         payload_size => "00000" & record_length(15 downto 5), --total decimation factor of 32
@@ -483,7 +491,7 @@ begin
       variable result_demod_vld_d : std_logic := '0';
       begin
         if rising_edge(sys_clk) then
-          if rst = '1' then
+          if srst = '1' then
             result_demod_vld_d := '0';
             result_demod_vld_re(ct) <= '0';
           else
@@ -497,7 +505,7 @@ begin
       generic map (INPUT_BYTE_WIDTH => 8)
       port map (
         clk => sys_clk,
-        rst => rst,
+        rst => srst,
 
         stream_id => x"0" & STREAM_ID_OFFSET & std_logic_vector(to_unsigned(ct+1,4)) & x"1",
         payload_size => x"0004", --minimum size
@@ -522,7 +530,7 @@ begin
   vitaMuxer : entity work.BBN_QDSP_VitaMuxer
   port map (
     clk => sys_clk,
-    rst => rst,
+    rst => srst,
 
     vita_raw_data  => vita_raw_data,
     vita_raw_vld   => vita_raw_vld,
@@ -555,7 +563,7 @@ begin
   generic map ( SAMPLE_WIDTH => 12)
   port map (
     clk => adc_clk,
-    rst => (not test_enable) or rst,
+    rst => (not test_enable) or srst,
 
     trig_interval => test_trig_interval,
     trigger       => trig_test,
