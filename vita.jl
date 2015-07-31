@@ -6,6 +6,11 @@ import Base.convert
 #Stream ID lives in the bottom 16 bits of the second word
 streamID(packet::VitaPacket) = UInt16(packet[2] & 0xffff)
 
+#time stamp is in header words 5,6,7 but we ignore the fractional high word in 6
+#assume 200MHz clock for now and undo 1M scaling  in simulation
+time_stamp(packet::VitaPacket) = Float64(packet[5]/1e6 + 5e-9*packet[7])
+
+#Number of padding bytes is in the trailer
 padding_bytes(packet::VitaPacket) = UInt8((packet[end] & 0x0f00) >> 8)
 
 #Strip 7 header words and 1 tail
@@ -79,4 +84,21 @@ function VitaStreamDict(fileName::String)
 		end
 	end
 	vitaDict
+end
+
+function parse_log(logFile)
+	packets = Dict{UInt16, Vector{Tuple{UInt8, Float64}}}()
+	open(logFile, "r") do FID
+		for line in eachline(FID)
+			m = match(r"stream ID = (?P<streamID>0x\d+) with size 0x\d+; packet count = (?P<packetCount>\d+) at timestamp (?P<timeStamp>\d?\.\d+)", line)
+			if m != nothing
+				streamID = parse(UInt16, m[:streamID])
+				if !(streamID in keys(packets))
+					packets[streamID] = Vector{Tuple{UInt8, Float64}}()
+				end
+				push!(packets[streamID], (parse(UInt8, m[:packetCount]), parse(Float64, m[:timeStamp])))
+			end
+		end
+	end
+	return packets
 end
