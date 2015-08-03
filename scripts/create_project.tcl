@@ -112,6 +112,10 @@ proc set_project_props {} {
 	# Bitgen properties
 	project set "Run Design Rules Checker (DRC)" "false" -process "Generate Programming File"
 	project set "Other Bitgen Command Line Options" "-g StartupClk:CClk -g DriveDone:Yes" -process "Generate Programming File"
+
+	#Top-level generics
+	set NUM_LANES [string index $PCIE_LANES 1]
+	project set "Generics, Parameters" "PCIE_LANES=$NUM_LANES,DEVICE=\"$DEV\""
 }
 
 proc add_source_files {} {
