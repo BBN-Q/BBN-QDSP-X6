@@ -19,11 +19,12 @@ set II_X6_DIR "/home/cryan/Downloads/II/X6_1000M_r1.6"
 # create_project
 
 set DEV "sx315t"
-set DEV_SPEED "-2" #set to "-1" for lx240t boards we have
+#set to "-1" for lx240t boards we have
+set DEV_SPEED "-2"
 set PKG "ff1156"
 set ARCH $DEV\-$PKG
-set PCIE_LANES "x8" #set to "x4" for lx240t
-
+#set to "x4" for lx240t
+set PCIE_LANES "x8"
 set REPO_ROOT [file normalize [pwd]/..]
 
 proc create_project {} {
@@ -62,6 +63,7 @@ proc create_project {} {
 proc set_project_props {} {
 
 	global DEV
+	global DEV_SPEED
 	global PKG
 	global II_X6_DIR
 	global ARCH
@@ -268,14 +270,14 @@ proc regenerate_ip {} {
 	puts "X6 create_project.tcl: Regenerating IP cores. This can take a while..."
 
 	if {[file exists $PROJECTS_DIR/$MY_PROJECT/ipcore_dir/coregen.cgp] == 0} {
-		file copy $REPO_ROOT/ip/coregen.cgp $PROJECTS_DIR/$MY_PROJECT/ipcore_dir/
+		file copy $REPO_ROOT/ip/coregen.$DEV.cgp $PROJECTS_DIR/$MY_PROJECT/ipcore_dir/coregen.cgp
 	}
 
 	cd $PROJECTS_DIR/$MY_PROJECT/ipcore_dir
 
 	foreach xcoFile [glob *.xco] {
 		puts "$xcoFile...."
-		catch {exec coregen -b $xcoFile -p coregen.$DEV.cgp} msg
+		catch {exec coregen -b $xcoFile -p coregen.cgp} msg
 	}
 
 	cd $PROJECTS_DIR/$MY_PROJECT
