@@ -48,6 +48,9 @@ architecture arch of BBN_QDSP_VitaMuxer is
 signal vita_raw_pf_data : std_logic_vector(31 downto 0) := (others => '0');
 signal vita_raw_pf_vld, vita_raw_pf_rdy, vita_raw_pf_last : std_logic := '0';
 
+signal vita_raw_reg_data : std_logic_vector(31 downto 0) := (others => '0');
+signal vita_raw_reg_vld, vita_raw_reg_rdy, vita_raw_reg_last : std_logic := '0';
+
 signal vita_result_raw_pf_data : width_32_array_t(NUM_DEMOD_CH-1 downto 0) := (others => (others => '0'));
 signal vita_result_raw_pf_vld, vita_result_raw_pf_last, vita_result_raw_pf_rdy : std_logic_vector(NUM_RAW_KI_CH-1 downto 0) := (others => '0');
 
@@ -89,6 +92,27 @@ begin
     output_axis_tvalid => vita_raw_pf_vld,
     output_axis_tready => vita_raw_pf_rdy,
     output_axis_tlast  => vita_raw_pf_last,
+    output_axis_tuser  => open
+  );
+
+  --Additional register for data path from raw FIFO to muxer
+  --Seems to be necessary on lx240
+  rawFIFOReg : axis_register
+  generic map ( DATA_WIDTH => 32)
+  port map (
+    clk => clk,
+    rst => rst,
+
+    input_axis_tdata  => vita_raw_pf_data,
+    input_axis_tvalid => vita_raw_pf_vld,
+    input_axis_tready => vita_raw_pf_rdy,
+    input_axis_tlast  => vita_raw_pf_last,
+    input_axis_tuser  => '0',
+
+    output_axis_tdata  => vita_raw_reg_data,
+    output_axis_tvalid => vita_raw_reg_vld,
+    output_axis_tready => vita_raw_reg_rdy,
+    output_axis_tlast  => vita_raw_reg_last,
     output_axis_tuser  => open
   );
 
@@ -265,10 +289,10 @@ begin
       clk => clk,
       rst => rst,
 
-      input_0_axis_tdata   => vita_raw_pf_data,
-      input_0_axis_tvalid  => vita_raw_pf_vld,
-      input_0_axis_tready  => vita_raw_pf_rdy,
-      input_0_axis_tlast   => vita_raw_pf_last,
+      input_0_axis_tdata   => vita_raw_reg_data,
+      input_0_axis_tvalid  => vita_raw_reg_vld,
+      input_0_axis_tready  => vita_raw_reg_rdy,
+      input_0_axis_tlast   => vita_raw_reg_last,
       input_0_axis_tuser   => '0',
 
       input_1_axis_tdata   => vita_muxed_result_raw_data,
