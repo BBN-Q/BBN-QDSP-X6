@@ -238,15 +238,15 @@ proc add_source_files {} {
 		$II_X6_DIR/1000M/logic/rev_a/coregen/dds_16b.xco \
 	]
 	foreach xcoFile $ii_xco_files {
-		xfile add -copy $xcoFile
+		xfile add $xcoFile -copy
 	}
 
 	#Now BBN ones
-	xfile add -copy $REPO_ROOT/ip/*.xco
+	xfile add $REPO_ROOT/ip/*.xco -copy
 	foreach coeFile [glob $REPO_ROOT/ip/*.coe] {
 		file copy $coeFile $PROJECTS_DIR/$MY_PROJECT/ipcore_dir/
 	}
-	xfile add -copy $REPO_ROOT/deps/VHDL-Components/ip/DDS_SSB.xco
+	xfile add $REPO_ROOT/deps/VHDL-Components/ip/DDS_SSB.xco -copy
 
 	#set the top module
 	project set top "arch" "x6_1000m_top"
