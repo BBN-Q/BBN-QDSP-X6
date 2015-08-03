@@ -209,6 +209,7 @@ proc add_source_files {} {
 	xfile add $REPO_ROOT/src/TestPattern.vhd
 	xfile add $REPO_ROOT/src/VitaFramer.vhd
 	xfile add $REPO_ROOT/src/VitaFramer_pkg.vhd
+	xfile add $REPO_ROOT/src/VitaTimeStamp.vhd
 
 	xfile add $REPO_ROOT/deps/verilog-axis/rtl/arbiter.v
 	xfile add $REPO_ROOT/deps/verilog-axis/rtl/priority_encoder.v
