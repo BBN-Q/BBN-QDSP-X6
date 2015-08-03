@@ -8,7 +8,7 @@
 # Also use make_ise.tcl from II
 
 # Modify the variables below as necessary
-set MY_PROJECT "X6-Test"
+set MY_PROJECT "X6-sx315t"
 set PROJECTS_DIR "/home/cryan/Programming/FPGA"
 set II_X6_DIR "/home/cryan/Downloads/II/X6_1000M_r1.6"
 
@@ -17,9 +17,10 @@ set II_X6_DIR "/home/cryan/Downloads/II/X6_1000M_r1.6"
 # create_project
 
 set DEV "sx315t"
+set DEV_SPEED "-2" #set to "-1" for lx240t boards we have
 set PKG "ff1156"
 set ARCH $DEV\-$PKG
-set PCIE_LANES "x8"
+set PCIE_LANES "x8" #set to "x4" for lx240t
 
 set REPO_ROOT [file normalize [pwd]/..]
 
@@ -78,7 +79,7 @@ proc set_project_props {} {
 	project set family "Virtex6"
 	project set device xc6v$DEV
 	project set package $PKG
-	project set speed "-2"
+	project set speed $DEV_SPEED
 	project set top_level_module_type "HDL"
 	project set synthesis_tool "XST (VHDL/Verilog)"
 	project set simulator "ISim (VHDL/Verilog)"
@@ -260,6 +261,7 @@ proc regenerate_ip {} {
 
 	global PROJECTS_DIR
 	global MY_PROJECT
+	global DEV
 
 	puts "X6 create_project.tcl: Regenerating IP cores. This can take a while..."
 
@@ -271,7 +273,7 @@ proc regenerate_ip {} {
 
 	foreach xcoFile [glob *.xco] {
 		puts "$xcoFile...."
-		catch {exec coregen -b $xcoFile -p coregen.cgp} msg
+		catch {exec coregen -b $xcoFile -p coregen.$DEV.cgp} msg
 	}
 
 	cd $PROJECTS_DIR/$MY_PROJECT
