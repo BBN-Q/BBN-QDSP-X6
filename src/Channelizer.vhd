@@ -3,6 +3,28 @@
 -- For AXI packet framing to work initial packet must be multiple of 8.
 -- Does not apply back pressure and needs a continuous valid data flow to keep up with DDS
 --
+--
+-- Arbitrarily the two FIR filters are 65 tap low-pass equiripple. The first FIR
+-- is a quarter rate decimating filter with a pass band from 0 to 0.15 (0 to 18.75MHz)
+-- and stop from 0.25 to 1 (31.25 to 125MHz) with 60dB suppression in the stop band.
+-- The second is a half-rate decimating filter with a passband from 0 to 6MHz and a stop band
+-- from 10 to 31.25 with 70dB of suppression.
+--
+-- import scipy.signal
+--
+-- def write_coe_file(br, fileName):
+-- 	with open(fileName, "w") as FID:
+-- 		FID.write("radix=10;\n")
+-- 		FID.write("coefdata=\n")
+-- 		for coef in br:
+-- 			FID.write("{:.10f}\n".format(coef))
+--
+-- bStage1 = scipy.signal.remez(65, [0,0.15/2,0.25/2,0.5], [1,0])
+-- bStage2 = scipy.signal.remez(65, [0,6.0/62.5,10.0/62.5,0.5], [1,0])
+--
+-- write_coe_file(bStage1, "FIR_ChannelSelect_Stage1.coe")
+-- write_coe_file(bStage2, "FIR_ChannelSelect_Stage2.coe")
+
 -- Fixed point scaling details:
 -- Complex Multiplier : Output should be DATA_IN_WIDTH + 16 + 1
 --                      Truncated to 24 bits

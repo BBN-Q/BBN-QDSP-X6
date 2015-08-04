@@ -1,7 +1,7 @@
 ##############################################################
 #
 # Xilinx Core Generator version 14.7
-# Date: Wed Jul 01 19:54:48 2015
+# Date: Tue Aug  4 19:51:03 2015
 #
 ##############################################################
 #
@@ -44,11 +44,11 @@ CSET channel_sequence=Basic
 CSET clock_frequency=300.0
 CSET coefficient_buffer_type=Automatic
 CSET coefficient_file=./FIR_ChannelSelect_Stage1.coe
-CSET coefficient_fractional_bits=18
+CSET coefficient_fractional_bits=19
 CSET coefficient_reload=false
 CSET coefficient_sets=1
 CSET coefficient_sign=Signed
-CSET coefficient_structure=Inferred
+CSET coefficient_structure=Symmetric
 CSET coefficient_width=18
 CSET coefficientsource=COE_File
 CSET coefficientvector=6,0,-4,-3,5,6,-6,-13,7,44,64,44,7,-13,-6,6,5,-3,-4,0,6
@@ -109,4 +109,4 @@ CSET zero_pack_factor=1
 MISC pkg_timestamp=2013-07-22T10:45:45Z
 # END Extra information
 GENERATE
-# CRC: 1c80fef4
+# CRC: 27108cc6
