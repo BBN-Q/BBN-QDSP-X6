@@ -49,10 +49,10 @@ proc create_project {} {
 	project new $MY_PROJECT
 	set_project_props
 	add_source_files
-	regenerate_ip
 	add_constraints
 
 	puts "X6 create_project.tcl: project creation complete"
+	puts "\nRun \"regenerate_ip\" to rebuild the IP cores (takes ~20 minutes)."
 }
 
 #
