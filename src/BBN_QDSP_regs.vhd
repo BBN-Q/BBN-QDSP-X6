@@ -148,7 +148,6 @@ architecture arch of BBN_QDSP_regs is
   -- 20-23 : demod results
   stream_enable   <= wb_reg_o(3);
   wb_reg_i(3)    <= wb_reg_o(3);
-  wb_reg_init(3) <= X"ffffffff"; --default everything enable
 
   gen_raw_regs : for ct in 0 to NUM_RAW_KI_CH-1 generate
     kernel_len(ct)  <= wb_reg_o(16+ct)(RAW_KERNEL_ADDR_WIDTH-1 downto 0);
