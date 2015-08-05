@@ -21,6 +21,10 @@ create_project
 regenerate_ip
 ```
 
+Building the bitfile might fail the first time on Map with an error about
+IODELAY placement.  ISE is messing up reading the constraints and ``Rerun All``
+all seems to fix the issue.
+
 ## Software Driver
 
 The firmware works with a C-API driver [libx6](https://github.com/BBN-Q/libx6).
