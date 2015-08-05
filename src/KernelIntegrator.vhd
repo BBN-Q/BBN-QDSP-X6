@@ -73,11 +73,14 @@ begin
 	assert KERNEL_ADDR_WIDTH <= 15 report "KERNEL_ADDR_WIDTH too wide. Must be <= 16 to prevent accumulator overflow.";
 
 	--Kernel memory write/read processes
-	kernel_mem_wr : process(kernel_wr_clk)
+	--WB write/reads
+	kernel_mem_wb : process(kernel_wr_clk)
 	variable addr_d : natural;
+	variable output_reg : std_logic_vector(31 downto 0);
 	begin
 		if rising_edge(kernel_wr_clk) then
-			kernel_rd_data <= kernel_RAM(addr_d);
+			kernel_rd_data <= output_reg;
+			output_reg := kernel_RAM(addr_d);
 			if kernel_we = '1' then
 				kernel_RAM(addr_d) <= kernel_wr_data;
 			end if;
@@ -85,6 +88,7 @@ begin
 		end if;
 	end process;
 
+	--Integrator reads
 	kernel_mem_read : process(clk)
 	variable addr_d : natural;
 	begin
