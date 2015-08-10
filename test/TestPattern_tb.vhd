@@ -8,6 +8,7 @@ end;
 architecture bench of TestPattern_tb is
 
   constant SAMPLE_WIDTH : natural := 12;
+  constant TRIGGER_WIDTH : natural := 2;
   constant CLK_PERIOD : time := 4 ns;
 
   signal clk : std_logic := '0';
@@ -26,7 +27,10 @@ architecture bench of TestPattern_tb is
 begin
 
   uut: entity work.TestPattern
-    generic map ( SAMPLE_WIDTH => SAMPLE_WIDTH )
+    generic map (
+      SAMPLE_WIDTH => SAMPLE_WIDTH,
+      TRIGGER_WIDTH => TRIGGER_WIDTH
+    )
     port map (
       clk             => clk,
       rst             => rst,

@@ -560,7 +560,10 @@ begin
 
   --Test pattern generator
   myTestPattern : entity work.TestPattern
-  generic map ( SAMPLE_WIDTH => 12)
+  generic map (
+    SAMPLE_WIDTH => 12,
+    TRIGGER_WIDTH => 2
+  )
   port map (
     clk => adc_clk,
     rst => (not test_enable) or srst,

@@ -10,7 +10,8 @@ use ieee.numeric_std.all;
 
 entity TestPattern is
   generic (
-    SAMPLE_WIDTH : natural := 16
+    SAMPLE_WIDTH : natural := 16;
+    TRIGGER_WIDTH : natural := 2
   );
   port (
     clk : in std_logic;
@@ -44,22 +45,27 @@ begin
 
 triggerPro : process(clk)
 variable ct : unsigned(16 downto 0);
+variable triggerLine : std_logic_vector(TRIGGER_WIDTH-1 downto 0);
 begin
   if rising_edge(clk) then
     if rst = '1' then
       ct := unsigned('0' & trig_interval)-2;
+      triggerLine := (others => '0');
       trigger <= '0';
     else
       if ct(ct'high) = '1' then
-        trigger <= '1';
+        triggerLine := (others => '1');
         ct := unsigned('0' & trig_interval)-2;
       else
         ct := ct - 1;
-        trigger <= '0';
+        triggerLine := triggerLine(triggerLine'high-1 downto 0) & '0';
       end if;
+      trigger <= triggerLine(triggerLine'high);
     end if;
   end if;
 end process;
+
+
 
 main : process(clk)
 type STATE_t is (IDLE, RESETTING, ALIGN_MARKER, WAIT_FOR_VALID, PLAYING);
