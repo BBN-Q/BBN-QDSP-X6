@@ -2,7 +2,7 @@ library IEEE;
 use IEEE.Std_logic_1164.all;
 use IEEE.Numeric_Std.all;
 
-use work.bbn_qdsp_pkg.KERNEL_ADDR_WIDTH;
+use work.bbn_qdsp_pkg.RAW_KERNEL_ADDR_WIDTH;
 
 entity KernelIntegrator_tb is
 end;
@@ -13,8 +13,8 @@ architecture bench of KernelIntegrator_tb is
   signal clk: std_logic := '0';
   signal data_re, data_im : std_logic_vector(15 downto 0) := (others => '0');
   signal data_vld, data_last : std_logic := '0';
-  signal kernel_len: std_logic_vector(KERNEL_ADDR_WIDTH-1 downto 0) := std_logic_vector(to_unsigned(128, KERNEL_ADDR_WIDTH));
-  signal kernel_rdwr_addr: std_logic_vector(KERNEL_ADDR_WIDTH-1 downto 0);
+  signal kernel_len: std_logic_vector(RAW_KERNEL_ADDR_WIDTH-1 downto 0) := std_logic_vector(to_unsigned(128, RAW_KERNEL_ADDR_WIDTH));
+  signal kernel_rdwr_addr: std_logic_vector(RAW_KERNEL_ADDR_WIDTH-1 downto 0);
   signal kernel_wr_data : std_logic_vector(31 downto 0);
   signal kernel_rd_data : std_logic_vector(31 downto 0);
   signal kernel_we: std_logic := '0';
@@ -33,9 +33,10 @@ begin
 
   --Clocking
   clk <= not clk after CLK_PERIOD/2 when not stop_the_clocks;
-  kernel_wr_clk <= not kernel_wr_clk after WB_CLK_PERIOD when not stop_the_clocks;
+  kernel_wr_clk <= not kernel_wr_clk after WB_CLK_PERIOD/2 when not stop_the_clocks;
 
   uut: entity work.KernelIntegrator
+    generic map ( KERNEL_ADDR_WIDTH => RAW_KERNEL_ADDR_WIDTH)
     port map (
       rst => rst,
       clk              => clk,
@@ -67,21 +68,24 @@ begin
     wait until rising_edge(kernel_wr_clk);
     testBench_state <= MEMORY_WRITE;
     memoryWriter : for ct in 1 to to_integer(unsigned(kernel_len)) loop
-      kernel_rdwr_addr <= std_logic_vector(to_unsigned(ct-1, KERNEL_ADDR_WIDTH));
+      kernel_rdwr_addr <= std_logic_vector(to_unsigned(ct-1, RAW_KERNEL_ADDR_WIDTH));
+      wait until rising_edge(kernel_wr_clk);
       --For now load ramp
       kernel_wr_data <= std_logic_vector(to_signed(ct, 16)) & std_logic_vector(to_signed(256*ct-1, 16));
       kernel_we <= '1';
       wait until rising_edge(kernel_wr_clk);
       kernel_we <= '0';
-      wait for 10ns;
+      wait until rising_edge(kernel_wr_clk);
     end loop;
 
     --Read back a memory address
     wait until rising_edge(kernel_wr_clk);
     testBench_state <= MEMORY_READ;
-    kernel_rdwr_addr <= std_logic_vector(to_unsigned(27, KERNEL_ADDR_WIDTH));
-    wait until rising_edge(kernel_wr_clk);
-    wait until rising_edge(kernel_wr_clk);
+    kernel_rdwr_addr <= std_logic_vector(to_unsigned(27, RAW_KERNEL_ADDR_WIDTH));
+    --Address and output register delay
+    for ct in 1 to 4 loop
+      wait until rising_edge(kernel_wr_clk);
+    end loop;
     assert kernel_rd_data = std_logic_vector(to_signed(28, 16)) & std_logic_vector(to_signed(256*28-1, 16))
       report "Failed to read kernel memory";
 
@@ -115,7 +119,7 @@ begin
     --Value calculated in Julia with
     -- kernel = 256*(1:128)-1 + 1im*(1:128)
     -- data = -256*(1:128) + 1im*(256(1:128)-1)
-    -- floor(sum(kernel .* data) / 2^13) % assuming KERNEL_ADDR_WIDTH = 12 and extra bit from ComplexMultiplier
+    -- floor(sum(kernel .* data) / 2^13) % assuming RAW_KERNEL_ADDR_WIDTH = 12 and extra bit from ComplexMultiplier
     -- = -5679955 + 5635494im
     --
     wait until rising_edge(result_vld);
