@@ -13,15 +13,15 @@ time_stamp(packet::VitaPacket) = Float64(packet[5]/1e6 + 5e-9*packet[7])
 #Number of padding bytes is in the trailer
 padding_bytes(packet::VitaPacket) = UInt8((packet[end] & 0x0f00) >> 8)
 
-#Strip 7 header words and 1 tail
-payload(packet::VitaPacket) = packet[8:end-1]
+#Strip 7 header words and 1 tail and padding_bytes
+payload(packet::VitaPacket) = packet[8:end-1-(padding_bytes(packet)>>2)]
 
 function convert(::Type{Vector{Int16}}, packet::VitaPacket)
 	#16bit words are packed as
 	#	W1	W0
 	#	W3	W2
 	#	W5	W4
-	data = Array(Int16, 2*(length(packet)-8))
+	data = Array(Int16, 2*(length(packet) - 8 - (padding_bytes(packet)>>2)))
 	for (ct,word) in enumerate(payload(packet))
 		data[2*ct-1] = (word & 0xffff) % Int16
 		data[2*ct] = ((word & 0xffff0000) >> 16) % Int16
@@ -30,7 +30,7 @@ function convert(::Type{Vector{Int16}}, packet::VitaPacket)
 end
 
 function convert(::Type{Vector{Complex{Int16}}}, packet::VitaPacket)
-	data = Array(Complex{Int16}, (length(packet)-8))
+	data = Array(Complex{Int16}, length(packet) - 8 - (padding_bytes(packet)>>2))
 	for (ct,word) in enumerate(payload(packet))
 		data[ct] = 1im*(((word & 0xffff0000) >> 16) % Int16)  + (word & 0xffff) % Int16;
 	end
