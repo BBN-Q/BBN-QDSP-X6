@@ -107,7 +107,8 @@ begin
 	begin
 		if rising_edge(clk) then
 			if rst = '1' then
-				kernel_addr <= (others => '0');
+				--Start at -1 so we step to addr 0 first
+				kernel_addr <= (others => '1');
 			elsif data_vld = '1' then
 					kernel_addr <= kernel_addr + 1;
 			end if;
@@ -120,7 +121,7 @@ begin
 		if rising_edge(clk) then
 			if rst = '1' then
 				kernel_last <= '0';
-				addrct := unsigned(kernel_len) - 2;
+				addrct := unsigned(kernel_len) - 1;
 			elsif data_vld = '1' then
 				addrct := addrct - 1;
 				--Catch underflow
@@ -134,22 +135,23 @@ begin
 	end process;
 
 	--Delay lines to align input data and kernel
-	--It takes two clock cycles for data to come out of the kernel BRAM
+	--It takes one cycle to increment addr and two clock cycles for data to come out of the kernel BRAM
 	delayLine_data_vld : entity work.DelayLine
-	generic map(DELAY_TAPS => 2)
+	generic map(DELAY_TAPS => 3)
 	port map(clk => clk, rst => rst, data_in(0) => data_vld, data_out(0) => data_vld_d);
 
-	delayLine_kernel_last : entity work.DelayLine
-	generic map(DELAY_TAPS => 2)
-	port map(clk => clk, rst => rst, data_in(0) => kernel_last, data_out(0) => kernel_last_d);
-
 	delayLine_data_re : entity work.DelayLine
-	generic map(REG_WIDTH => 16, DELAY_TAPS => 2)
+	generic map(REG_WIDTH => 16, DELAY_TAPS => 3)
 	port map(clk => clk, rst => rst, data_in => data_re, data_out => data_re_d);
 
 	delayLine_data_im : entity work.DelayLine
-	generic map(REG_WIDTH => 16, DELAY_TAPS => 2)
+	generic map(REG_WIDTH => 16, DELAY_TAPS => 3)
 	port map(clk => clk, rst => rst, data_in => data_im, data_out => data_im_d);
+
+	--Kernel last needs one clock less delay because it is clocked above
+	delayLine_kernel_last : entity work.DelayLine
+	generic map(DELAY_TAPS => 2)
+	port map(clk => clk, rst => rst, data_in(0) => kernel_last, data_out(0) => kernel_last_d);
 
 	--Complex multiplier and pipelining
 	multiplier : entity work.ComplexMultiplier
