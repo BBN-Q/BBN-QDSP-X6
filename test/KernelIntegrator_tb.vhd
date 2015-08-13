@@ -83,7 +83,7 @@ begin
     testBench_state <= MEMORY_READ;
     kernel_rdwr_addr <= std_logic_vector(to_unsigned(27, RAW_KERNEL_ADDR_WIDTH));
     --Address and output register delay
-    for ct in 1 to 4 loop
+    for ct in 1 to 3 loop
       wait until rising_edge(kernel_wr_clk);
     end loop;
     assert kernel_rd_data = std_logic_vector(to_signed(28, 16)) & std_logic_vector(to_signed(256*28-1, 16))
