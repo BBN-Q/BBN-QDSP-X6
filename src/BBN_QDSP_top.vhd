@@ -282,7 +282,7 @@ begin
       rst => rst_rawKI,
 
       --TODO make KernelIntegrator data width generic
-      data_re   => std_logic_vector(resize(signed(decimated_sysclk_data),16)),
+      data_re   => std_logic_vector(resize(signed(decimated_data),16)),
       data_im   => (others => '0'),
       data_vld  => decimated_vld,
       data_last => decimated_last,
