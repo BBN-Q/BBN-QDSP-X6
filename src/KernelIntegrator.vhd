@@ -58,7 +58,7 @@ alias kernel_im : std_logic_vector(15 downto 0) is kernel_data(31 downto 16);
 
 signal data_vld_d : std_logic := '0';
 signal kernel_last, kernel_last_d : std_logic := '0';
-signal mult_vld, mult_last	 : std_logic := '0';
+signal prod_vld, prod_last	 : std_logic := '0';
 signal accum_last, accum_last_d	: std_logic := '0';
 
 --instantiate kernel BRAM storage
@@ -176,8 +176,8 @@ begin
 
 		signed(prod_data_re) => prod_re,
 		signed(prod_data_im) => prod_im,
-		prod_vld => mult_vld,
-		prod_last => mult_last
+		prod_vld => prod_vld,
+		prod_last => prod_last
 	);
 
 	--Acumulator
@@ -192,10 +192,13 @@ begin
 				accum_last <= '0';
 				accum_last_d <= '0';
 			else
-				accum_re <= accum_re + prod_re;
-				accum_im <= accum_im + prod_im;
 
-				accum_last <= mult_last;
+				if prod_vld = '1' then
+					accum_re <= accum_re + prod_re;
+					accum_im <= accum_im + prod_im;
+				end if;
+
+				accum_last <= prod_last;
 				accum_last_d <= accum_last;
 
 				-- latch out result on rising edge of accum_last
