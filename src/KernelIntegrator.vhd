@@ -74,7 +74,8 @@ begin
 
 	--Kernel memory write/read processes
 	--WB write/reads to port A
-	--"No change" mode is most efficient according to Xilinx templates
+	--"No change" mode is most efficient according to Xilinx templates but
+	--fails to read on a 32x4096 BRAM so go with write-first
 	kernel_mem_wb : process(kernel_wr_clk)
 	variable addr_d : natural;
 	variable output_reg : std_logic_vector(31 downto 0);
@@ -84,11 +85,10 @@ begin
 			addr_d := to_integer(unsigned(kernel_rdwr_addr));
 			if kernel_we = '1' then
 				kernel_RAM(addr_d) <= kernel_wr_data;
-			else
-				--Output data with register
-				kernel_rd_data <= output_reg;
-				output_reg := kernel_RAM(addr_d);
 			end if;
+			--Output data with register
+			kernel_rd_data <= output_reg;
+			output_reg := kernel_RAM(addr_d);
 		end if;
 	end process;
 
