@@ -50,7 +50,6 @@ architecture bench of BBN_QDSP_tb is
 begin
 
   wb_clk_i <= sys_clk;
-  wb_rst_i <= rst;
 
   uut: entity work.BBN_QDSP_top
   generic map ( WB_OFFSET => x"2000", STREAM_ID_OFFSET => x"1" )
@@ -70,7 +69,7 @@ begin
     adc_data           => adc_data,
     vita_muxed_data    => vita_muxed_data,
     vita_muxed_vld     => vita_muxed_vld,
-    vita_muxed_rdy     => '1',
+    vita_muxed_rdy     => vita_muxed_rdy,
     vita_muxed_last    => vita_muxed_last,
     state              => state,
     state_vld          => state_vld );
@@ -140,15 +139,16 @@ begin
     --Initial reset
     testBench_state <= RESET;
     rst <= '1';
+    wb_rst_i <= '1';
     wait for 100ns;
-    rst <= '0';
+    wb_rst_i <= '0';
     wait for 20ns;
 
     testbench_state <= WB_WRITES;
   	for phys in 0 to 0 loop
   		-- write the phase increments for the demodulator NCO's
   		for demod in 0 to 1 loop
-  			wb_write(8192 + phys*256 + 52 + demod, (2*phys+demod+1) * 671088);
+  			wb_write(8192 + phys*256 + 52 + demod, (phys+2*demod+1) * 671088);
   		end loop;
 
       --Write record length
@@ -162,14 +162,24 @@ begin
       for rawch in 0 to 1 loop
         write_kernel_raw(phys, rawch, RAMP_KERNEL_RAW);
       end loop;
+
+      --Write stream enables
+      wb_write(8192 + phys*256 + 3,  3342343);
+
   	end loop;
+
+    testbench_state <= RUNNING;
+    wait until rising_edge(sys_clk);
+    rst <= '0';
+
+    wait for 2us;
 
     --Enable test mode and set trigger interval to 2500 clocks (10us)
     wb_write(8192 + 1, 65536 + 2500);
 
-    testbench_state <= RUNNING;
+    vita_muxed_rdy <= '1';
 
-    wait for 1000us;
+    wait for 649 us;
 
     testBench_state <= FINISHED;
     stop_the_clocks <= true;
@@ -181,7 +191,7 @@ begin
   	--pump the trigger every 20us
   	while true loop
   		if testBench_state = RUNNING then
-  			trigger <= '1';
+  			trigger <= '0';
   			wait for 10ns;
   			trigger <= '0';
   			wait for 19.99 us;

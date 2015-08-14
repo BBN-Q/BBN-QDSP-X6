@@ -53,11 +53,11 @@ package body TestVectors is
 --Create a ramp from MAX_NEG to MAX_POS real and flipped imaginary kernel
 function create_ramp_kernel(num_points : natural) return KERNEL_ARRAY_t is
 variable kernel_array : KERNEL_ARRAY_t(0 to num_points-1);
-constant STEP : natural := 65536/num_points;
+constant STEP : natural := (2**16)/num_points;
 begin
   for ct in 0 to num_points-1 loop
-    kernel_array(ct) := std_logic_vector(to_signed(-65536 + STEP*ct, 16)) &
-                        std_logic_vector(to_signed(65535 - STEP*ct, 16));
+    kernel_array(ct) := std_logic_vector(to_signed(2**15 - 1 - STEP*ct, 16)) &
+                        std_logic_vector(to_signed(-2**15 + STEP*ct, 16));
   end loop;
   return kernel_array;
 end create_ramp_kernel;

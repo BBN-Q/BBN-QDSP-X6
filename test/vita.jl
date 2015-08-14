@@ -37,6 +37,10 @@ function convert(::Type{Vector{Complex{Int16}}}, packet::VitaPacket)
 	data
 end
 
+function convert(::Type{Complex{Int32}}, packet::VitaPacket)
+	return Complex{Int32}(payload(packet)[1] % Int32, payload(packet)[2] % Int32)
+end
+
 function accumulate(packets::Vector{VitaPacket}, recordLength::Int, numSegments::Int)
 	#Accumulate vita packets in a approriately sized buffer
 	if ((streamID(packets[1]) & 0xf0) == 0)
