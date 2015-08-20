@@ -10,9 +10,9 @@
 # Modify the variables below as necessary
 set MY_PROJECT "X6-sx315t"
 set PROJECTS_DIR "/home/cryan/Programming/FPGA"
-set II_X6_DIR "/home/cryan/Downloads/II/X6_1000M_r1.6"
+set II_X6_DIR "/home/cryan/Downloads/II/X6_1000M_r1.7"
 #set PROJECTS_DIR "C:/Users/qlab/Documents/Xilinx Projects"
-#set II_X6_DIR "C:/Innovative/X6-1000M/Hardware/FrameWork Logic/X6_1000M_r1.6"
+#set II_X6_DIR "C:/Innovative/X6-1000M/Hardware/FrameWork Logic/X6_1000M_r1.7"
 
 #Run at the tcl console with
 # source create_project.tcl
