@@ -72,6 +72,8 @@ wf_rd_addr_copy(11 downto 0) <= std_logic_vector(wf_addr_rd);
 
 
 --WF BRAM
+--Irritatingly XST cannot infer a large asymmetrical block RAM so have to use an IP core
+--INFO:Xst:3229 - The RAM description <Mram_wf_RAM> will not be implemented on the device block RAM because actual implementation does not support asymetric block RAM larger than one block.
 my_wf_bram : entity work.WF_BRAM
   PORT MAP (
     clka => sys_clk,
@@ -98,7 +100,7 @@ begin
 			if dac_data_rdy = '1' then
 				wf_addr_rd <= wf_addr_rd + 1;
 				dac_data_wr_en <= '1';
-				
+
 				if wf_addr_rd = unsigned(wf_length(12 downto 0)) then
 					wf_addr_rd <= (others => '0');
 				end if;
