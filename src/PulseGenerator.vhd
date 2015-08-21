@@ -5,14 +5,12 @@ use ieee.numeric_std.all;
 entity PulseGenerator is
 	generic (wb_offset : std_logic_vector(15 downto 0));
 	port (
-	sys_clk : in std_logic;
-	reset : in std_logic;
+	-- DAC sample interface
+	dac_clk : in std_logic;
+	rst : in std_logic;
 	trigger : in std_logic;
 
-	-- DAC sample interface
 	dac_data       : out std_logic_vector(63 downto 0) ;
-	dac_data_wr_en : out std_logic;
-	dac_data_rdy   : in std_logic;
 
 	--wishbone interface
 	wb_rst_i       : in  std_logic;
@@ -36,6 +34,10 @@ signal wf_length : std_logic_vector(15 downto 0) := (others => '0');
 signal wf_addr_wr, wf_data_wr, wf_data_rd : std_logic_vector(31 downto 0) ;
 signal wf_we : std_logic;
 signal wf_addr_rd : unsigned(11 downto 0) ;
+signal wf_data : std_logic_vector(63 downto 0);
+
+type state_t is (IDLE, PLAYING);
+signal state : state_t := IDLE;
 
 begin
 
@@ -70,45 +72,67 @@ wf_rd_addr_copy(11 downto 0) <= std_logic_vector(wf_addr_rd);
 		wf_data_in  => wf_data_rd
 	);
 
-
 --WF BRAM
 --Irritatingly XST cannot infer a large asymmetrical block RAM so have to use an IP core
 --INFO:Xst:3229 - The RAM description <Mram_wf_RAM> will not be implemented on the device block RAM because actual implementation does not support asymetric block RAM larger than one block.
 my_wf_bram : entity work.WF_BRAM
   PORT MAP (
-    clka => sys_clk,
+    clka => wb_clk_i,
     wea(0) => wf_we,
     addra => wf_addr_wr(12 downto 0),
     dina => wf_data_wr,
     douta => wf_data_rd,
-    clkb => sys_clk,
+    clkb => dac_clk,
     web(0)  => '0',
     addrb => std_logic_vector(wf_addr_rd),
     dinb => (others => '0'),
-    doutb => dac_data
+    doutb => wf_data
   );
 
---Playback logic
--- since the data is FIFO'd in the DAC_PHY just push it on when possible
-playback : process( sys_clk )
+--Playback state machine
+playback : process( dac_clk )
+variable ct : unsigned(16 downto 0);
 begin
-	if rising_edge(sys_clk) then
-		if reset = '1' then
+	if rising_edge(dac_clk) then
+		if rst = '1' then
 			wf_addr_rd <= (others => '0');
-			dac_data_wr_en <= '0';
+			ct := unsigned(wf_length) - 2;
+			state <= IDLE;
 		else
-			if dac_data_rdy = '1' then
-				wf_addr_rd <= wf_addr_rd + 1;
-				dac_data_wr_en <= '1';
+			case( state ) is
 
-				if wf_addr_rd = unsigned(wf_length(12 downto 0)) then
+				when IDLE =>
 					wf_addr_rd <= (others => '0');
-				end if;
-			else
-				dac_data_wr_en <= '0';
-			end if;
+					ct := unsigned(wf_length) - 2;
+
+					if trigger = '1' then
+						state <= PLAYING;
+					end if;
+
+				when PLAYING =>
+					wf_addr_rd <= wf_addr_rd + 1;
+					if ct(ct'high) = '1' then
+						state <= IDLE;
+					end if;
+					ct := ct - 1;
+
+			end case;
 		end if;
 	end if ;
 end process ; -- playback
+
+--Mux between zero and wf data
+zeroMux : process(dac_clk)
+begin
+	if rising_edge(dac_clk) then
+		if rst = '1' then
+			dac_data <= (others => '0');
+		else
+			if state = PLAYING then
+				dac_data <= wf_data;
+			end if;
+		end if;
+	end if;
+end process;
 
 end architecture ; -- arch
