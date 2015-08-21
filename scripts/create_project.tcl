@@ -196,7 +196,6 @@ proc add_source_files {} {
 	xfile add $REPO_ROOT/ii_mods/ii_dac5682z_intf_top.vhd
 	xfile add $REPO_ROOT/ii_mods/ii_dac5682z_intf.vhd
 	xfile add $X6_1000_LOGIC/src/ii_dac5682z_spi.vhd
-	xfile add $X6_1000_LOGIC/src/ii_dac_test_gen.vhd
 
 	xfile add $REPO_ROOT/ii_mods/ii_ads5400_intf_top.vhd
 	xfile add $REPO_ROOT/ii_mods/ii_ads5400_intf.vhd
@@ -204,7 +203,6 @@ proc add_source_files {} {
 
 	xfile add $REPO_ROOT/src/PulseGenerator.vhd
 	xfile add $REPO_ROOT/src/pg_wb_regs.vhd
-	xfile add $REPO_ROOT/src/dac_offgain.vhd
 
 	xfile add $REPO_ROOT/src/ADCDecimator.vhd
 	xfile add $REPO_ROOT/src/axis_arb_mux_2.v
@@ -243,7 +241,6 @@ proc add_source_files {} {
 	set ii_xco_files [list \
 		$II_LIB_COMMON/coregen/sfifo_32x48_ft.xco \
 		$II_LIB_COMMON/coregen/sfifo_512x128_bram.xco \
-		$II_X6_DIR/1000M/logic/rev_a/coregen/afifo_512x64_bram.xco \
 		$II_X6_DIR/1000M/logic/rev_a/coregen/dds_16b.xco \
 	]
 	foreach xcoFile $ii_xco_files {
