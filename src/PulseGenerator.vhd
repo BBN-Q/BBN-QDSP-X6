@@ -49,9 +49,9 @@ wf_rd_addr_copy(11 downto 0) <= std_logic_vector(wf_addr_rd);
 
 --Wishbone registers
 
-	inst_pg_regs : entity work.pg_wb_regs
+	inst_pg_regs : entity work.PulseGenerator_regs
 	generic map (
-		offset      => wb_offset
+		offset      => WB_OFFSET
 	)
 	port map (
 		-- Wishbone interface signals

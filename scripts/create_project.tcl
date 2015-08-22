@@ -202,7 +202,7 @@ proc add_source_files {} {
 	xfile add $X6_1000_LOGIC/src/ii_sample_sort.vhd
 
 	xfile add $REPO_ROOT/src/PulseGenerator.vhd
-	xfile add $REPO_ROOT/src/pg_wb_regs.vhd
+	xfile add $REPO_ROOT/src/PulseGenerator_regs.vhd
 
 	xfile add $REPO_ROOT/src/ADCDecimator.vhd
 	xfile add $REPO_ROOT/src/axis_arb_mux_2.v

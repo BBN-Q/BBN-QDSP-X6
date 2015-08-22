@@ -2,9 +2,9 @@ library ieee;
 use ieee.std_logic_1164.all;
 use ieee.numeric_std.all;
 
-entity pg_wb_regs is
+entity PulseGenerator_regs is
   generic (
-    addr_bits            : integer := 6;
+    addr_bits            : integer := 4;
     offset               : std_logic_vector(15 downto 0)
   );
   port (
@@ -28,9 +28,9 @@ entity pg_wb_regs is
     wf_we             : out std_logic;
     wf_data_in        : in std_logic_vector(31 downto 0)
   );
-end pg_wb_regs;
+end PulseGenerator_regs;
 
-architecture arch of pg_wb_regs is
+architecture arch of PulseGenerator_regs is
 
   component ii_regs_core
     generic (
@@ -115,7 +115,6 @@ architecture arch of pg_wb_regs is
 
   wf_length <= wb_reg_o(8)(15 downto 0);
   wb_reg_i(8) <= wb_reg_o(8);
-  wb_reg_init(8) <= x"00001000";
 
   --Use addr 9/10 for the addr/data of the pulse block RAM
   wf_addr <= wb_reg_o(9);
@@ -127,4 +126,3 @@ architecture arch of pg_wb_regs is
   wf_we <= wr_stb(10);
 
 end arch;
-
