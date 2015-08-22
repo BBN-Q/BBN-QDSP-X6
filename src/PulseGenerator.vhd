@@ -3,7 +3,7 @@ use ieee.std_logic_1164.all;
 use ieee.numeric_std.all;
 
 entity PulseGenerator is
-	generic (wb_offset : std_logic_vector(15 downto 0));
+	generic (WB_OFFSET : std_logic_vector(15 downto 0));
 	port (
 	-- DAC sample interface
 	dac_clk : in std_logic;
@@ -35,6 +35,8 @@ signal wf_addr_wr, wf_data_wr, wf_data_rd : std_logic_vector(31 downto 0) ;
 signal wf_we : std_logic;
 signal wf_addr_rd : unsigned(11 downto 0) ;
 signal wf_data : std_logic_vector(63 downto 0);
+
+signal wf_vld, wf_vld_d : std_logic := '0';
 
 type state_t is (IDLE, PLAYING);
 signal state : state_t := IDLE;
@@ -95,21 +97,24 @@ variable ct : unsigned(16 downto 0);
 begin
 	if rising_edge(dac_clk) then
 		if rst = '1' then
-			wf_addr_rd <= (others => '0');
-			ct := unsigned(wf_length) - 2;
+			wf_addr_rd <= (others => '1');
+			ct := resize(unsigned(wf_length(wf_length'high downto 1)) - 2, 17); --divide by two because take 4 samples per clock
 			state <= IDLE;
+			wf_vld <= '0';
 		else
+			wf_vld <= '0'; --default
 			case( state ) is
 
 				when IDLE =>
-					wf_addr_rd <= (others => '0');
-					ct := unsigned(wf_length) - 2;
+					wf_addr_rd <= (others => '1');
+					ct := resize(unsigned(wf_length(wf_length'high downto 1)) - 2, 17); --divide by two because take 4 samples per clock
 
 					if trigger = '1' then
 						state <= PLAYING;
 					end if;
 
 				when PLAYING =>
+					wf_vld <= '1';
 					wf_addr_rd <= wf_addr_rd + 1;
 					if ct(ct'high) = '1' then
 						state <= IDLE;
@@ -122,14 +127,21 @@ begin
 end process ; -- playback
 
 --Mux between zero and wf data
+--We need a delay line for the valid for address update the output registers in BRAM
+delayLine_wf_vld : entity work.DelayLine
+generic map(DELAY_TAPS => 2)
+port map(clk => dac_clk, rst => rst, data_in(0) => wf_vld, data_out(0) => wf_vld_d);
+
 zeroMux : process(dac_clk)
 begin
 	if rising_edge(dac_clk) then
 		if rst = '1' then
 			dac_data <= (others => '0');
 		else
-			if state = PLAYING then
+			if wf_vld_d = '1' then
 				dac_data <= wf_data;
+			else
+				dac_data <= (others => '0');
 			end if;
 		end if;
 	end if;

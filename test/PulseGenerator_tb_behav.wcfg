@@ -1,0 +1,134 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<wave_config>
+   <wave_state>
+   </wave_state>
+   <db_ref_list>
+      <db_ref path="PulseGenerator_tb_behav.wdb" id="1">
+         <top_modules>
+            <top_module name="PulseGenerator_tb" />
+            <top_module name="glbl" />
+         </top_modules>
+      </db_ref>
+   </db_ref_list>
+   <WVObjectSize size="27" />
+   <wvobject db_ref_id="1" type="logic" fp_name="/PulseGenerator_tb/uut/dac_clk">
+      <obj_property name="ElementShortName">dac_clk</obj_property>
+      <obj_property name="ObjectShortName">dac_clk</obj_property>
+   </wvobject>
+   <wvobject db_ref_id="1" type="other" fp_name="/PulseGenerator_tb/testBench_state">
+      <obj_property name="ElementShortName">testBench_state</obj_property>
+      <obj_property name="ObjectShortName">testBench_state</obj_property>
+   </wvobject>
+   <wvobject db_ref_id="1" type="logic" fp_name="/PulseGenerator_tb/uut/rst">
+      <obj_property name="ElementShortName">rst</obj_property>
+      <obj_property name="ObjectShortName">rst</obj_property>
+   </wvobject>
+   <wvobject db_ref_id="1" type="logic" fp_name="/PulseGenerator_tb/uut/trigger">
+      <obj_property name="ElementShortName">trigger</obj_property>
+      <obj_property name="ObjectShortName">trigger</obj_property>
+   </wvobject>
+   <wvobject db_ref_id="1" type="array" fp_name="/PulseGenerator_tb/uut/dac_data">
+      <obj_property name="ElementShortName">dac_data[63:0]</obj_property>
+      <obj_property name="ObjectShortName">dac_data[63:0]</obj_property>
+      <obj_property name="Radix">HEXRADIX</obj_property>
+   </wvobject>
+   <wvobject db_ref_id="1" type="logic" fp_name="/PulseGenerator_tb/uut/wb_rst_i">
+      <obj_property name="ElementShortName">wb_rst_i</obj_property>
+      <obj_property name="ObjectShortName">wb_rst_i</obj_property>
+   </wvobject>
+   <wvobject db_ref_id="1" type="logic" fp_name="/PulseGenerator_tb/uut/wb_clk_i">
+      <obj_property name="ElementShortName">wb_clk_i</obj_property>
+      <obj_property name="ObjectShortName">wb_clk_i</obj_property>
+   </wvobject>
+   <wvobject db_ref_id="1" type="array" fp_name="/PulseGenerator_tb/uut/wb_adr_i">
+      <obj_property name="ElementShortName">wb_adr_i[15:0]</obj_property>
+      <obj_property name="ObjectShortName">wb_adr_i[15:0]</obj_property>
+      <obj_property name="Radix">HEXRADIX</obj_property>
+   </wvobject>
+   <wvobject db_ref_id="1" type="array" fp_name="/PulseGenerator_tb/uut/wb_dat_i">
+      <obj_property name="ElementShortName">wb_dat_i[31:0]</obj_property>
+      <obj_property name="ObjectShortName">wb_dat_i[31:0]</obj_property>
+      <obj_property name="Radix">HEXRADIX</obj_property>
+   </wvobject>
+   <wvobject db_ref_id="1" type="logic" fp_name="/PulseGenerator_tb/uut/wb_we_i">
+      <obj_property name="ElementShortName">wb_we_i</obj_property>
+      <obj_property name="ObjectShortName">wb_we_i</obj_property>
+   </wvobject>
+   <wvobject db_ref_id="1" type="logic" fp_name="/PulseGenerator_tb/uut/wb_stb_i">
+      <obj_property name="ElementShortName">wb_stb_i</obj_property>
+      <obj_property name="ObjectShortName">wb_stb_i</obj_property>
+   </wvobject>
+   <wvobject db_ref_id="1" type="logic" fp_name="/PulseGenerator_tb/uut/wb_ack_o">
+      <obj_property name="ElementShortName">wb_ack_o</obj_property>
+      <obj_property name="ObjectShortName">wb_ack_o</obj_property>
+   </wvobject>
+   <wvobject db_ref_id="1" type="array" fp_name="/PulseGenerator_tb/uut/wb_dat_o">
+      <obj_property name="ElementShortName">wb_dat_o[31:0]</obj_property>
+      <obj_property name="ObjectShortName">wb_dat_o[31:0]</obj_property>
+      <obj_property name="Radix">HEXRADIX</obj_property>
+   </wvobject>
+   <wvobject db_ref_id="1" type="array" fp_name="/PulseGenerator_tb/uut/wf_rd_addr_copy">
+      <obj_property name="ElementShortName">wf_rd_addr_copy[15:0]</obj_property>
+      <obj_property name="ObjectShortName">wf_rd_addr_copy[15:0]</obj_property>
+   </wvobject>
+   <wvobject db_ref_id="1" type="array" fp_name="/PulseGenerator_tb/uut/control">
+      <obj_property name="ElementShortName">control[31:0]</obj_property>
+      <obj_property name="ObjectShortName">control[31:0]</obj_property>
+      <obj_property name="Radix">HEXRADIX</obj_property>
+   </wvobject>
+   <wvobject db_ref_id="1" type="array" fp_name="/PulseGenerator_tb/uut/status">
+      <obj_property name="ElementShortName">status[31:0]</obj_property>
+      <obj_property name="ObjectShortName">status[31:0]</obj_property>
+      <obj_property name="Radix">HEXRADIX</obj_property>
+   </wvobject>
+   <wvobject db_ref_id="1" type="array" fp_name="/PulseGenerator_tb/uut/wf_length">
+      <obj_property name="ElementShortName">wf_length[15:0]</obj_property>
+      <obj_property name="ObjectShortName">wf_length[15:0]</obj_property>
+      <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
+   </wvobject>
+   <wvobject db_ref_id="1" type="array" fp_name="/PulseGenerator_tb/uut/wf_addr_wr">
+      <obj_property name="ElementShortName">wf_addr_wr[31:0]</obj_property>
+      <obj_property name="ObjectShortName">wf_addr_wr[31:0]</obj_property>
+      <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
+   </wvobject>
+   <wvobject db_ref_id="1" type="array" fp_name="/PulseGenerator_tb/uut/wf_data_wr">
+      <obj_property name="ElementShortName">wf_data_wr[31:0]</obj_property>
+      <obj_property name="ObjectShortName">wf_data_wr[31:0]</obj_property>
+      <obj_property name="Radix">HEXRADIX</obj_property>
+   </wvobject>
+   <wvobject db_ref_id="1" type="array" fp_name="/PulseGenerator_tb/uut/wf_data_rd">
+      <obj_property name="ElementShortName">wf_data_rd[31:0]</obj_property>
+      <obj_property name="ObjectShortName">wf_data_rd[31:0]</obj_property>
+      <obj_property name="Radix">HEXRADIX</obj_property>
+   </wvobject>
+   <wvobject db_ref_id="1" type="logic" fp_name="/PulseGenerator_tb/uut/wf_we">
+      <obj_property name="ElementShortName">wf_we</obj_property>
+      <obj_property name="ObjectShortName">wf_we</obj_property>
+   </wvobject>
+   <wvobject db_ref_id="1" type="array" fp_name="/PulseGenerator_tb/uut/wf_addr_rd">
+      <obj_property name="ElementShortName">wf_addr_rd[11:0]</obj_property>
+      <obj_property name="ObjectShortName">wf_addr_rd[11:0]</obj_property>
+      <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
+   </wvobject>
+   <wvobject db_ref_id="1" type="array" fp_name="/PulseGenerator_tb/uut/wf_data">
+      <obj_property name="ElementShortName">wf_data[63:0]</obj_property>
+      <obj_property name="ObjectShortName">wf_data[63:0]</obj_property>
+      <obj_property name="Radix">HEXRADIX</obj_property>
+   </wvobject>
+   <wvobject db_ref_id="1" type="logic" fp_name="/PulseGenerator_tb/uut/wf_vld">
+      <obj_property name="ElementShortName">wf_vld</obj_property>
+      <obj_property name="ObjectShortName">wf_vld</obj_property>
+   </wvobject>
+   <wvobject db_ref_id="1" type="logic" fp_name="/PulseGenerator_tb/uut/wf_vld_d">
+      <obj_property name="ElementShortName">wf_vld_d</obj_property>
+      <obj_property name="ObjectShortName">wf_vld_d</obj_property>
+   </wvobject>
+   <wvobject db_ref_id="1" type="other" fp_name="/PulseGenerator_tb/uut/state">
+      <obj_property name="ElementShortName">state</obj_property>
+      <obj_property name="ObjectShortName">state</obj_property>
+   </wvobject>
+   <wvobject db_ref_id="1" type="array" fp_name="/PulseGenerator_tb/uut/WB_OFFSET">
+      <obj_property name="ElementShortName">WB_OFFSET[15:0]</obj_property>
+      <obj_property name="ObjectShortName">WB_OFFSET[15:0]</obj_property>
+   </wvobject>
+</wave_config>
