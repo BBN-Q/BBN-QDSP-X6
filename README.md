@@ -31,4 +31,9 @@ The firmware works with a C-API driver [libx6](https://github.com/BBN-Q/libx6).
 
 ## License
 
-The BBN written modules are licensed under the Mozilla Public License.  Files in the ii_mods directory are modified from original Innovative Integration code and carry their own license.
+The BBN written modules are licensed under the Apache open source
+[license](http://github.com/BBN-Q/BBN-QDSP-X6/blob/github/LICENSE). Files in the
+ii_mods directory are modified from original Innovative Integration code and
+carry their own license. If your copy of the repository does not have the
+ii_mods folder please contact BBN and if you have a valid Frameworks Logic
+license we can share the modified files.
