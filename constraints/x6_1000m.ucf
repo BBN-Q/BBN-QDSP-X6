@@ -158,6 +158,14 @@ NET "led3"           LOC = J27;  #Bank 16
 NET "sys_clk_?" TNM_NET = "TNM_sys_clk_i";
 TIMESPEC "TS_sys_clk_i" = PERIOD "TNM_sys_clk_i" 5 ns;
 
+NET "dac?_clk_in_?" TNM_NET = "TNM_DAC_CLK_IN";
+TIMESPEC "TS_DAC_CLK_IN" = PERIOD "TNM_DAC_CLK_IN" 2 ns;   #500MHz
+NET "inst_afe_top/inst_dac?_intf/dac_clk_bufr" TNM_NET = "TNM_DAC_CLK";
+
+NET "adc?_da_dclk_?" TNM_NET = "TNM_ADC_DCLK";
+TIMESPEC "TS_ADC_DCLK" = PERIOD "TNM_ADC_DCLK" 2 ns;  #500MHz
+NET "inst_afe_top/inst_adc?/adc_dclk_div2" TNM_NET = "TNM_ADC_CLK";
+
 NET "ref_clk200" TNM = "TNM_ref_clk200";
 
 NET "lpddr2_c?/mem_clk_div2" TNM = "TNM_lpddr2_mmcm_clk";
@@ -453,18 +461,6 @@ NET "dac1_dig_n"      LOC = K31;  #Bank 15
 
 
 ################################################################################
-# Timing constraints                                                           #
-################################################################################
-NET "dac?_clk_in_?" TNM_NET = "TNM_DAC_CLK_IN";
-TIMESPEC "TS_DAC_CLK_IN" = PERIOD "TNM_DAC_CLK_IN" 2 ns;   #500MHz
-NET "inst_afe_top/inst_dac?_intf/dac_clk_bufr" TNM_NET = "TNM_DAC_CLK";
-
-NET "adc?_da_dclk_?" TNM_NET = "TNM_ADC_DCLK";
-TIMESPEC "TS_ADC_DCLK" = PERIOD "TNM_ADC_DCLK" 2 ns;  #500MHz
-NET "inst_afe_top/inst_adc?/adc_dclk_div2" TNM_NET = "TNM_ADC_CLK";
-
-
-################################################################################
 # FPGA part dependent area constraints                                         #
 # SX315T                                                                       #
 ################################################################################
@@ -493,3 +489,7 @@ INST "inst_afe_top/dac1_sw_trig" LOC = SLICE_X0Y118;
 INST "inst_afe_top/dac1_sw_trig" BEL = D5FF;
 INST "inst_afe_top/dac_sw_trig_dmt" LOC = SLICE_X1Y120;
 INST "inst_afe_top/dac_sw_trig_dmt" BEL = AFF;
+
+#ISE messes up Map and places the BUFR in the wrong clock region sometimes
+#See Xilnx AR 59173 http://www.xilinx.com/support/answers/59173.html
+INST "inst_afe_top/inst_dac1_intf/inst_dac_intf/dac5682z_phy_inst/dac_clk_bufr_inst" LOC = BUFR_X0Y4;
