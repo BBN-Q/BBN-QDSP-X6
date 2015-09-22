@@ -160,7 +160,7 @@ TIMESPEC "TS_sys_clk_i" = PERIOD "TNM_sys_clk_i" 5 ns;
 
 NET "dac?_clk_in_?" TNM_NET = "TNM_DAC_CLK_IN";
 TIMESPEC "TS_DAC_CLK_IN" = PERIOD "TNM_DAC_CLK_IN" 2 ns;   #500MHz
-NET "inst_afe_top/inst_dac?_intf/dac_clk_bufr" TNM_NET = "TNM_DAC_CLK";
+NET "inst_afe_top/inst_dac?_intf/dac_clk" TNM_NET = "TNM_DAC_CLK";
 
 NET "adc?_da_dclk_?" TNM_NET = "TNM_ADC_DCLK";
 TIMESPEC "TS_ADC_DCLK" = PERIOD "TNM_ADC_DCLK" 2 ns;  #500MHz

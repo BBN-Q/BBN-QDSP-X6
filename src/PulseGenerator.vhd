@@ -10,7 +10,8 @@ entity PulseGenerator is
 	rst : in std_logic;
 	trigger : in std_logic;
 
-	dac_data       : out std_logic_vector(63 downto 0) ;
+	dac_data       : out std_logic_vector(63 downto 0);
+	dac_data_en        : out std_logic;
 
 	--wishbone interface
 	wb_rst_i       : in  std_logic;
@@ -73,6 +74,8 @@ wf_rd_addr_copy(11 downto 0) <= std_logic_vector(wf_addr_rd);
 		wf_we       => wf_we,
 		wf_data_in  => wf_data_rd
 	);
+
+dac_data_en <= control(0);
 
 --WF BRAM
 --Irritatingly XST cannot infer a large asymmetrical block RAM so have to use an IP core
