@@ -10,7 +10,7 @@
 # Modify the variables below as necessary
 set MY_PROJECT "X6-sx315t"
 set PROJECTS_DIR "/home/cryan/Programming/FPGA"
-set II_X6_DIR "/home/cryan/Downloads/II/X6_1000M_r1.7"
+set II_X6_DIR "/home/cryan/Programming/FPGA/II/X6_1000M_r1.7"
 #set PROJECTS_DIR "C:/Users/qlab/Documents/Xilinx Projects"
 #set II_X6_DIR "C:/Innovative/X6-1000M/Hardware/FrameWork Logic/X6_1000M_r1.7"
 
@@ -147,17 +147,17 @@ proc add_source_files {} {
 	xfile add $II_LIB_COMMON/ii_loader.vhd
 	xfile add $II_LIB_COMMON/ii_loader_regs.vhd
 
-  xfile add $II_LIB_COMMON/ii_temp_control_top.vhd
-  xfile add $II_LIB_COMMON/ii_lm96163_intf.vhd
-  xfile add $II_LIB_COMMON/ii_lm96163_intf_phy.vhd
-  xfile add $II_LIB_COMMON/ii_temp_control_regs.vhd
-  xfile add $II_LIB_COMMON/ii_temp_control.vhd
+	xfile add $II_LIB_COMMON/ii_temp_control_top.vhd
+	xfile add $II_LIB_COMMON/ii_lm96163_intf.vhd
+	xfile add $II_LIB_COMMON/ii_lm96163_intf_phy.vhd
+	xfile add $II_LIB_COMMON/ii_temp_control_regs.vhd
+	xfile add $II_LIB_COMMON/ii_temp_control.vhd
 
-  xfile add $II_LIB_COMMON/ii_flash_intf_top.vhd
-  xfile add $II_LIB_COMMON/ii_flash_spi.vhd
-  xfile add $II_LIB_COMMON/ii_flash_regs.vhd
+	xfile add $II_LIB_COMMON/ii_flash_intf_top.vhd
+	xfile add $II_LIB_COMMON/ii_flash_spi.vhd
+	xfile add $II_LIB_COMMON/ii_flash_regs.vhd
 
-  xfile add $II_LIB_COMMON/ii_alert_gen.vhd
+	xfile add $II_LIB_COMMON/ii_alert_gen.vhd
 
 	xfile add $II_LIB_COMMON/ii_alerts_top.vhd
 	xfile add $II_LIB_COMMON/ii_alerts_regs.vhd
@@ -196,6 +196,11 @@ proc add_source_files {} {
 	xfile add $REPO_ROOT/ii_mods/ii_dac5682z_intf_top.vhd
 	xfile add $REPO_ROOT/ii_mods/ii_dac5682z_intf.vhd
 	xfile add $X6_1000_LOGIC/src/ii_dac5682z_spi.vhd
+	xfile add $X6_1000_LOGIC/src/ii_dac_test_gen.vhd
+	xfile add $X6_1000_LOGIC/src/ii_dac_bitslip.vhd
+	xfile add $II_LIB_COMMON/ii_offgain.vhd
+	xfile add $II_LIB_COMMON/ii_sign_sat.vhd
+	xfile add $II_LIB_COMMON/mult_add/ii_mult_add.vhd
 
 	xfile add $REPO_ROOT/ii_mods/ii_ads5400_intf_top.vhd
 	xfile add $REPO_ROOT/ii_mods/ii_ads5400_intf.vhd
@@ -241,6 +246,8 @@ proc add_source_files {} {
 	set ii_xco_files [list \
 		$II_LIB_COMMON/coregen/sfifo_32x48_ft.xco \
 		$II_LIB_COMMON/coregen/sfifo_512x128_bram.xco \
+		$II_X6_DIR/1000M/logic/rev_a/coregen/afifo_512x64_bram.xco \
+		$II_X6_DIR/1000M/logic/rev_a/coregen/dds_16b.xco \
 	]
 	foreach xcoFile $ii_xco_files {
 		xfile add $xcoFile -copy
