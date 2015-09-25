@@ -286,20 +286,39 @@ proc regenerate_ip {} {
 	cd $PROJECTS_DIR/$MY_PROJECT
 }
 
+proc strip_area_group {inputFile outputFile} {
+	set input [open $inputFile r]
+	set output [open $outputFile w]
+
+	# Loop through each line of the file
+	while { [gets $input line] >= 0} {
+	    if {![string match *AREA_GROUP* $line]} {
+			puts $output $line
+		}
+	}
+
+	close $input
+	close $output
+}
+
 proc add_constraints {} {
 
 	global II_X6_DIR
 	global PCIE_LANES
 	global ARCH
 	global REPO_ROOT
+	global PROJECTS_DIR
+	global MY_PROJECT
 
 	set X6_1000_SRC $II_X6_DIR/1000M/logic/rev_a/src
 
 	#modifed by BBN
 	xfile add $REPO_ROOT/constraints/x6_1000m.ucf
 
-	#Original II ones
+	#Original II ones but remove AREA_GROUP contraints
 	xfile add $II_X6_DIR/lib/ip/pcie/$PCIE_LANES/$ARCH/ii_pcie_intf.ucf
-	xfile add $II_X6_DIR/lib/ip/vfifo/$ARCH/ucf/ii_vfifo_c2.ucf
-	xfile add $II_X6_DIR/lib/ip/vfifo/$ARCH/ucf/ii_vfifo_c3.ucf
+	strip_area_group $II_X6_DIR/lib/ip/vfifo/$ARCH/ucf/ii_vfifo_c2.ucf $PROJECTS_DIR/$MY_PROJECT/ii_vfifo_c2.ucf
+	xfile add $PROJECTS_DIR/$MY_PROJECT/ii_vfifo_c2.ucf
+	strip_area_group $II_X6_DIR/lib/ip/vfifo/$ARCH/ucf/ii_vfifo_c3.ucf $PROJECTS_DIR/$MY_PROJECT/ii_vfifo_c3.ucf
+	xfile add $PROJECTS_DIR/$MY_PROJECT/ii_vfifo_c3.ucf
 }
