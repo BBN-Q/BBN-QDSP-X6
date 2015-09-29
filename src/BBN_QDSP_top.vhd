@@ -70,6 +70,9 @@ signal decimated_vld, decimated_last : std_logic := '0';
 signal decimated_sysclk_data : std_logic_vector(13 downto 0) := (others => '0');
 signal decimated_sysclk_vld, decimated_sysclk_last, decimated_sysclk_rdy : std_logic := '0';
 
+signal decimated_sysclk_data_int : std_logic_vector(13 downto 0) := (others => '0');
+signal decimated_sysclk_vld_int, decimated_sysclk_last_int, decimated_sysclk_rdy_int : std_logic := '0';
+
 signal channelized_data_re, channelized_data_im : width_16_array_t(NUM_DEMOD_CH-1 downto 0) := (others => (others => '0'));
 signal channelized_vld, channelized_last : std_logic_vector(NUM_DEMOD_CH-1 downto 0) := (others => '0');
 
@@ -378,6 +381,28 @@ begin
 
     output_clk => sys_clk,
     output_rst => srst,
+    output_axis_tdata => decimated_sysclk_data_int,
+    output_axis_tvalid => decimated_sysclk_vld_int,
+    output_axis_tready => decimated_sysclk_rdy_int,
+    output_axis_tlast => decimated_sysclk_last_int,
+    output_axis_tuser => open
+  );
+
+  --Output register for decimated_sysclk_data fanout
+  pktFIFO : axis_register
+  generic map (
+    DATA_WIDTH => 14
+  )
+  port map (
+    clk => sys_clk,
+    rst => srst,
+
+    input_axis_tdata => decimated_sysclk_data_int,
+    input_axis_tvalid => decimated_sysclk_vld_int,
+    input_axis_tready => decimated_sysclk_rdy_int,
+    input_axis_tlast => decimated_sysclk_last_int,
+    input_axis_tuser => '0',
+
     output_axis_tdata => decimated_sysclk_data,
     output_axis_tvalid => decimated_sysclk_vld,
     output_axis_tready => decimated_sysclk_rdy,
