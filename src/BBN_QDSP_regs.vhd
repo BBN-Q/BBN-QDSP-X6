@@ -10,6 +10,7 @@ use ieee.std_logic_1164.all;
 use ieee.numeric_std.all;
 
 use work.BBN_QDSP_pkg.all;
+use work.BBN_X6_pkg.all;
 
 entity BBN_QDSP_regs is
   generic (
@@ -126,6 +127,7 @@ architecture arch of BBN_QDSP_regs is
   -- 1  : test settings (interval/enable)
   -- 2  : record length in samples
   -- 3  : stream_enable
+  -- 4  : firmware version
   -- 16 to 19 : kernel_len for raw integrators
   -- 20 to 23 : kernel_len for demod integrators
   -- 32 to 39 (even) : kernel_addr for raw integrators
@@ -146,8 +148,10 @@ architecture arch of BBN_QDSP_regs is
   -- 1-4   : raw results
   -- 16-19 : demod
   -- 20-23 : demod results
-  stream_enable   <= wb_reg_o(3);
-  wb_reg_i(3)    <= wb_reg_o(3);
+  stream_enable <= wb_reg_o(3);
+  wb_reg_i(3)   <= wb_reg_o(3);
+
+  wb_reg_i(4) <= BBN_X6_FIRMWARE_VERSION & QDSP_VERSION;
 
   gen_raw_regs : for ct in 0 to NUM_RAW_KI_CH-1 generate
     kernel_len(ct)  <= wb_reg_o(16+ct)(RAW_KERNEL_ADDR_WIDTH-1 downto 0);

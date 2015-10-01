@@ -206,6 +206,8 @@ proc add_source_files {} {
 	xfile add $REPO_ROOT/ii_mods/ii_ads5400_intf.vhd
 	xfile add $X6_1000_LOGIC/src/ii_sample_sort.vhd
 
+	xfile add $REPO_ROOT/src/BBN_X6_pkg.vhd
+
 	xfile add $REPO_ROOT/src/PulseGenerator.vhd
 	xfile add $REPO_ROOT/src/PulseGenerator_regs.vhd
 
