@@ -130,6 +130,9 @@ signal test_pattern_re, test_pattern_im : std_logic_vector(47 downto 0) := (othe
 
 begin
 
+  --Need at least one demod channel
+  assert NUM_DEMOD_CH > 0 report "Must have at least one demod channel.";
+
   inst_BBN_QDSP_regs : entity work.BBN_QDSP_regs
   generic map ( offset  => WB_OFFSET)
   port map (
@@ -363,7 +366,7 @@ begin
   );
 
   --Output register for decimated_sysclk_data fanout
-  pktFIFO : axis_register
+  axis_register_inst : axis_register
   generic map (
     DATA_WIDTH => 14
   )
@@ -388,13 +391,15 @@ begin
   --DDS and FIR in channlizer need two clock high reset
   channelizerResetPulse : process(sys_clk)
   variable reset_line : std_logic_vector(1 downto 0);
-  type state_t is (IDLE, WAIT_FOR_END);
+  type state_t is (IDLE, WAIT_FOR_CHANNELIZER, WAIT_FOR_RESULT);
   variable state : state_t := IDLE;
+  variable wait_ct : unsigned(4 downto 0);
   begin
     if rising_edge(sys_clk) then
       if srst = '1' then
         reset_line := (others => '1');
         state := IDLE;
+        wait_ct := to_unsigned(10, wait_ct'length);
       else
 
         case( state ) is
@@ -402,16 +407,26 @@ begin
           when IDLE =>
           --Wait for valid to signal start of packet
           reset_line := (others => '1');
+          wait_ct := to_unsigned(10, wait_ct'length);
           if decimated_sysclk_vld = '1' then
-            state := WAIT_FOR_END;
+            state := WAIT_FOR_CHANNELIZER;
           end if;
 
-          when WAIT_FOR_END =>
-            --Wait until it is through the channelizers and integrators
+          when WAIT_FOR_CHANNELIZER =>
+            --Wait until it is through the channelizer
+            --This will break if NUM_DEMOD_CH = 0
             reset_line := reset_line(reset_line'high-1 downto 0) & '0';
-            if and_reduce(result_demod_vld) = '1' then
+            if channelized_last(0) = '1' then
+              state := WAIT_FOR_RESULT;
+            end if;
+
+          when WAIT_FOR_RESULT =>
+            --We can't just use vld because the result stream might not be active and have the correct length kernel
+            --Latency through the accumulator is 9 clocks so wait ten for good measure
+            if wait_ct(wait_ct'high) = '1' then
               state := IDLE;
             end if;
+            wait_ct := wait_ct -1;
         end case;
       end if;
 
