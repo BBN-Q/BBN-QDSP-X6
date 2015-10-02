@@ -124,7 +124,7 @@ signal result_raw_vld_sys  : std_logic_vector(NUM_RAW_KI_CH-1 downto 0) := (othe
 signal result_raw_vld_re   : std_logic_vector(NUM_RAW_KI_CH-1 downto 0) := (others => '0');
 signal result_demod_vld_re : std_logic_vector(NUM_DEMOD_CH-1 downto 0) := (others => '0');
 
-signal trigger, trig_test, trig_sysclk : std_logic := '0';
+signal trigger, trig_test : std_logic := '0';
 
 signal test_pattern_re, test_pattern_im : std_logic_vector(47 downto 0) := (others => '0');
 
@@ -180,32 +180,6 @@ begin
   rst_sync_adc : entity work.synchronizer
   generic map(G_INIT_VALUE => '1', G_NUM_GUARD_FFS => 1)
   port map(reset => srst, clk => adc_clk, i_data => '0', o_data => rst_adc_clk);
-
-  --Generate channelizer reset pulse on system clock
-  --DDS and FIR in channlizer need two clock high reset
-  sync_trig_sys : entity work.synchronizer
-  port map(reset => srst, clk => sys_clk, i_data => trigger, o_data => trig_sysclk);
-
-  channelizerResetPulse : process(sys_clk)
-  variable trig_d : std_logic;
-  variable reset_line : std_logic_vector(1 downto 0);
-  begin
-    if rising_edge(sys_clk) then
-      if srst = '1' then
-        trig_d := '0';
-        reset_line := (others => '1');
-      else
-        --Check for rising_edge of trigger
-        if trig_sysclk = '1' and trig_d = '0' then
-          reset_line := (others => '1');
-        else
-          reset_line := reset_line(reset_line'high-1 downto 0) & '0';
-        end if;
-        trig_d := trig_sysclk;
-      end if;
-      rst_chan <= reset_line(reset_line'high);
-    end if;
-  end process;
 
   --Hold valid high for the record length amount of time
   --TODO: add a trigger delay state
@@ -409,6 +383,42 @@ begin
     output_axis_tlast => decimated_sysclk_last,
     output_axis_tuser => open
   );
+
+  --Generate channelizer reset pulse at the start of a packet
+  --DDS and FIR in channlizer need two clock high reset
+  channelizerResetPulse : process(sys_clk)
+  variable reset_line : std_logic_vector(1 downto 0);
+  type state_t is (IDLE, WAIT_FOR_END);
+  variable state : state_t := IDLE;
+  begin
+    if rising_edge(sys_clk) then
+      if srst = '1' then
+        reset_line := (others => '1');
+        state := IDLE;
+      else
+
+        case( state ) is
+
+          when IDLE =>
+          --Wait for valid to signal start of packet
+          reset_line := (others => '1');
+          if decimated_sysclk_vld = '1' then
+            state := WAIT_FOR_END;
+          end if;
+
+          when WAIT_FOR_END =>
+            --Wait until it is through the channelizers and integrators
+            reset_line := reset_line(reset_line'high-1 downto 0) & '0';
+            if and_reduce(result_demod_vld) = '1' then
+              state := IDLE;
+            end if;
+        end case;
+      end if;
+
+      rst_chan <= reset_line(reset_line'high);
+
+    end if;
+  end process;
 
   --Package the decimated raw data into a vita frame
   rawFramer : entity work.VitaFramer
