@@ -1,5 +1,5 @@
 typealias VitaPacket Vector{UInt32}
-typealias VitaStreamDict Dict{Uint16, Vector{VitaPacket}}
+typealias VitaStreamDict Dict{UInt16, Vector{VitaPacket}}
 
 import Base.convert
 
@@ -68,7 +68,7 @@ end
 function accumulate_raw(packets::Vector{VitaPacket}, recordLength, numSegments)
 end
 
-function VitaStreamDict(fileName::String)
+function VitaStreamDict(fileName::AbstractString)
 	#Turn a simulation output file of 32 bit words into a dictionary of packets
 	vitaDict = VitaStreamDict() #scope for the do block below; TODO: potentially use default dict
 

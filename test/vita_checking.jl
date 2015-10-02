@@ -18,7 +18,7 @@ step = floor(2^16/320)
 rawKernel = collect(-2^15:step:-2^15+319*step) + 1im*collect(2^15-1:-step:2^15-1-319*step)
 
 for ct = 1:numRecs
-  expected = (sum(rawKernel .* 5awRecs[ct][1:320])) / 2^13
+  expected = (sum(rawKernel .* rawRecs[ct][1:320])) / 2^13
   @test rawKIRecs1[ct] == floor(real(expected)) + 1im*floor(imag(expected))
 end
 
