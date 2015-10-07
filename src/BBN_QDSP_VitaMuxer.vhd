@@ -75,7 +75,7 @@ begin
   --FIFO's to buffer data while arbitrating
   rawFIFO: axis_fifo
   generic map (
-    ADDR_WIDTH => 12, --4096-8 VITA words = 8184 samples (2 samples per word)
+    ADDR_WIDTH => 12, --4096 VITA words = 8192 samples (2 samples per word) -- not counting headers
     DATA_WIDTH => 32
   )
   port map (
@@ -119,7 +119,7 @@ begin
   resultRawloop : for ct in 0 to NUM_RAW_KI_CH-1 generate
     resultRawFIFO: axis_fifo
     generic map (
-      ADDR_WIDTH => 4, --16-8 VITA words =  4 samples (2 words per sample - Complex{Int32})
+      ADDR_WIDTH => 7, --128 VITA words = 10 12 word packets
       DATA_WIDTH => 32
     )
     port map (
@@ -144,7 +144,7 @@ begin
   demodFIFOloop : for ct in 0 to NUM_DEMOD_CH-1 generate
     demodFIFO: axis_fifo
     generic map (
-      ADDR_WIDTH => 10, --1024-8 VITA words = 1016 samples (1 sample per word - Complex{Int16})
+      ADDR_WIDTH => 10, --1024 VITA words = 1024 samples (1 sample per word - Complex{Int16}) -- not counting headers
       DATA_WIDTH => 32
     )
     port map (
@@ -166,7 +166,7 @@ begin
 
     resultDemodFIFO: axis_fifo
     generic map (
-      ADDR_WIDTH => 4, --16-8 VITA words =  4 samples (2 words per sample - Complex{Int32})
+      ADDR_WIDTH => 7, --128 VITA words = 10 12 word packets
       DATA_WIDTH => 32
     )
     port map (
