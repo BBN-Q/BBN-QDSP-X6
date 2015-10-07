@@ -174,10 +174,16 @@ begin
 
     wait for 2us;
 
-    --Enable test mode and set trigger interval to 2500 clocks (10us)
-    wb_write(8192 + 1, 65536 + 2500);
+    --Test fast burst
+    --Enable test mode and set trigger interval to 1375 clocks (5.5us)
+    wb_write(8192 + 1, 65536 + 1375);
 
     vita_muxed_rdy <= '1';
+
+    wait for 25 us;
+
+    --Enable test mode and set trigger interval to 2500 clocks (10us)
+    wb_write(8192 + 1, 65536 + 2500);
 
     wait for 649 us;
 
