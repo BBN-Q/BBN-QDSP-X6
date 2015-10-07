@@ -17,6 +17,7 @@ use ieee.std_logic_1164.all;
 use ieee.numeric_std.all;
 
 use ieee.std_logic_misc.and_reduce; --just use and in VHDL-2008
+use ieee.std_logic_misc.or_reduce; --just use and in VHDL-2008
 
 use work.BBN_QDSP_pkg.all;
 
@@ -127,6 +128,8 @@ signal result_demod_vld_re : std_logic_vector(NUM_DEMOD_CH-1 downto 0) := (other
 signal trigger, trig_test : std_logic := '0';
 
 signal test_pattern_re, test_pattern_im : std_logic_vector(47 downto 0) := (others => '0');
+
+signal hold_buffer : boolean;
 
 begin
 
@@ -391,31 +394,55 @@ begin
   --DDS and FIR in channlizer need two clock high reset
   channelizerResetPulse : process(sys_clk)
   variable reset_line : std_logic_vector(1 downto 0);
-  type state_t is (IDLE, WAIT_FOR_CHANNELIZER, WAIT_FOR_RESULT);
+  type state_t is (IDLE, RESET_HOLDOFF, WAIT_FOR_DDS, WAIT_FOR_LAST, WAIT_FOR_CHANNELIZER, WAIT_FOR_RESULT);
   variable state : state_t := IDLE;
   variable wait_ct : unsigned(4 downto 0);
   begin
     if rising_edge(sys_clk) then
+
+      rst_chan <= reset_line(reset_line'high);
+
       if srst = '1' then
         reset_line := (others => '1');
         state := IDLE;
         wait_ct := to_unsigned(10, wait_ct'length);
+        hold_buffer <= true;
       else
+
+        --defaults
+        hold_buffer <= true;
 
         case( state ) is
 
           when IDLE =>
-          --Wait for valid to signal start of packet
-          reset_line := (others => '1');
-          wait_ct := to_unsigned(10, wait_ct'length);
-          if decimated_sysclk_vld = '1' then
-            state := WAIT_FOR_CHANNELIZER;
-          end if;
+            --Wait for valid to signal start of packet
+            wait_ct := to_unsigned(10, wait_ct'length);
+            if decimated_sysclk_vld = '1' then
+              state := RESET_HOLDOFF;
+            end if;
+
+          --DDS vld takes two clock cycles to respond to reset so wait till dds vld is cleared
+          when RESET_HOLDOFF =>
+            if or_reduce(channelizer_dds_vld) = '0' then
+              state := WAIT_FOR_DDS;
+            end if;
+
+          when WAIT_FOR_DDS =>
+            --wait for the channelizer DDSs to come out of reset
+            if and_reduce(channelizer_dds_vld) = '1' then
+              state := WAIT_FOR_LAST;
+            end if;
+
+          when WAIT_FOR_LAST =>
+            hold_buffer <= false;
+            if (decimated_sysclk_vld = '1') and (decimated_sysclk_last = '1') then
+              state := WAIT_FOR_CHANNELIZER;
+              hold_buffer <= true;
+            end if;
 
           when WAIT_FOR_CHANNELIZER =>
             --Wait until it is through the channelizer
             --This will break if NUM_DEMOD_CH = 0
-            reset_line := reset_line(reset_line'high-1 downto 0) & '0';
             if channelized_last(0) = '1' then
               state := WAIT_FOR_RESULT;
             end if;
@@ -428,12 +455,24 @@ begin
             end if;
             wait_ct := wait_ct -1;
         end case;
-      end if;
 
-      rst_chan <= reset_line(reset_line'high);
+        --reset in IDLE
+        if state = IDLE then
+          reset_line := (others => '1');
+        else
+          reset_line := reset_line(reset_line'high-1 downto 0) & '0';
+        end if;
 
-    end if;
+      end if; --rst
+    end if; --rising_edge
   end process;
+
+  --Wait until channelizer comes out of reset before letting framer control flow
+  --We still let framer control to get the right size vita packets but of course the channlizer
+  --needs continuous data because it does not apply back pressure to DDS
+  --Also don't let data flow when waiting for previous packet to empty (to hold off until start of packet reset is finished)
+  raw_framer_vld <= decimated_sysclk_vld when not hold_buffer else '0';
+  decimated_sysclk_rdy <= raw_framer_rdy when not hold_buffer else '0';
 
   --Package the decimated raw data into a vita frame
   rawFramer : entity work.VitaFramer
@@ -458,12 +497,6 @@ begin
     out_rdy  => vita_raw_rdy,
     out_last => vita_raw_last
   );
-
-  --Wait until channelizer comes out of reset before letting framer control flow
-  --We still let framer control to get the right size vita packets but of course the channlizer
-  --needs continuous data because it does not apply back pressure to DDS
-  raw_framer_vld <= decimated_sysclk_vld when and_reduce(channelizer_dds_vld) = '1' else '0';
-  decimated_sysclk_rdy <= raw_framer_rdy when and_reduce(channelizer_dds_vld) = '1' else '0';
 
   -- For each demod channel demodulate, integrate and frame both
   demodGenLoop : for ct in 0 to NUM_DEMOD_CH-1 generate
