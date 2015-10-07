@@ -177,7 +177,7 @@ begin
           meta_vld <= '0';
           pkt_last <= '0';
           headerct := 0;
-          wordct := resize(unsigned(payload_size),17) - 1;
+          wordct := resize(unsigned(payload_size),17) - 2;
           --Wait until in_vld is asserted
           if in_vld = '1' then
             state <= WRITE_HEADER;
@@ -212,7 +212,7 @@ begin
             meta_vld <= '0';
           else
             meta_vld <= '1';
-            if pkt_rdy = '1' then
+            if pkt_rdy = '1' and meta_vld = '1' then
               wordct := wordct - 1;
             end if;
           end if;
