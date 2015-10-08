@@ -8,7 +8,7 @@
 # Also use make_ise.tcl from II
 
 # Modify the variables below as necessary
-set MY_PROJECT "X6-sx315t"
+set MY_PROJECT "X6-lx240t"
 set PROJECTS_DIR "/home/cryan/Programming/FPGA"
 set II_X6_DIR "/home/cryan/Programming/FPGA/II/X6_1000M_r1.7"
 #set PROJECTS_DIR "C:/Users/qlab/Documents/Xilinx Projects"
@@ -18,13 +18,14 @@ set II_X6_DIR "/home/cryan/Programming/FPGA/II/X6_1000M_r1.7"
 # source create_project.tcl
 # create_project
 
-set DEV "sx315t"
-#set to "-1" for lx240t boards we have
-set DEV_SPEED "-2"
+# set to sx315t or lx240t
+set DEV "lx240t"
+#set to "-1" for lx240t and "-2" for sx315t
+set DEV_SPEED "-1"
 set PKG "ff1156"
 set ARCH $DEV\-$PKG
-#set to "x4" for lx240t
-set PCIE_LANES "x8"
+#set to "x4" for lx240t and "x8" for sx315t
+set PCIE_LANES "x4"
 set REPO_ROOT [file normalize [pwd]/..]
 
 proc create_project {} {
