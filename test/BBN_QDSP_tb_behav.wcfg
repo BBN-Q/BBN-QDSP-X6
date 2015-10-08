@@ -7,13 +7,14 @@
          <top_modules>
             <top_module name="BBN_QDSP_tb" />
             <top_module name="bbn_qdsp_pkg" />
+            <top_module name="bbn_x6_pkg" />
             <top_module name="glbl" />
             <top_module name="testvectors" />
             <top_module name="vitaframer_pkg" />
          </top_modules>
       </db_ref>
    </db_ref_list>
-   <WVObjectSize size="28" />
+   <WVObjectSize size="31" />
    <wvobject db_ref_id="1" type="logic" fp_name="/BBN_QDSP_tb/sys_clk">
       <obj_property name="ElementShortName">sys_clk</obj_property>
       <obj_property name="ObjectShortName">sys_clk</obj_property>
@@ -50,13 +51,19 @@
       <obj_property name="ElementShortName">trig_test</obj_property>
       <obj_property name="ObjectShortName">trig_test</obj_property>
    </wvobject>
-   <wvobject db_ref_id="1" type="logic" fp_name="/BBN_QDSP_tb/uut/trig_sysclk">
-      <obj_property name="ElementShortName">trig_sysclk</obj_property>
-      <obj_property name="ObjectShortName">trig_sysclk</obj_property>
-   </wvobject>
    <wvobject db_ref_id="1" type="logic" fp_name="/BBN_QDSP_tb/uut/trigger">
       <obj_property name="ElementShortName">trigger</obj_property>
       <obj_property name="ObjectShortName">trigger</obj_property>
+   </wvobject>
+   <wvobject db_ref_id="1" type="array" fp_name="/BBN_QDSP_tb/uut/ts_seconds">
+      <obj_property name="ElementShortName">ts_seconds[31:0]</obj_property>
+      <obj_property name="ObjectShortName">ts_seconds[31:0]</obj_property>
+      <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
+   </wvobject>
+   <wvobject db_ref_id="1" type="array" fp_name="/BBN_QDSP_tb/uut/ts_frac_seconds">
+      <obj_property name="ElementShortName">ts_frac_seconds[31:0]</obj_property>
+      <obj_property name="ObjectShortName">ts_frac_seconds[31:0]</obj_property>
+      <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
    </wvobject>
    <wvobject type="group" fp_name="group431">
       <obj_property name="label">Wishbone</obj_property>
@@ -296,116 +303,164 @@
          <obj_property name="ObjectShortName">decimated_sysclk_rdy</obj_property>
       </wvobject>
    </wvobject>
-   <wvobject type="group" fp_name="group617">
-      <obj_property name="label">Raw Framer</obj_property>
+   <wvobject type="group" fp_name="group898">
+      <obj_property name="label">CDC FIFO</obj_property>
       <obj_property name="DisplayName">label</obj_property>
-      <wvobject db_ref_id="1" type="logic" fp_name="/BBN_QDSP_tb/uut/rawFramer/clk">
-         <obj_property name="ElementShortName">clk</obj_property>
-         <obj_property name="ObjectShortName">clk</obj_property>
+      <wvobject db_ref_id="1" type="logic" fp_name="/BBN_QDSP_tb/uut/adc2sys_CDC/input_clk">
+         <obj_property name="ElementShortName">input_clk</obj_property>
+         <obj_property name="ObjectShortName">input_clk</obj_property>
       </wvobject>
-      <wvobject db_ref_id="1" type="logic" fp_name="/BBN_QDSP_tb/uut/rawFramer/rst">
-         <obj_property name="ElementShortName">rst</obj_property>
-         <obj_property name="ObjectShortName">rst</obj_property>
+      <wvobject db_ref_id="1" type="logic" fp_name="/BBN_QDSP_tb/uut/adc2sys_CDC/input_rst">
+         <obj_property name="ElementShortName">input_rst</obj_property>
+         <obj_property name="ObjectShortName">input_rst</obj_property>
       </wvobject>
-      <wvobject db_ref_id="1" type="array" fp_name="/BBN_QDSP_tb/uut/rawFramer/stream_id">
-         <obj_property name="ElementShortName">stream_id[15:0]</obj_property>
-         <obj_property name="ObjectShortName">stream_id[15:0]</obj_property>
+      <wvobject db_ref_id="1" type="array" fp_name="/BBN_QDSP_tb/uut/adc2sys_CDC/input_axis_tdata">
+         <obj_property name="ElementShortName">input_axis_tdata[13:0]</obj_property>
+         <obj_property name="ObjectShortName">input_axis_tdata[13:0]</obj_property>
       </wvobject>
-      <wvobject db_ref_id="1" type="array" fp_name="/BBN_QDSP_tb/uut/rawFramer/payload_size">
-         <obj_property name="ElementShortName">payload_size[15:0]</obj_property>
-         <obj_property name="ObjectShortName">payload_size[15:0]</obj_property>
+      <wvobject db_ref_id="1" type="logic" fp_name="/BBN_QDSP_tb/uut/adc2sys_CDC/input_axis_tvalid">
+         <obj_property name="ElementShortName">input_axis_tvalid</obj_property>
+         <obj_property name="ObjectShortName">input_axis_tvalid</obj_property>
       </wvobject>
-      <wvobject db_ref_id="1" type="array" fp_name="/BBN_QDSP_tb/uut/rawFramer/pad_bytes">
-         <obj_property name="ElementShortName">pad_bytes[3:0]</obj_property>
-         <obj_property name="ObjectShortName">pad_bytes[3:0]</obj_property>
+      <wvobject db_ref_id="1" type="logic" fp_name="/BBN_QDSP_tb/uut/adc2sys_CDC/input_axis_tready">
+         <obj_property name="ElementShortName">input_axis_tready</obj_property>
+         <obj_property name="ObjectShortName">input_axis_tready</obj_property>
       </wvobject>
-      <wvobject db_ref_id="1" type="array" fp_name="/BBN_QDSP_tb/uut/rawFramer/in_data">
-         <obj_property name="ElementShortName">in_data[15:0]</obj_property>
-         <obj_property name="ObjectShortName">in_data[15:0]</obj_property>
+      <wvobject db_ref_id="1" type="logic" fp_name="/BBN_QDSP_tb/uut/adc2sys_CDC/input_axis_tlast">
+         <obj_property name="ElementShortName">input_axis_tlast</obj_property>
+         <obj_property name="ObjectShortName">input_axis_tlast</obj_property>
       </wvobject>
-      <wvobject db_ref_id="1" type="logic" fp_name="/BBN_QDSP_tb/uut/rawFramer/in_vld">
-         <obj_property name="ElementShortName">in_vld</obj_property>
-         <obj_property name="ObjectShortName">in_vld</obj_property>
+      <wvobject db_ref_id="1" type="logic" fp_name="/BBN_QDSP_tb/uut/adc2sys_CDC/input_axis_tuser">
+         <obj_property name="ElementShortName">input_axis_tuser</obj_property>
+         <obj_property name="ObjectShortName">input_axis_tuser</obj_property>
       </wvobject>
-      <wvobject db_ref_id="1" type="logic" fp_name="/BBN_QDSP_tb/uut/rawFramer/in_last">
-         <obj_property name="ElementShortName">in_last</obj_property>
-         <obj_property name="ObjectShortName">in_last</obj_property>
+      <wvobject db_ref_id="1" type="logic" fp_name="/BBN_QDSP_tb/uut/adc2sys_CDC/output_clk">
+         <obj_property name="ElementShortName">output_clk</obj_property>
+         <obj_property name="ObjectShortName">output_clk</obj_property>
       </wvobject>
-      <wvobject db_ref_id="1" type="logic" fp_name="/BBN_QDSP_tb/uut/rawFramer/in_rdy">
-         <obj_property name="ElementShortName">in_rdy</obj_property>
-         <obj_property name="ObjectShortName">in_rdy</obj_property>
+      <wvobject db_ref_id="1" type="logic" fp_name="/BBN_QDSP_tb/uut/adc2sys_CDC/output_rst">
+         <obj_property name="ElementShortName">output_rst</obj_property>
+         <obj_property name="ObjectShortName">output_rst</obj_property>
       </wvobject>
-      <wvobject db_ref_id="1" type="array" fp_name="/BBN_QDSP_tb/uut/rawFramer/out_data">
-         <obj_property name="ElementShortName">out_data[31:0]</obj_property>
-         <obj_property name="ObjectShortName">out_data[31:0]</obj_property>
+      <wvobject db_ref_id="1" type="array" fp_name="/BBN_QDSP_tb/uut/adc2sys_CDC/output_axis_tdata">
+         <obj_property name="ElementShortName">output_axis_tdata[13:0]</obj_property>
+         <obj_property name="ObjectShortName">output_axis_tdata[13:0]</obj_property>
       </wvobject>
-      <wvobject db_ref_id="1" type="logic" fp_name="/BBN_QDSP_tb/uut/rawFramer/out_vld">
-         <obj_property name="ElementShortName">out_vld</obj_property>
-         <obj_property name="ObjectShortName">out_vld</obj_property>
+      <wvobject db_ref_id="1" type="logic" fp_name="/BBN_QDSP_tb/uut/adc2sys_CDC/output_axis_tvalid">
+         <obj_property name="ElementShortName">output_axis_tvalid</obj_property>
+         <obj_property name="ObjectShortName">output_axis_tvalid</obj_property>
       </wvobject>
-      <wvobject db_ref_id="1" type="logic" fp_name="/BBN_QDSP_tb/uut/rawFramer/out_last">
-         <obj_property name="ElementShortName">out_last</obj_property>
-         <obj_property name="ObjectShortName">out_last</obj_property>
+      <wvobject db_ref_id="1" type="logic" fp_name="/BBN_QDSP_tb/uut/adc2sys_CDC/output_axis_tready">
+         <obj_property name="ElementShortName">output_axis_tready</obj_property>
+         <obj_property name="ObjectShortName">output_axis_tready</obj_property>
       </wvobject>
-      <wvobject db_ref_id="1" type="logic" fp_name="/BBN_QDSP_tb/uut/rawFramer/out_rdy">
-         <obj_property name="ElementShortName">out_rdy</obj_property>
-         <obj_property name="ObjectShortName">out_rdy</obj_property>
+      <wvobject db_ref_id="1" type="logic" fp_name="/BBN_QDSP_tb/uut/adc2sys_CDC/output_axis_tlast">
+         <obj_property name="ElementShortName">output_axis_tlast</obj_property>
+         <obj_property name="ObjectShortName">output_axis_tlast</obj_property>
       </wvobject>
-      <wvobject db_ref_id="1" type="array" fp_name="/BBN_QDSP_tb/uut/rawFramer/vita_header_array">
-         <obj_property name="ElementShortName">vita_header_array[0:6][31:0]</obj_property>
-         <obj_property name="ObjectShortName">vita_header_array[0:6][31:0]</obj_property>
+      <wvobject db_ref_id="1" type="logic" fp_name="/BBN_QDSP_tb/uut/adc2sys_CDC/output_axis_tuser">
+         <obj_property name="ElementShortName">output_axis_tuser</obj_property>
+         <obj_property name="ObjectShortName">output_axis_tuser</obj_property>
       </wvobject>
-      <wvobject db_ref_id="1" type="array" fp_name="/BBN_QDSP_tb/uut/rawFramer/vita_tail">
-         <obj_property name="ElementShortName">vita_tail[31:0]</obj_property>
-         <obj_property name="ObjectShortName">vita_tail[31:0]</obj_property>
+      <wvobject db_ref_id="1" type="array" fp_name="/BBN_QDSP_tb/uut/adc2sys_CDC/wr_ptr">
+         <obj_property name="ElementShortName">wr_ptr[12:0]</obj_property>
+         <obj_property name="ObjectShortName">wr_ptr[12:0]</obj_property>
+         <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
       </wvobject>
-      <wvobject db_ref_id="1" type="array" fp_name="/BBN_QDSP_tb/uut/rawFramer/in_vww_data">
-         <obj_property name="ElementShortName">in_vww_data[31:0]</obj_property>
-         <obj_property name="ObjectShortName">in_vww_data[31:0]</obj_property>
+      <wvobject db_ref_id="1" type="array" fp_name="/BBN_QDSP_tb/uut/adc2sys_CDC/wr_ptr_next">
+         <obj_property name="ElementShortName">wr_ptr_next[12:0]</obj_property>
+         <obj_property name="ObjectShortName">wr_ptr_next[12:0]</obj_property>
+         <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
       </wvobject>
-      <wvobject db_ref_id="1" type="logic" fp_name="/BBN_QDSP_tb/uut/rawFramer/in_vww_vld">
-         <obj_property name="ElementShortName">in_vww_vld</obj_property>
-         <obj_property name="ObjectShortName">in_vww_vld</obj_property>
+      <wvobject db_ref_id="1" type="array" fp_name="/BBN_QDSP_tb/uut/adc2sys_CDC/wr_ptr_gray">
+         <obj_property name="ElementShortName">wr_ptr_gray[12:0]</obj_property>
+         <obj_property name="ObjectShortName">wr_ptr_gray[12:0]</obj_property>
       </wvobject>
-      <wvobject db_ref_id="1" type="logic" fp_name="/BBN_QDSP_tb/uut/rawFramer/in_vww_last">
-         <obj_property name="ElementShortName">in_vww_last</obj_property>
-         <obj_property name="ObjectShortName">in_vww_last</obj_property>
+      <wvobject db_ref_id="1" type="array" fp_name="/BBN_QDSP_tb/uut/adc2sys_CDC/rd_ptr">
+         <obj_property name="ElementShortName">rd_ptr[12:0]</obj_property>
+         <obj_property name="ObjectShortName">rd_ptr[12:0]</obj_property>
+         <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
       </wvobject>
-      <wvobject db_ref_id="1" type="logic" fp_name="/BBN_QDSP_tb/uut/rawFramer/in_vww_rdy">
-         <obj_property name="ElementShortName">in_vww_rdy</obj_property>
-         <obj_property name="ObjectShortName">in_vww_rdy</obj_property>
+      <wvobject db_ref_id="1" type="array" fp_name="/BBN_QDSP_tb/uut/adc2sys_CDC/rd_ptr_next">
+         <obj_property name="ElementShortName">rd_ptr_next[12:0]</obj_property>
+         <obj_property name="ObjectShortName">rd_ptr_next[12:0]</obj_property>
+         <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
       </wvobject>
-      <wvobject db_ref_id="1" type="array" fp_name="/BBN_QDSP_tb/uut/rawFramer/pkt_data">
-         <obj_property name="ElementShortName">pkt_data[31:0]</obj_property>
-         <obj_property name="ObjectShortName">pkt_data[31:0]</obj_property>
+      <wvobject db_ref_id="1" type="array" fp_name="/BBN_QDSP_tb/uut/adc2sys_CDC/rd_ptr_gray">
+         <obj_property name="ElementShortName">rd_ptr_gray[12:0]</obj_property>
+         <obj_property name="ObjectShortName">rd_ptr_gray[12:0]</obj_property>
       </wvobject>
-      <wvobject db_ref_id="1" type="array" fp_name="/BBN_QDSP_tb/uut/rawFramer/meta_data">
-         <obj_property name="ElementShortName">meta_data[31:0]</obj_property>
-         <obj_property name="ObjectShortName">meta_data[31:0]</obj_property>
+      <wvobject db_ref_id="1" type="array" fp_name="/BBN_QDSP_tb/uut/adc2sys_CDC/wr_ptr_gray_sync1">
+         <obj_property name="ElementShortName">wr_ptr_gray_sync1[12:0]</obj_property>
+         <obj_property name="ObjectShortName">wr_ptr_gray_sync1[12:0]</obj_property>
       </wvobject>
-      <wvobject db_ref_id="1" type="logic" fp_name="/BBN_QDSP_tb/uut/rawFramer/pkt_vld">
-         <obj_property name="ElementShortName">pkt_vld</obj_property>
-         <obj_property name="ObjectShortName">pkt_vld</obj_property>
+      <wvobject db_ref_id="1" type="array" fp_name="/BBN_QDSP_tb/uut/adc2sys_CDC/wr_ptr_gray_sync2">
+         <obj_property name="ElementShortName">wr_ptr_gray_sync2[12:0]</obj_property>
+         <obj_property name="ObjectShortName">wr_ptr_gray_sync2[12:0]</obj_property>
       </wvobject>
-      <wvobject db_ref_id="1" type="logic" fp_name="/BBN_QDSP_tb/uut/rawFramer/pkt_last">
-         <obj_property name="ElementShortName">pkt_last</obj_property>
-         <obj_property name="ObjectShortName">pkt_last</obj_property>
+      <wvobject db_ref_id="1" type="array" fp_name="/BBN_QDSP_tb/uut/adc2sys_CDC/rd_ptr_gray_sync1">
+         <obj_property name="ElementShortName">rd_ptr_gray_sync1[12:0]</obj_property>
+         <obj_property name="ObjectShortName">rd_ptr_gray_sync1[12:0]</obj_property>
       </wvobject>
-      <wvobject db_ref_id="1" type="logic" fp_name="/BBN_QDSP_tb/uut/rawFramer/pkt_rdy">
-         <obj_property name="ElementShortName">pkt_rdy</obj_property>
-         <obj_property name="ObjectShortName">pkt_rdy</obj_property>
+      <wvobject db_ref_id="1" type="array" fp_name="/BBN_QDSP_tb/uut/adc2sys_CDC/rd_ptr_gray_sync2">
+         <obj_property name="ElementShortName">rd_ptr_gray_sync2[12:0]</obj_property>
+         <obj_property name="ObjectShortName">rd_ptr_gray_sync2[12:0]</obj_property>
       </wvobject>
-      <wvobject db_ref_id="1" type="logic" fp_name="/BBN_QDSP_tb/uut/rawFramer/meta_vld">
-         <obj_property name="ElementShortName">meta_vld</obj_property>
-         <obj_property name="ObjectShortName">meta_vld</obj_property>
+      <wvobject db_ref_id="1" type="logic" fp_name="/BBN_QDSP_tb/uut/adc2sys_CDC/input_rst_sync1">
+         <obj_property name="ElementShortName">input_rst_sync1</obj_property>
+         <obj_property name="ObjectShortName">input_rst_sync1</obj_property>
       </wvobject>
-      <wvobject db_ref_id="1" type="other" fp_name="/BBN_QDSP_tb/uut/rawFramer/state">
-         <obj_property name="ElementShortName">state</obj_property>
-         <obj_property name="ObjectShortName">state</obj_property>
+      <wvobject db_ref_id="1" type="logic" fp_name="/BBN_QDSP_tb/uut/adc2sys_CDC/input_rst_sync2">
+         <obj_property name="ElementShortName">input_rst_sync2</obj_property>
+         <obj_property name="ObjectShortName">input_rst_sync2</obj_property>
       </wvobject>
-      <wvobject db_ref_id="1" type="other" fp_name="/BBN_QDSP_tb/uut/rawFramer/INPUT_BYTE_WIDTH">
-         <obj_property name="ElementShortName">INPUT_BYTE_WIDTH</obj_property>
-         <obj_property name="ObjectShortName">INPUT_BYTE_WIDTH</obj_property>
+      <wvobject db_ref_id="1" type="logic" fp_name="/BBN_QDSP_tb/uut/adc2sys_CDC/output_rst_sync1">
+         <obj_property name="ElementShortName">output_rst_sync1</obj_property>
+         <obj_property name="ObjectShortName">output_rst_sync1</obj_property>
+      </wvobject>
+      <wvobject db_ref_id="1" type="logic" fp_name="/BBN_QDSP_tb/uut/adc2sys_CDC/output_rst_sync2">
+         <obj_property name="ElementShortName">output_rst_sync2</obj_property>
+         <obj_property name="ObjectShortName">output_rst_sync2</obj_property>
+      </wvobject>
+      <wvobject db_ref_id="1" type="array" fp_name="/BBN_QDSP_tb/uut/adc2sys_CDC/data_out_reg">
+         <obj_property name="ElementShortName">data_out_reg[15:0]</obj_property>
+         <obj_property name="ObjectShortName">data_out_reg[15:0]</obj_property>
+      </wvobject>
+      <wvobject db_ref_id="1" type="array" fp_name="/BBN_QDSP_tb/uut/adc2sys_CDC/mem">
+         <obj_property name="ElementShortName">mem[4095:0][15:0]</obj_property>
+         <obj_property name="ObjectShortName">mem[4095:0][15:0]</obj_property>
+      </wvobject>
+      <wvobject db_ref_id="1" type="logic" fp_name="/BBN_QDSP_tb/uut/adc2sys_CDC/output_axis_tvalid_reg">
+         <obj_property name="ElementShortName">output_axis_tvalid_reg</obj_property>
+         <obj_property name="ObjectShortName">output_axis_tvalid_reg</obj_property>
+      </wvobject>
+      <wvobject db_ref_id="1" type="array" fp_name="/BBN_QDSP_tb/uut/adc2sys_CDC/data_in">
+         <obj_property name="ElementShortName">data_in[15:0]</obj_property>
+         <obj_property name="ObjectShortName">data_in[15:0]</obj_property>
+      </wvobject>
+      <wvobject db_ref_id="1" type="logic" fp_name="/BBN_QDSP_tb/uut/adc2sys_CDC/full">
+         <obj_property name="ElementShortName">full</obj_property>
+         <obj_property name="ObjectShortName">full</obj_property>
+      </wvobject>
+      <wvobject db_ref_id="1" type="logic" fp_name="/BBN_QDSP_tb/uut/adc2sys_CDC/empty">
+         <obj_property name="ElementShortName">empty</obj_property>
+         <obj_property name="ObjectShortName">empty</obj_property>
+      </wvobject>
+      <wvobject db_ref_id="1" type="logic" fp_name="/BBN_QDSP_tb/uut/adc2sys_CDC/write">
+         <obj_property name="ElementShortName">write</obj_property>
+         <obj_property name="ObjectShortName">write</obj_property>
+      </wvobject>
+      <wvobject db_ref_id="1" type="logic" fp_name="/BBN_QDSP_tb/uut/adc2sys_CDC/read">
+         <obj_property name="ElementShortName">read</obj_property>
+         <obj_property name="ObjectShortName">read</obj_property>
+      </wvobject>
+      <wvobject db_ref_id="1" type="array" fp_name="/BBN_QDSP_tb/uut/adc2sys_CDC/ADDR_WIDTH">
+         <obj_property name="ElementShortName">ADDR_WIDTH[31:0]</obj_property>
+         <obj_property name="ObjectShortName">ADDR_WIDTH[31:0]</obj_property>
+      </wvobject>
+      <wvobject db_ref_id="1" type="array" fp_name="/BBN_QDSP_tb/uut/adc2sys_CDC/DATA_WIDTH">
+         <obj_property name="ElementShortName">DATA_WIDTH[31:0]</obj_property>
+         <obj_property name="ObjectShortName">DATA_WIDTH[31:0]</obj_property>
       </wvobject>
    </wvobject>
    <wvobject type="group" fp_name="group1543">
@@ -654,6 +709,7 @@
       <wvobject db_ref_id="1" type="array" fp_name="/BBN_QDSP_tb/uut/\demodGenLoop(0)\/genChannelizer/dds_phase_inc">
          <obj_property name="ElementShortName">dds_phase_inc[23:0]</obj_property>
          <obj_property name="ObjectShortName">dds_phase_inc[23:0]</obj_property>
+         <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
       </wvobject>
       <wvobject db_ref_id="1" type="logic" fp_name="/BBN_QDSP_tb/uut/\demodGenLoop(0)\/genChannelizer/dds_phase_inc_vld">
          <obj_property name="ElementShortName">dds_phase_inc_vld</obj_property>
@@ -662,10 +718,12 @@
       <wvobject db_ref_id="1" type="array" fp_name="/BBN_QDSP_tb/uut/\demodGenLoop(0)\/genChannelizer/data_in_re">
          <obj_property name="ElementShortName">data_in_re[13:0]</obj_property>
          <obj_property name="ObjectShortName">data_in_re[13:0]</obj_property>
+         <obj_property name="Radix">SIGNEDDECRADIX</obj_property>
       </wvobject>
       <wvobject db_ref_id="1" type="array" fp_name="/BBN_QDSP_tb/uut/\demodGenLoop(0)\/genChannelizer/data_in_im">
          <obj_property name="ElementShortName">data_in_im[13:0]</obj_property>
          <obj_property name="ObjectShortName">data_in_im[13:0]</obj_property>
+         <obj_property name="Radix">SIGNEDDECRADIX</obj_property>
       </wvobject>
       <wvobject db_ref_id="1" type="logic" fp_name="/BBN_QDSP_tb/uut/\demodGenLoop(0)\/genChannelizer/data_in_vld">
          <obj_property name="ElementShortName">data_in_vld</obj_property>
@@ -678,10 +736,12 @@
       <wvobject db_ref_id="1" type="array" fp_name="/BBN_QDSP_tb/uut/\demodGenLoop(0)\/genChannelizer/data_out_re">
          <obj_property name="ElementShortName">data_out_re[15:0]</obj_property>
          <obj_property name="ObjectShortName">data_out_re[15:0]</obj_property>
+         <obj_property name="Radix">SIGNEDDECRADIX</obj_property>
       </wvobject>
       <wvobject db_ref_id="1" type="array" fp_name="/BBN_QDSP_tb/uut/\demodGenLoop(0)\/genChannelizer/data_out_im">
          <obj_property name="ElementShortName">data_out_im[15:0]</obj_property>
          <obj_property name="ObjectShortName">data_out_im[15:0]</obj_property>
+         <obj_property name="Radix">SIGNEDDECRADIX</obj_property>
       </wvobject>
       <wvobject db_ref_id="1" type="logic" fp_name="/BBN_QDSP_tb/uut/\demodGenLoop(0)\/genChannelizer/data_out_vld">
          <obj_property name="ElementShortName">data_out_vld</obj_property>
@@ -726,10 +786,12 @@
       <wvobject db_ref_id="1" type="array" fp_name="/BBN_QDSP_tb/uut/\demodGenLoop(0)\/genChannelizer/stage1_re">
          <obj_property name="ElementShortName">stage1_re[23:0]</obj_property>
          <obj_property name="ObjectShortName">stage1_re[23:0]</obj_property>
+         <obj_property name="Radix">SIGNEDDECRADIX</obj_property>
       </wvobject>
       <wvobject db_ref_id="1" type="array" fp_name="/BBN_QDSP_tb/uut/\demodGenLoop(0)\/genChannelizer/stage1_im">
          <obj_property name="ElementShortName">stage1_im[23:0]</obj_property>
          <obj_property name="ObjectShortName">stage1_im[23:0]</obj_property>
+         <obj_property name="Radix">SIGNEDDECRADIX</obj_property>
       </wvobject>
       <wvobject db_ref_id="1" type="logic" fp_name="/BBN_QDSP_tb/uut/\demodGenLoop(0)\/genChannelizer/stage1_re_vld">
          <obj_property name="ElementShortName">stage1_re_vld</obj_property>
@@ -750,10 +812,12 @@
       <wvobject db_ref_id="1" type="array" fp_name="/BBN_QDSP_tb/uut/\demodGenLoop(0)\/genChannelizer/stage2_re">
          <obj_property name="ElementShortName">stage2_re[23:0]</obj_property>
          <obj_property name="ObjectShortName">stage2_re[23:0]</obj_property>
+         <obj_property name="Radix">SIGNEDDECRADIX</obj_property>
       </wvobject>
       <wvobject db_ref_id="1" type="array" fp_name="/BBN_QDSP_tb/uut/\demodGenLoop(0)\/genChannelizer/stage2_im">
          <obj_property name="ElementShortName">stage2_im[23:0]</obj_property>
          <obj_property name="ObjectShortName">stage2_im[23:0]</obj_property>
+         <obj_property name="Radix">SIGNEDDECRADIX</obj_property>
       </wvobject>
       <wvobject db_ref_id="1" type="logic" fp_name="/BBN_QDSP_tb/uut/\demodGenLoop(0)\/genChannelizer/stage2_re_vld">
          <obj_property name="ElementShortName">stage2_re_vld</obj_property>
@@ -774,10 +838,193 @@
       <wvobject db_ref_id="1" type="other" fp_name="/BBN_QDSP_tb/uut/\demodGenLoop(0)\/genChannelizer/DATA_IN_WIDTH">
          <obj_property name="ElementShortName">DATA_IN_WIDTH</obj_property>
          <obj_property name="ObjectShortName">DATA_IN_WIDTH</obj_property>
+         <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
       </wvobject>
       <wvobject db_ref_id="1" type="other" fp_name="/BBN_QDSP_tb/uut/\demodGenLoop(0)\/genChannelizer/DATA_OUT_WIDTH">
          <obj_property name="ElementShortName">DATA_OUT_WIDTH</obj_property>
          <obj_property name="ObjectShortName">DATA_OUT_WIDTH</obj_property>
+         <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
+      </wvobject>
+   </wvobject>
+   <wvobject type="group" fp_name="group509">
+      <obj_property name="label">Demod 0 Framer</obj_property>
+      <obj_property name="DisplayName">label</obj_property>
+      <wvobject db_ref_id="1" type="logic" fp_name="/BBN_QDSP_tb/uut/\demodGenLoop(0)\/demodFramer/clk">
+         <obj_property name="ElementShortName">clk</obj_property>
+         <obj_property name="ObjectShortName">clk</obj_property>
+      </wvobject>
+      <wvobject db_ref_id="1" type="logic" fp_name="/BBN_QDSP_tb/uut/\demodGenLoop(0)\/demodFramer/rst">
+         <obj_property name="ElementShortName">rst</obj_property>
+         <obj_property name="ObjectShortName">rst</obj_property>
+      </wvobject>
+      <wvobject db_ref_id="1" type="array" fp_name="/BBN_QDSP_tb/uut/\demodGenLoop(0)\/demodFramer/stream_id">
+         <obj_property name="ElementShortName">stream_id[15:0]</obj_property>
+         <obj_property name="ObjectShortName">stream_id[15:0]</obj_property>
+         <obj_property name="Radix">HEXRADIX</obj_property>
+      </wvobject>
+      <wvobject db_ref_id="1" type="array" fp_name="/BBN_QDSP_tb/uut/\demodGenLoop(0)\/demodFramer/payload_size">
+         <obj_property name="ElementShortName">payload_size[15:0]</obj_property>
+         <obj_property name="ObjectShortName">payload_size[15:0]</obj_property>
+         <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
+      </wvobject>
+      <wvobject db_ref_id="1" type="array" fp_name="/BBN_QDSP_tb/uut/\demodGenLoop(0)\/demodFramer/pad_bytes">
+         <obj_property name="ElementShortName">pad_bytes[3:0]</obj_property>
+         <obj_property name="ObjectShortName">pad_bytes[3:0]</obj_property>
+         <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
+      </wvobject>
+      <wvobject db_ref_id="1" type="array" fp_name="/BBN_QDSP_tb/uut/\demodGenLoop(0)\/demodFramer/ts_seconds">
+         <obj_property name="ElementShortName">ts_seconds[31:0]</obj_property>
+         <obj_property name="ObjectShortName">ts_seconds[31:0]</obj_property>
+         <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
+      </wvobject>
+      <wvobject db_ref_id="1" type="array" fp_name="/BBN_QDSP_tb/uut/\demodGenLoop(0)\/demodFramer/ts_frac_seconds">
+         <obj_property name="ElementShortName">ts_frac_seconds[31:0]</obj_property>
+         <obj_property name="ObjectShortName">ts_frac_seconds[31:0]</obj_property>
+         <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
+      </wvobject>
+      <wvobject db_ref_id="1" type="array" fp_name="/BBN_QDSP_tb/uut/\demodGenLoop(0)\/demodFramer/in_data">
+         <obj_property name="ElementShortName">in_data[31:0]</obj_property>
+         <obj_property name="ObjectShortName">in_data[31:0]</obj_property>
+         <obj_property name="Radix">HEXRADIX</obj_property>
+      </wvobject>
+      <wvobject db_ref_id="1" type="logic" fp_name="/BBN_QDSP_tb/uut/\demodGenLoop(0)\/demodFramer/in_vld">
+         <obj_property name="ElementShortName">in_vld</obj_property>
+         <obj_property name="ObjectShortName">in_vld</obj_property>
+      </wvobject>
+      <wvobject db_ref_id="1" type="logic" fp_name="/BBN_QDSP_tb/uut/\demodGenLoop(0)\/demodFramer/in_last">
+         <obj_property name="ElementShortName">in_last</obj_property>
+         <obj_property name="ObjectShortName">in_last</obj_property>
+      </wvobject>
+      <wvobject db_ref_id="1" type="logic" fp_name="/BBN_QDSP_tb/uut/\demodGenLoop(0)\/demodFramer/in_rdy">
+         <obj_property name="ElementShortName">in_rdy</obj_property>
+         <obj_property name="ObjectShortName">in_rdy</obj_property>
+      </wvobject>
+      <wvobject db_ref_id="1" type="array" fp_name="/BBN_QDSP_tb/uut/\demodGenLoop(0)\/demodFramer/out_data">
+         <obj_property name="ElementShortName">out_data[31:0]</obj_property>
+         <obj_property name="ObjectShortName">out_data[31:0]</obj_property>
+         <obj_property name="Radix">HEXRADIX</obj_property>
+      </wvobject>
+      <wvobject db_ref_id="1" type="logic" fp_name="/BBN_QDSP_tb/uut/\demodGenLoop(0)\/demodFramer/out_vld">
+         <obj_property name="ElementShortName">out_vld</obj_property>
+         <obj_property name="ObjectShortName">out_vld</obj_property>
+      </wvobject>
+      <wvobject db_ref_id="1" type="logic" fp_name="/BBN_QDSP_tb/uut/\demodGenLoop(0)\/demodFramer/out_last">
+         <obj_property name="ElementShortName">out_last</obj_property>
+         <obj_property name="ObjectShortName">out_last</obj_property>
+      </wvobject>
+      <wvobject db_ref_id="1" type="logic" fp_name="/BBN_QDSP_tb/uut/\demodGenLoop(0)\/demodFramer/out_rdy">
+         <obj_property name="ElementShortName">out_rdy</obj_property>
+         <obj_property name="ObjectShortName">out_rdy</obj_property>
+      </wvobject>
+      <wvobject db_ref_id="1" type="array" fp_name="/BBN_QDSP_tb/uut/\demodGenLoop(0)\/demodFramer/vita_header_array">
+         <obj_property name="ElementShortName">vita_header_array[0:6][31:0]</obj_property>
+         <obj_property name="ObjectShortName">vita_header_array[0:6][31:0]</obj_property>
+         <obj_property name="Radix">HEXRADIX</obj_property>
+      </wvobject>
+      <wvobject db_ref_id="1" type="array" fp_name="/BBN_QDSP_tb/uut/\demodGenLoop(0)\/demodFramer/vita_tail">
+         <obj_property name="ElementShortName">vita_tail[31:0]</obj_property>
+         <obj_property name="ObjectShortName">vita_tail[31:0]</obj_property>
+         <obj_property name="Radix">HEXRADIX</obj_property>
+      </wvobject>
+      <wvobject db_ref_id="1" type="array" fp_name="/BBN_QDSP_tb/uut/\demodGenLoop(0)\/demodFramer/inputFIFO/data_reg">
+         <obj_property name="ElementShortName">data_reg[7:0][33:0]</obj_property>
+         <obj_property name="ObjectShortName">data_reg[7:0][33:0]</obj_property>
+      </wvobject>
+      <wvobject db_ref_id="1" type="array" fp_name="/BBN_QDSP_tb/uut/\demodGenLoop(0)\/demodFramer/inputFIFO/ptr_reg">
+         <obj_property name="ElementShortName">ptr_reg[3:0]</obj_property>
+         <obj_property name="ObjectShortName">ptr_reg[3:0]</obj_property>
+      </wvobject>
+      <wvobject db_ref_id="1" type="array" fp_name="/BBN_QDSP_tb/uut/\demodGenLoop(0)\/demodFramer/in_pf_data">
+         <obj_property name="ElementShortName">in_pf_data[31:0]</obj_property>
+         <obj_property name="ObjectShortName">in_pf_data[31:0]</obj_property>
+         <obj_property name="Radix">HEXRADIX</obj_property>
+      </wvobject>
+      <wvobject db_ref_id="1" type="logic" fp_name="/BBN_QDSP_tb/uut/\demodGenLoop(0)\/demodFramer/in_pf_vld">
+         <obj_property name="ElementShortName">in_pf_vld</obj_property>
+         <obj_property name="ObjectShortName">in_pf_vld</obj_property>
+      </wvobject>
+      <wvobject db_ref_id="1" type="logic" fp_name="/BBN_QDSP_tb/uut/\demodGenLoop(0)\/demodFramer/in_pf_last">
+         <obj_property name="ElementShortName">in_pf_last</obj_property>
+         <obj_property name="ObjectShortName">in_pf_last</obj_property>
+      </wvobject>
+      <wvobject db_ref_id="1" type="logic" fp_name="/BBN_QDSP_tb/uut/\demodGenLoop(0)\/demodFramer/in_pf_rdy">
+         <obj_property name="ElementShortName">in_pf_rdy</obj_property>
+         <obj_property name="ObjectShortName">in_pf_rdy</obj_property>
+      </wvobject>
+      <wvobject db_ref_id="1" type="array" fp_name="/BBN_QDSP_tb/uut/\demodGenLoop(0)\/demodFramer/in_fifo_count">
+         <obj_property name="ElementShortName">in_fifo_count[3:0]</obj_property>
+         <obj_property name="ObjectShortName">in_fifo_count[3:0]</obj_property>
+      </wvobject>
+      <wvobject db_ref_id="1" type="array" fp_name="/BBN_QDSP_tb/uut/\demodGenLoop(0)\/demodFramer/in_vww_data">
+         <obj_property name="ElementShortName">in_vww_data[31:0]</obj_property>
+         <obj_property name="ObjectShortName">in_vww_data[31:0]</obj_property>
+         <obj_property name="Radix">HEXRADIX</obj_property>
+      </wvobject>
+      <wvobject db_ref_id="1" type="logic" fp_name="/BBN_QDSP_tb/uut/\demodGenLoop(0)\/demodFramer/in_vww_vld">
+         <obj_property name="ElementShortName">in_vww_vld</obj_property>
+         <obj_property name="ObjectShortName">in_vww_vld</obj_property>
+      </wvobject>
+      <wvobject db_ref_id="1" type="logic" fp_name="/BBN_QDSP_tb/uut/\demodGenLoop(0)\/demodFramer/in_vww_last">
+         <obj_property name="ElementShortName">in_vww_last</obj_property>
+         <obj_property name="ObjectShortName">in_vww_last</obj_property>
+      </wvobject>
+      <wvobject db_ref_id="1" type="logic" fp_name="/BBN_QDSP_tb/uut/\demodGenLoop(0)\/demodFramer/in_vww_rdy">
+         <obj_property name="ElementShortName">in_vww_rdy</obj_property>
+         <obj_property name="ObjectShortName">in_vww_rdy</obj_property>
+      </wvobject>
+      <wvobject db_ref_id="1" type="array" fp_name="/BBN_QDSP_tb/uut/\demodGenLoop(0)\/demodFramer/pkt_data">
+         <obj_property name="ElementShortName">pkt_data[31:0]</obj_property>
+         <obj_property name="ObjectShortName">pkt_data[31:0]</obj_property>
+      </wvobject>
+      <wvobject db_ref_id="1" type="array" fp_name="/BBN_QDSP_tb/uut/\demodGenLoop(0)\/demodFramer/meta_data">
+         <obj_property name="ElementShortName">meta_data[31:0]</obj_property>
+         <obj_property name="ObjectShortName">meta_data[31:0]</obj_property>
+      </wvobject>
+      <wvobject db_ref_id="1" type="logic" fp_name="/BBN_QDSP_tb/uut/\demodGenLoop(0)\/demodFramer/pkt_vld">
+         <obj_property name="ElementShortName">pkt_vld</obj_property>
+         <obj_property name="ObjectShortName">pkt_vld</obj_property>
+      </wvobject>
+      <wvobject db_ref_id="1" type="logic" fp_name="/BBN_QDSP_tb/uut/\demodGenLoop(0)\/demodFramer/pkt_last">
+         <obj_property name="ElementShortName">pkt_last</obj_property>
+         <obj_property name="ObjectShortName">pkt_last</obj_property>
+      </wvobject>
+      <wvobject db_ref_id="1" type="logic" fp_name="/BBN_QDSP_tb/uut/\demodGenLoop(0)\/demodFramer/pkt_rdy">
+         <obj_property name="ElementShortName">pkt_rdy</obj_property>
+         <obj_property name="ObjectShortName">pkt_rdy</obj_property>
+      </wvobject>
+      <wvobject db_ref_id="1" type="logic" fp_name="/BBN_QDSP_tb/uut/\demodGenLoop(0)\/demodFramer/meta_vld">
+         <obj_property name="ElementShortName">meta_vld</obj_property>
+         <obj_property name="ObjectShortName">meta_vld</obj_property>
+      </wvobject>
+      <wvobject db_ref_id="1" type="array" fp_name="/BBN_QDSP_tb/uut/\demodGenLoop(0)\/demodFramer/pkt_cnt">
+         <obj_property name="ElementShortName">pkt_cnt[3:0]</obj_property>
+         <obj_property name="ObjectShortName">pkt_cnt[3:0]</obj_property>
+      </wvobject>
+      <wvobject db_ref_id="1" type="array" fp_name="/BBN_QDSP_tb/uut/\demodGenLoop(0)\/demodFramer/ts_seconds_l">
+         <obj_property name="ElementShortName">ts_seconds_l[31:0]</obj_property>
+         <obj_property name="ObjectShortName">ts_seconds_l[31:0]</obj_property>
+      </wvobject>
+      <wvobject db_ref_id="1" type="array" fp_name="/BBN_QDSP_tb/uut/\demodGenLoop(0)\/demodFramer/ts_frac_seconds_l">
+         <obj_property name="ElementShortName">ts_frac_seconds_l[31:0]</obj_property>
+         <obj_property name="ObjectShortName">ts_frac_seconds_l[31:0]</obj_property>
+      </wvobject>
+      <wvobject db_ref_id="1" type="logic" fp_name="/BBN_QDSP_tb/uut/\demodGenLoop(0)\/demodFramer/latch_timeStamp">
+         <obj_property name="ElementShortName">latch_timeStamp</obj_property>
+         <obj_property name="ObjectShortName">latch_timeStamp</obj_property>
+      </wvobject>
+      <wvobject db_ref_id="1" type="other" fp_name="/BBN_QDSP_tb/uut/\demodGenLoop(0)\/demodFramer/state">
+         <obj_property name="ElementShortName">state</obj_property>
+         <obj_property name="ObjectShortName">state</obj_property>
+      </wvobject>
+      <wvobject db_ref_id="1" type="other" fp_name="/BBN_QDSP_tb/uut/\demodGenLoop(0)\/demodFramer/INPUT_BYTE_WIDTH">
+         <obj_property name="ElementShortName">INPUT_BYTE_WIDTH</obj_property>
+         <obj_property name="ObjectShortName">INPUT_BYTE_WIDTH</obj_property>
+         <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
+      </wvobject>
+      <wvobject db_ref_id="1" type="other" fp_name="/BBN_QDSP_tb/uut/\demodGenLoop(0)\/demodFramer/INPUT_FIFO_DEPTH">
+         <obj_property name="ElementShortName">INPUT_FIFO_DEPTH</obj_property>
+         <obj_property name="ObjectShortName">INPUT_FIFO_DEPTH</obj_property>
+         <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
       </wvobject>
    </wvobject>
    <wvobject type="group" fp_name="group368">
@@ -893,14 +1140,6 @@
          <obj_property name="ElementShortName">kernel_last_d</obj_property>
          <obj_property name="ObjectShortName">kernel_last_d</obj_property>
       </wvobject>
-      <wvobject db_ref_id="1" type="logic" fp_name="/BBN_QDSP_tb/uut/\demodGenLoop(0)\/demodIntegrator/mult_vld">
-         <obj_property name="ElementShortName">mult_vld</obj_property>
-         <obj_property name="ObjectShortName">mult_vld</obj_property>
-      </wvobject>
-      <wvobject db_ref_id="1" type="logic" fp_name="/BBN_QDSP_tb/uut/\demodGenLoop(0)\/demodIntegrator/mult_last">
-         <obj_property name="ElementShortName">mult_last</obj_property>
-         <obj_property name="ObjectShortName">mult_last</obj_property>
-      </wvobject>
       <wvobject db_ref_id="1" type="logic" fp_name="/BBN_QDSP_tb/uut/\demodGenLoop(0)\/demodIntegrator/accum_last">
          <obj_property name="ElementShortName">accum_last</obj_property>
          <obj_property name="ObjectShortName">accum_last</obj_property>
@@ -1007,10 +1246,12 @@
       <wvobject db_ref_id="1" type="array" fp_name="/BBN_QDSP_tb/uut/\rawKIgen(0)\/rawIntegrator/kernel_rd_data">
          <obj_property name="ElementShortName">kernel_rd_data[31:0]</obj_property>
          <obj_property name="ObjectShortName">kernel_rd_data[31:0]</obj_property>
+         <obj_property name="Radix">HEXRADIX</obj_property>
       </wvobject>
       <wvobject db_ref_id="1" type="array" fp_name="/BBN_QDSP_tb/uut/\rawKIgen(0)\/rawIntegrator/kernel_rdwr_addr">
          <obj_property name="ElementShortName">kernel_rdwr_addr[11:0]</obj_property>
          <obj_property name="ObjectShortName">kernel_rdwr_addr[11:0]</obj_property>
+         <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
       </wvobject>
       <wvobject db_ref_id="1" type="logic" fp_name="/BBN_QDSP_tb/uut/\rawKIgen(0)\/rawIntegrator/kernel_we">
          <obj_property name="ElementShortName">kernel_we</obj_property>
@@ -1023,22 +1264,17 @@
       <wvobject db_ref_id="1" type="array" fp_name="/BBN_QDSP_tb/uut/\rawKIgen(0)\/rawIntegrator/kernel_wr_data">
          <obj_property name="ElementShortName">kernel_wr_data[31:0]</obj_property>
          <obj_property name="ObjectShortName">kernel_wr_data[31:0]</obj_property>
-      </wvobject>
-      <wvobject db_ref_id="1" type="logic" fp_name="/BBN_QDSP_tb/uut/\rawKIgen(0)\/rawIntegrator/mult_last">
-         <obj_property name="ElementShortName">mult_last</obj_property>
-         <obj_property name="ObjectShortName">mult_last</obj_property>
-      </wvobject>
-      <wvobject db_ref_id="1" type="logic" fp_name="/BBN_QDSP_tb/uut/\rawKIgen(0)\/rawIntegrator/mult_vld">
-         <obj_property name="ElementShortName">mult_vld</obj_property>
-         <obj_property name="ObjectShortName">mult_vld</obj_property>
+         <obj_property name="Radix">HEXRADIX</obj_property>
       </wvobject>
       <wvobject db_ref_id="1" type="array" fp_name="/BBN_QDSP_tb/uut/\rawKIgen(0)\/rawIntegrator/prod_im">
          <obj_property name="ElementShortName">prod_im[32:0]</obj_property>
          <obj_property name="ObjectShortName">prod_im[32:0]</obj_property>
+         <obj_property name="Radix">SIGNEDDECRADIX</obj_property>
       </wvobject>
       <wvobject db_ref_id="1" type="array" fp_name="/BBN_QDSP_tb/uut/\rawKIgen(0)\/rawIntegrator/prod_re">
          <obj_property name="ElementShortName">prod_re[32:0]</obj_property>
          <obj_property name="ObjectShortName">prod_re[32:0]</obj_property>
+         <obj_property name="Radix">SIGNEDDECRADIX</obj_property>
       </wvobject>
       <wvobject db_ref_id="1" type="array" fp_name="/BBN_QDSP_tb/uut/\rawKIgen(0)\/rawIntegrator/result_im">
          <obj_property name="ElementShortName">result_im[31:0]</obj_property>
@@ -1051,6 +1287,167 @@
       <wvobject db_ref_id="1" type="logic" fp_name="/BBN_QDSP_tb/uut/\rawKIgen(0)\/rawIntegrator/result_vld">
          <obj_property name="ElementShortName">result_vld</obj_property>
          <obj_property name="ObjectShortName">result_vld</obj_property>
+      </wvobject>
+   </wvobject>
+   <wvobject type="group" fp_name="group624">
+      <obj_property name="label">Raw Result Framer 0</obj_property>
+      <obj_property name="DisplayName">label</obj_property>
+      <wvobject db_ref_id="1" type="logic" fp_name="/BBN_QDSP_tb/uut/\rawKIgen(0)\/rawResultFramer/clk">
+         <obj_property name="ElementShortName">clk</obj_property>
+         <obj_property name="ObjectShortName">clk</obj_property>
+      </wvobject>
+      <wvobject db_ref_id="1" type="logic" fp_name="/BBN_QDSP_tb/uut/\rawKIgen(0)\/rawResultFramer/rst">
+         <obj_property name="ElementShortName">rst</obj_property>
+         <obj_property name="ObjectShortName">rst</obj_property>
+      </wvobject>
+      <wvobject db_ref_id="1" type="array" fp_name="/BBN_QDSP_tb/uut/\rawKIgen(0)\/rawResultFramer/stream_id">
+         <obj_property name="ElementShortName">stream_id[15:0]</obj_property>
+         <obj_property name="ObjectShortName">stream_id[15:0]</obj_property>
+         <obj_property name="Radix">HEXRADIX</obj_property>
+      </wvobject>
+      <wvobject db_ref_id="1" type="array" fp_name="/BBN_QDSP_tb/uut/\rawKIgen(0)\/rawResultFramer/payload_size">
+         <obj_property name="ElementShortName">payload_size[15:0]</obj_property>
+         <obj_property name="ObjectShortName">payload_size[15:0]</obj_property>
+      </wvobject>
+      <wvobject db_ref_id="1" type="array" fp_name="/BBN_QDSP_tb/uut/\rawKIgen(0)\/rawResultFramer/pad_bytes">
+         <obj_property name="ElementShortName">pad_bytes[3:0]</obj_property>
+         <obj_property name="ObjectShortName">pad_bytes[3:0]</obj_property>
+      </wvobject>
+      <wvobject db_ref_id="1" type="array" fp_name="/BBN_QDSP_tb/uut/\rawKIgen(0)\/rawResultFramer/ts_seconds">
+         <obj_property name="ElementShortName">ts_seconds[31:0]</obj_property>
+         <obj_property name="ObjectShortName">ts_seconds[31:0]</obj_property>
+      </wvobject>
+      <wvobject db_ref_id="1" type="array" fp_name="/BBN_QDSP_tb/uut/\rawKIgen(0)\/rawResultFramer/ts_frac_seconds">
+         <obj_property name="ElementShortName">ts_frac_seconds[31:0]</obj_property>
+         <obj_property name="ObjectShortName">ts_frac_seconds[31:0]</obj_property>
+      </wvobject>
+      <wvobject db_ref_id="1" type="array" fp_name="/BBN_QDSP_tb/uut/\rawKIgen(0)\/rawResultFramer/in_data">
+         <obj_property name="ElementShortName">in_data[63:0]</obj_property>
+         <obj_property name="ObjectShortName">in_data[63:0]</obj_property>
+      </wvobject>
+      <wvobject db_ref_id="1" type="logic" fp_name="/BBN_QDSP_tb/uut/\rawKIgen(0)\/rawResultFramer/in_vld">
+         <obj_property name="ElementShortName">in_vld</obj_property>
+         <obj_property name="ObjectShortName">in_vld</obj_property>
+      </wvobject>
+      <wvobject db_ref_id="1" type="logic" fp_name="/BBN_QDSP_tb/uut/\rawKIgen(0)\/rawResultFramer/in_last">
+         <obj_property name="ElementShortName">in_last</obj_property>
+         <obj_property name="ObjectShortName">in_last</obj_property>
+      </wvobject>
+      <wvobject db_ref_id="1" type="logic" fp_name="/BBN_QDSP_tb/uut/\rawKIgen(0)\/rawResultFramer/in_rdy">
+         <obj_property name="ElementShortName">in_rdy</obj_property>
+         <obj_property name="ObjectShortName">in_rdy</obj_property>
+      </wvobject>
+      <wvobject db_ref_id="1" type="array" fp_name="/BBN_QDSP_tb/uut/\rawKIgen(0)\/rawResultFramer/out_data">
+         <obj_property name="ElementShortName">out_data[31:0]</obj_property>
+         <obj_property name="ObjectShortName">out_data[31:0]</obj_property>
+      </wvobject>
+      <wvobject db_ref_id="1" type="logic" fp_name="/BBN_QDSP_tb/uut/\rawKIgen(0)\/rawResultFramer/out_vld">
+         <obj_property name="ElementShortName">out_vld</obj_property>
+         <obj_property name="ObjectShortName">out_vld</obj_property>
+      </wvobject>
+      <wvobject db_ref_id="1" type="logic" fp_name="/BBN_QDSP_tb/uut/\rawKIgen(0)\/rawResultFramer/out_last">
+         <obj_property name="ElementShortName">out_last</obj_property>
+         <obj_property name="ObjectShortName">out_last</obj_property>
+      </wvobject>
+      <wvobject db_ref_id="1" type="logic" fp_name="/BBN_QDSP_tb/uut/\rawKIgen(0)\/rawResultFramer/out_rdy">
+         <obj_property name="ElementShortName">out_rdy</obj_property>
+         <obj_property name="ObjectShortName">out_rdy</obj_property>
+      </wvobject>
+      <wvobject db_ref_id="1" type="array" fp_name="/BBN_QDSP_tb/uut/\rawKIgen(0)\/rawResultFramer/vita_header_array">
+         <obj_property name="ElementShortName">vita_header_array[0:6][31:0]</obj_property>
+         <obj_property name="ObjectShortName">vita_header_array[0:6][31:0]</obj_property>
+      </wvobject>
+      <wvobject db_ref_id="1" type="array" fp_name="/BBN_QDSP_tb/uut/\rawKIgen(0)\/rawResultFramer/vita_tail">
+         <obj_property name="ElementShortName">vita_tail[31:0]</obj_property>
+         <obj_property name="ObjectShortName">vita_tail[31:0]</obj_property>
+      </wvobject>
+      <wvobject db_ref_id="1" type="array" fp_name="/BBN_QDSP_tb/uut/\rawKIgen(0)\/rawResultFramer/in_pf_data">
+         <obj_property name="ElementShortName">in_pf_data[63:0]</obj_property>
+         <obj_property name="ObjectShortName">in_pf_data[63:0]</obj_property>
+      </wvobject>
+      <wvobject db_ref_id="1" type="logic" fp_name="/BBN_QDSP_tb/uut/\rawKIgen(0)\/rawResultFramer/in_pf_vld">
+         <obj_property name="ElementShortName">in_pf_vld</obj_property>
+         <obj_property name="ObjectShortName">in_pf_vld</obj_property>
+      </wvobject>
+      <wvobject db_ref_id="1" type="logic" fp_name="/BBN_QDSP_tb/uut/\rawKIgen(0)\/rawResultFramer/in_pf_last">
+         <obj_property name="ElementShortName">in_pf_last</obj_property>
+         <obj_property name="ObjectShortName">in_pf_last</obj_property>
+      </wvobject>
+      <wvobject db_ref_id="1" type="logic" fp_name="/BBN_QDSP_tb/uut/\rawKIgen(0)\/rawResultFramer/in_pf_rdy">
+         <obj_property name="ElementShortName">in_pf_rdy</obj_property>
+         <obj_property name="ObjectShortName">in_pf_rdy</obj_property>
+      </wvobject>
+      <wvobject db_ref_id="1" type="array" fp_name="/BBN_QDSP_tb/uut/\rawKIgen(0)\/rawResultFramer/in_fifo_count">
+         <obj_property name="ElementShortName">in_fifo_count[3:0]</obj_property>
+         <obj_property name="ObjectShortName">in_fifo_count[3:0]</obj_property>
+      </wvobject>
+      <wvobject db_ref_id="1" type="array" fp_name="/BBN_QDSP_tb/uut/\rawKIgen(0)\/rawResultFramer/in_vww_data">
+         <obj_property name="ElementShortName">in_vww_data[31:0]</obj_property>
+         <obj_property name="ObjectShortName">in_vww_data[31:0]</obj_property>
+      </wvobject>
+      <wvobject db_ref_id="1" type="logic" fp_name="/BBN_QDSP_tb/uut/\rawKIgen(0)\/rawResultFramer/in_vww_vld">
+         <obj_property name="ElementShortName">in_vww_vld</obj_property>
+         <obj_property name="ObjectShortName">in_vww_vld</obj_property>
+      </wvobject>
+      <wvobject db_ref_id="1" type="logic" fp_name="/BBN_QDSP_tb/uut/\rawKIgen(0)\/rawResultFramer/in_vww_last">
+         <obj_property name="ElementShortName">in_vww_last</obj_property>
+         <obj_property name="ObjectShortName">in_vww_last</obj_property>
+      </wvobject>
+      <wvobject db_ref_id="1" type="logic" fp_name="/BBN_QDSP_tb/uut/\rawKIgen(0)\/rawResultFramer/in_vww_rdy">
+         <obj_property name="ElementShortName">in_vww_rdy</obj_property>
+         <obj_property name="ObjectShortName">in_vww_rdy</obj_property>
+      </wvobject>
+      <wvobject db_ref_id="1" type="array" fp_name="/BBN_QDSP_tb/uut/\rawKIgen(0)\/rawResultFramer/pkt_data">
+         <obj_property name="ElementShortName">pkt_data[31:0]</obj_property>
+         <obj_property name="ObjectShortName">pkt_data[31:0]</obj_property>
+      </wvobject>
+      <wvobject db_ref_id="1" type="array" fp_name="/BBN_QDSP_tb/uut/\rawKIgen(0)\/rawResultFramer/meta_data">
+         <obj_property name="ElementShortName">meta_data[31:0]</obj_property>
+         <obj_property name="ObjectShortName">meta_data[31:0]</obj_property>
+      </wvobject>
+      <wvobject db_ref_id="1" type="logic" fp_name="/BBN_QDSP_tb/uut/\rawKIgen(0)\/rawResultFramer/pkt_vld">
+         <obj_property name="ElementShortName">pkt_vld</obj_property>
+         <obj_property name="ObjectShortName">pkt_vld</obj_property>
+      </wvobject>
+      <wvobject db_ref_id="1" type="logic" fp_name="/BBN_QDSP_tb/uut/\rawKIgen(0)\/rawResultFramer/pkt_last">
+         <obj_property name="ElementShortName">pkt_last</obj_property>
+         <obj_property name="ObjectShortName">pkt_last</obj_property>
+      </wvobject>
+      <wvobject db_ref_id="1" type="logic" fp_name="/BBN_QDSP_tb/uut/\rawKIgen(0)\/rawResultFramer/pkt_rdy">
+         <obj_property name="ElementShortName">pkt_rdy</obj_property>
+         <obj_property name="ObjectShortName">pkt_rdy</obj_property>
+      </wvobject>
+      <wvobject db_ref_id="1" type="logic" fp_name="/BBN_QDSP_tb/uut/\rawKIgen(0)\/rawResultFramer/meta_vld">
+         <obj_property name="ElementShortName">meta_vld</obj_property>
+         <obj_property name="ObjectShortName">meta_vld</obj_property>
+      </wvobject>
+      <wvobject db_ref_id="1" type="array" fp_name="/BBN_QDSP_tb/uut/\rawKIgen(0)\/rawResultFramer/pkt_cnt">
+         <obj_property name="ElementShortName">pkt_cnt[3:0]</obj_property>
+         <obj_property name="ObjectShortName">pkt_cnt[3:0]</obj_property>
+      </wvobject>
+      <wvobject db_ref_id="1" type="array" fp_name="/BBN_QDSP_tb/uut/\rawKIgen(0)\/rawResultFramer/ts_seconds_l">
+         <obj_property name="ElementShortName">ts_seconds_l[31:0]</obj_property>
+         <obj_property name="ObjectShortName">ts_seconds_l[31:0]</obj_property>
+      </wvobject>
+      <wvobject db_ref_id="1" type="array" fp_name="/BBN_QDSP_tb/uut/\rawKIgen(0)\/rawResultFramer/ts_frac_seconds_l">
+         <obj_property name="ElementShortName">ts_frac_seconds_l[31:0]</obj_property>
+         <obj_property name="ObjectShortName">ts_frac_seconds_l[31:0]</obj_property>
+      </wvobject>
+      <wvobject db_ref_id="1" type="logic" fp_name="/BBN_QDSP_tb/uut/\rawKIgen(0)\/rawResultFramer/latch_timeStamp">
+         <obj_property name="ElementShortName">latch_timeStamp</obj_property>
+         <obj_property name="ObjectShortName">latch_timeStamp</obj_property>
+      </wvobject>
+      <wvobject db_ref_id="1" type="other" fp_name="/BBN_QDSP_tb/uut/\rawKIgen(0)\/rawResultFramer/state">
+         <obj_property name="ElementShortName">state</obj_property>
+         <obj_property name="ObjectShortName">state</obj_property>
+      </wvobject>
+      <wvobject db_ref_id="1" type="other" fp_name="/BBN_QDSP_tb/uut/\rawKIgen(0)\/rawResultFramer/INPUT_BYTE_WIDTH">
+         <obj_property name="ElementShortName">INPUT_BYTE_WIDTH</obj_property>
+         <obj_property name="ObjectShortName">INPUT_BYTE_WIDTH</obj_property>
+      </wvobject>
+      <wvobject db_ref_id="1" type="other" fp_name="/BBN_QDSP_tb/uut/\rawKIgen(0)\/rawResultFramer/INPUT_FIFO_DEPTH">
+         <obj_property name="ElementShortName">INPUT_FIFO_DEPTH</obj_property>
+         <obj_property name="ObjectShortName">INPUT_FIFO_DEPTH</obj_property>
       </wvobject>
    </wvobject>
    <wvobject db_ref_id="1" type="array" fp_name="/BBN_QDSP_tb/uut/state">
