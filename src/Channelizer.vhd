@@ -1,16 +1,21 @@
--- AXI stream digital down-conversion and channel selection via 2 stage FIR filter
--- Selected channel is returned decimated by a factor of 8.
--- For AXI packet framing to work initial packet must be multiple of 8.
--- Does not apply back pressure and needs a continuous valid data flow to keep up with DDS
+-- AXI stream digital down-conversion and channel selection via 2
+-- stage FIR filter Selected channel is returned decimated by a factor
+-- of 8. For AXI packet framing to work initial packet must be
+-- multiple of 8. Does not apply back pressure and needs a continuous
+-- valid data flow to keep up with DDS
 --
 --
--- Arbitrarily the two FIR filters are 65 tap low-pass equiripple. The first FIR
--- is a quarter rate decimating filter with a pass band from 0 to 0.15 (0 to 18.75MHz)
--- and stop from 0.25 to 1 (31.25 to 125MHz) with 60dB suppression in the stop band.
--- The second is a half-rate decimating filter with a passband from 0 to 6MHz and a stop band
--- from 10 to 31.25 with 70dB of suppression.
+-- Arbitrarily the two FIR filters are low-pass equiripple. The number
+-- of taps are chosen to optimally map to DSP slices given decimation
+-- factors and hardware oversampling The first FIR is a 71 tap quarter
+-- rate decimating filter with a pass band from 0 to 0.15 (0 to
+-- 18.75MHz) and stop from 0.25 to 1 (31.25 to 125MHz) with 62dB
+-- suppression in the stop band and uses 10 DSP slices. The second, is
+-- a 79 tap half-rate decimating filter with a passband from 0 to 6MHz
+-- and a stop band from 9 to 31.25 with 66dB of suppression.  With 4x
+-- oversampling it uses only 6DSP slices.
 --
--- import scipy.signal
+-- from scipy import signal
 --
 -- def write_coe_file(br, fileName):
 -- 	with open(fileName, "w") as FID:
@@ -19,8 +24,8 @@
 -- 		for coef in br:
 -- 			FID.write("{:.10f}\n".format(coef))
 --
--- bStage1 = scipy.signal.remez(65, [0,0.15/2,0.25/2,0.5], [1,0])
--- bStage2 = scipy.signal.remez(65, [0,6.0/62.5,10.0/62.5,0.5], [1,0])
+-- bStage1 = signal.remez(71, [0,0.15/2,0.25/2,0.5], [1,0])
+-- bStage2 = signal.remez(79, [0,6.0/62.5,9.0/62.5,0.5], [1,0])
 --
 -- write_coe_file(bStage1, "FIR_ChannelSelect_Stage1.coe")
 -- write_coe_file(bStage2, "FIR_ChannelSelect_Stage2.coe")

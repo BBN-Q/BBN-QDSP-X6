@@ -123,17 +123,14 @@ begin
       if data_out_vld = '1' then
         data_out_re_expected := to_signed(channel_filter_expected_re(ct), DATA_OUT_WIDTH);
         data_out_im_expected := to_signed(channel_filter_expected_im(ct), DATA_OUT_WIDTH);
-        --For some reason output is delayed three samples. TODO: sort out why
-        if ct > 2 then
-            assert abs(to_integer(signed(data_out_re)) - channel_filter_expected_re(ct-3)) < 16
-              report "Channel filter real part incorrect: expected " &
-              integer'image(channel_filter_expected_re(ct-3)) & " but got " &
-              integer'image(to_integer(signed(data_out_re)));
-            assert abs(to_integer(signed(data_out_im)) - channel_filter_expected_im(ct-3)) < 16
-              report "Channel filter imaginary part incorrect: expected " &
-              integer'image(channel_filter_expected_im(ct-3)) & " but got " &
-              integer'image(to_integer(signed(data_out_im)));
-        end if;
+        assert abs(to_integer(signed(data_out_re)) - channel_filter_expected_re(ct)) < 16
+          report "Channel filter real part incorrect: expected " &
+          integer'image(channel_filter_expected_re(ct)) & " but got " &
+          integer'image(to_integer(signed(data_out_re)));
+        assert abs(to_integer(signed(data_out_im)) - channel_filter_expected_im(ct)) < 16
+          report "Channel filter imaginary part incorrect: expected " &
+          integer'image(channel_filter_expected_im(ct)) & " but got " &
+          integer'image(to_integer(signed(data_out_im)));
         ct := ct + 1;
       end if;
       if data_out_last = '1' then
