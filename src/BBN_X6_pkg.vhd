@@ -9,8 +9,8 @@ use ieee.numeric_std.all;
 package BBN_X6_pkg is
 
 	--Version numbers
-	constant BBN_X6_FIRMWARE_VERSION : std_logic_vector(15 downto 0) := x"0008";
-	constant QDSP_VERSION : std_logic_vector(15 downto 0) := x"0100";
+	constant BBN_X6_VERSION : std_logic_vector(15 downto 0) := x"0009";
+	constant QDSP_VERSION : std_logic_vector(15 downto 0) := x"0101";
 	constant PG_VERSION : std_logic_vector(15 downto 0) := x"0001";
 
 end BBN_X6_pkg;
