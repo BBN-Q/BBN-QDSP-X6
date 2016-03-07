@@ -11,35 +11,35 @@ use ieee.numeric_std.all;
 use work.BBN_QDSP_pkg.all;
 
 entity BBN_QDSP_VitaMuxer is
-  port (
-  clk : in std_logic;
-  rst : in std_logic;
+	port (
+	clk : in std_logic;
+	rst : in std_logic;
 
-  vita_raw_data  : in std_logic_vector(31 downto 0);
-  vita_raw_vld   : in std_logic;
-  vita_raw_rdy   : out std_logic;
-  vita_raw_last  : in std_logic;
+	vita_raw_data	: in std_logic_vector(31 downto 0);
+	vita_raw_vld	 : in std_logic;
+	vita_raw_rdy	 : out std_logic;
+	vita_raw_last	: in std_logic;
 
-  vita_result_raw_data  : in width_32_array_t(NUM_DEMOD_CH-1 downto 0);
-  vita_result_raw_vld   : in std_logic_vector(NUM_DEMOD_CH-1 downto 0);
-  vita_result_raw_rdy   : out std_logic_vector(NUM_DEMOD_CH-1 downto 0);
-  vita_result_raw_last  : in std_logic_vector(NUM_DEMOD_CH-1 downto 0);
+	vita_result_raw_data	: in width_32_array_t(NUM_DEMOD_CH-1 downto 0);
+	vita_result_raw_vld	 : in std_logic_vector(NUM_DEMOD_CH-1 downto 0);
+	vita_result_raw_rdy	 : out std_logic_vector(NUM_DEMOD_CH-1 downto 0);
+	vita_result_raw_last	: in std_logic_vector(NUM_DEMOD_CH-1 downto 0);
 
-  vita_demod_data  : in width_32_array_t(NUM_DEMOD_CH-1 downto 0);
-  vita_demod_vld   : in std_logic_vector(NUM_DEMOD_CH-1 downto 0);
-  vita_demod_rdy   : out std_logic_vector(NUM_DEMOD_CH-1 downto 0);
-  vita_demod_last  : in std_logic_vector(NUM_DEMOD_CH-1 downto 0);
+	vita_demod_data	: in width_32_array_t(NUM_DEMOD_CH-1 downto 0);
+	vita_demod_vld	 : in std_logic_vector(NUM_DEMOD_CH-1 downto 0);
+	vita_demod_rdy	 : out std_logic_vector(NUM_DEMOD_CH-1 downto 0);
+	vita_demod_last	: in std_logic_vector(NUM_DEMOD_CH-1 downto 0);
 
-  vita_result_demod_data  : in width_32_array_t(NUM_DEMOD_CH-1 downto 0);
-  vita_result_demod_vld   : in std_logic_vector(NUM_DEMOD_CH-1 downto 0);
-  vita_result_demod_rdy   : out std_logic_vector(NUM_DEMOD_CH-1 downto 0);
-  vita_result_demod_last  : in std_logic_vector(NUM_DEMOD_CH-1 downto 0);
+	vita_result_demod_data	: in width_32_array_t(NUM_DEMOD_CH-1 downto 0);
+	vita_result_demod_vld	 : in std_logic_vector(NUM_DEMOD_CH-1 downto 0);
+	vita_result_demod_rdy	 : out std_logic_vector(NUM_DEMOD_CH-1 downto 0);
+	vita_result_demod_last	: in std_logic_vector(NUM_DEMOD_CH-1 downto 0);
 
-  vita_muxed_data  : out std_logic_vector(31 downto 0);
-  vita_muxed_vld   : out std_logic;
-  vita_muxed_rdy   : in std_logic;
-  vita_muxed_last  : out std_logic
-  );
+	vita_muxed_data	: out std_logic_vector(31 downto 0);
+	vita_muxed_vld	 : out std_logic;
+	vita_muxed_rdy	 : in std_logic;
+	vita_muxed_last	: out std_logic
+	);
 end entity;
 
 architecture arch of BBN_QDSP_VitaMuxer is
@@ -72,252 +72,252 @@ signal vita_muxed_result_demod_vld, vita_muxed_result_demod_rdy, vita_muxed_resu
 
 begin
 
-  --FIFO's to buffer data while arbitrating
-  rawFIFO: axis_fifo
-  generic map (
-    ADDR_WIDTH => 12, --4096 VITA words = 8192 samples (2 samples per word) -- not counting headers
-    DATA_WIDTH => 32
-  )
-  port map (
-    clk => clk,
-    rst => rst,
+	--FIFO's to buffer data while arbitrating
+	rawFIFO: axis_fifo
+	generic map (
+		ADDR_WIDTH => 12, --4096 VITA words = 8192 samples (2 samples per word) -- not counting headers
+		DATA_WIDTH => 32
+	)
+	port map (
+		clk => clk,
+		rst => rst,
 
-    input_axis_tdata  => vita_raw_data,
-    input_axis_tvalid => vita_raw_vld,
-    input_axis_tready => vita_raw_rdy,
-    input_axis_tlast  => vita_raw_last,
-    input_axis_tuser  => '0',
+		input_axis_tdata	=> vita_raw_data,
+		input_axis_tvalid => vita_raw_vld,
+		input_axis_tready => vita_raw_rdy,
+		input_axis_tlast	=> vita_raw_last,
+		input_axis_tuser	=> '0',
 
-    output_axis_tdata  => vita_raw_pf_data,
-    output_axis_tvalid => vita_raw_pf_vld,
-    output_axis_tready => vita_raw_pf_rdy,
-    output_axis_tlast  => vita_raw_pf_last,
-    output_axis_tuser  => open
-  );
+		output_axis_tdata	=> vita_raw_pf_data,
+		output_axis_tvalid => vita_raw_pf_vld,
+		output_axis_tready => vita_raw_pf_rdy,
+		output_axis_tlast	=> vita_raw_pf_last,
+		output_axis_tuser	=> open
+	);
 
-  --Additional register for data path from raw FIFO to muxer
-  --Seems to be necessary on lx240
-  rawFIFOReg : axis_register
-  generic map ( DATA_WIDTH => 32)
-  port map (
-    clk => clk,
-    rst => rst,
+	--Additional register for data path from raw FIFO to muxer
+	--Seems to be necessary on lx240
+	rawFIFOReg : axis_register
+	generic map ( DATA_WIDTH => 32)
+	port map (
+		clk => clk,
+		rst => rst,
 
-    input_axis_tdata  => vita_raw_pf_data,
-    input_axis_tvalid => vita_raw_pf_vld,
-    input_axis_tready => vita_raw_pf_rdy,
-    input_axis_tlast  => vita_raw_pf_last,
-    input_axis_tuser  => '0',
+		input_axis_tdata	=> vita_raw_pf_data,
+		input_axis_tvalid => vita_raw_pf_vld,
+		input_axis_tready => vita_raw_pf_rdy,
+		input_axis_tlast	=> vita_raw_pf_last,
+		input_axis_tuser	=> '0',
 
-    output_axis_tdata  => vita_raw_reg_data,
-    output_axis_tvalid => vita_raw_reg_vld,
-    output_axis_tready => vita_raw_reg_rdy,
-    output_axis_tlast  => vita_raw_reg_last,
-    output_axis_tuser  => open
-  );
+		output_axis_tdata	=> vita_raw_reg_data,
+		output_axis_tvalid => vita_raw_reg_vld,
+		output_axis_tready => vita_raw_reg_rdy,
+		output_axis_tlast	=> vita_raw_reg_last,
+		output_axis_tuser	=> open
+	);
 
-  resultRawloop : for ct in 0 to NUM_RAW_KI_CH-1 generate
-    resultRawFIFO: axis_fifo
-    generic map (
-      ADDR_WIDTH => 7, --128 VITA words = 10 12 word packets
-      DATA_WIDTH => 32
-    )
-    port map (
-      clk => clk,
-      rst => rst,
+	resultRawloop : for ct in 0 to NUM_RAW_KI_CH-1 generate
+		resultRawFIFO: axis_fifo
+		generic map (
+			ADDR_WIDTH => 7, --128 VITA words = 10 12 word packets
+			DATA_WIDTH => 32
+		)
+		port map (
+			clk => clk,
+			rst => rst,
 
-      input_axis_tdata  => vita_result_raw_data(ct),
-      input_axis_tvalid => vita_result_raw_vld(ct),
-      input_axis_tready => vita_result_raw_rdy(ct),
-      input_axis_tlast  => vita_result_raw_last(ct),
-      input_axis_tuser  => '0',
+			input_axis_tdata	=> vita_result_raw_data(ct),
+			input_axis_tvalid => vita_result_raw_vld(ct),
+			input_axis_tready => vita_result_raw_rdy(ct),
+			input_axis_tlast	=> vita_result_raw_last(ct),
+			input_axis_tuser	=> '0',
 
-      output_axis_tdata  => vita_result_raw_pf_data(ct),
-      output_axis_tvalid => vita_result_raw_pf_vld(ct),
-      output_axis_tready => vita_result_raw_pf_rdy(ct),
-      output_axis_tlast  => vita_result_raw_pf_last(ct),
-      output_axis_tuser  => open
-    );
+			output_axis_tdata	=> vita_result_raw_pf_data(ct),
+			output_axis_tvalid => vita_result_raw_pf_vld(ct),
+			output_axis_tready => vita_result_raw_pf_rdy(ct),
+			output_axis_tlast	=> vita_result_raw_pf_last(ct),
+			output_axis_tuser	=> open
+		);
 
-  end generate;
+	end generate;
 
-  demodFIFOloop : for ct in 0 to NUM_DEMOD_CH-1 generate
-    demodFIFO: axis_fifo
-    generic map (
-      ADDR_WIDTH => 10, --1024 VITA words = 1024 samples (1 sample per word - Complex{Int16}) -- not counting headers
-      DATA_WIDTH => 32
-    )
-    port map (
-      clk => clk,
-      rst => rst,
+	demodFIFOloop : for ct in 0 to NUM_DEMOD_CH-1 generate
+		demodFIFO: axis_fifo
+		generic map (
+			ADDR_WIDTH => 10, --1024 VITA words = 1024 samples (1 sample per word - Complex{Int16}) -- not counting headers
+			DATA_WIDTH => 32
+		)
+		port map (
+			clk => clk,
+			rst => rst,
 
-      input_axis_tdata  => vita_demod_data(ct),
-      input_axis_tvalid => vita_demod_vld(ct),
-      input_axis_tready => vita_demod_rdy(ct),
-      input_axis_tlast  => vita_demod_last(ct),
-      input_axis_tuser  => '0',
+			input_axis_tdata	=> vita_demod_data(ct),
+			input_axis_tvalid => vita_demod_vld(ct),
+			input_axis_tready => vita_demod_rdy(ct),
+			input_axis_tlast	=> vita_demod_last(ct),
+			input_axis_tuser	=> '0',
 
-      output_axis_tdata  => vita_demod_pf_data(ct),
-      output_axis_tvalid => vita_demod_pf_vld(ct),
-      output_axis_tready => vita_demod_pf_rdy(ct),
-      output_axis_tlast  => vita_demod_pf_last(ct),
-      output_axis_tuser  => open
-    );
+			output_axis_tdata	=> vita_demod_pf_data(ct),
+			output_axis_tvalid => vita_demod_pf_vld(ct),
+			output_axis_tready => vita_demod_pf_rdy(ct),
+			output_axis_tlast	=> vita_demod_pf_last(ct),
+			output_axis_tuser	=> open
+		);
 
-    resultDemodFIFO: axis_fifo
-    generic map (
-      ADDR_WIDTH => 7, --128 VITA words = 10 12 word packets
-      DATA_WIDTH => 32
-    )
-    port map (
-      clk => clk,
-      rst => rst,
+		resultDemodFIFO: axis_fifo
+		generic map (
+			ADDR_WIDTH => 7, --128 VITA words = 10 12 word packets
+			DATA_WIDTH => 32
+		)
+		port map (
+			clk => clk,
+			rst => rst,
 
-      input_axis_tdata  => vita_result_demod_data(ct),
-      input_axis_tvalid => vita_result_demod_vld(ct),
-      input_axis_tready => vita_result_demod_rdy(ct),
-      input_axis_tlast  => vita_result_demod_last(ct),
-      input_axis_tuser  => '0',
+			input_axis_tdata	=> vita_result_demod_data(ct),
+			input_axis_tvalid => vita_result_demod_vld(ct),
+			input_axis_tready => vita_result_demod_rdy(ct),
+			input_axis_tlast	=> vita_result_demod_last(ct),
+			input_axis_tuser	=> '0',
 
-      output_axis_tdata  => vita_result_demod_pf_data(ct),
-      output_axis_tvalid => vita_result_demod_pf_vld(ct),
-      output_axis_tready => vita_result_demod_pf_rdy(ct),
-      output_axis_tlast  => vita_result_demod_pf_last(ct),
-      output_axis_tuser  => open
-    );
+			output_axis_tdata	=> vita_result_demod_pf_data(ct),
+			output_axis_tvalid => vita_result_demod_pf_vld(ct),
+			output_axis_tready => vita_result_demod_pf_rdy(ct),
+			output_axis_tlast	=> vita_result_demod_pf_last(ct),
+			output_axis_tuser	=> open
+		);
 
-  end generate;
+	end generate;
 
-  --Mux together the raw result streams
-  rawResultMux : axis_arb_mux_2
-    generic map (
-      DATA_WIDTH => 32,
-      ARB_TYPE   => "ROUND_ROBIN",
-      LSB_PRIORITY => "HIGH"
-    )
-    port map (
-      clk => clk,
-      rst => rst,
+	--Mux together the raw result streams
+	rawResultMux : axis_arb_mux_2
+		generic map (
+			DATA_WIDTH => 32,
+			ARB_TYPE	 => "ROUND_ROBIN",
+			LSB_PRIORITY => "HIGH"
+		)
+		port map (
+			clk => clk,
+			rst => rst,
 
-      input_0_axis_tdata   => vita_result_raw_pf_data(0),
-      input_0_axis_tvalid  => vita_result_raw_pf_vld(0),
-      input_0_axis_tready  => vita_result_raw_pf_rdy(0),
-      input_0_axis_tlast   => vita_result_raw_pf_last(0),
-      input_0_axis_tuser   => '0',
+			input_0_axis_tdata	 => vita_result_raw_pf_data(0),
+			input_0_axis_tvalid	=> vita_result_raw_pf_vld(0),
+			input_0_axis_tready	=> vita_result_raw_pf_rdy(0),
+			input_0_axis_tlast	 => vita_result_raw_pf_last(0),
+			input_0_axis_tuser	 => '0',
 
-      input_1_axis_tdata   => vita_result_raw_pf_data(1),
-      input_1_axis_tvalid  => vita_result_raw_pf_vld(1),
-      input_1_axis_tready  => vita_result_raw_pf_rdy(1),
-      input_1_axis_tlast   => vita_result_raw_pf_last(1),
-      input_1_axis_tuser   => '0',
+			input_1_axis_tdata	 => vita_result_raw_pf_data(1),
+			input_1_axis_tvalid	=> vita_result_raw_pf_vld(1),
+			input_1_axis_tready	=> vita_result_raw_pf_rdy(1),
+			input_1_axis_tlast	 => vita_result_raw_pf_last(1),
+			input_1_axis_tuser	 => '0',
 
-      output_axis_tdata    => vita_muxed_result_raw_data,
-      output_axis_tvalid   => vita_muxed_result_raw_vld,
-      output_axis_tready   => vita_muxed_result_raw_rdy,
-      output_axis_tlast    => vita_muxed_result_raw_last,
-      output_axis_tuser    => open
-    );
+			output_axis_tdata		=> vita_muxed_result_raw_data,
+			output_axis_tvalid	 => vita_muxed_result_raw_vld,
+			output_axis_tready	 => vita_muxed_result_raw_rdy,
+			output_axis_tlast		=> vita_muxed_result_raw_last,
+			output_axis_tuser		=> open
+		);
 
-  --Mux together the demod streams
-  demodMux : axis_arb_mux_2
-    generic map (
-      DATA_WIDTH => 32,
-      ARB_TYPE   => "ROUND_ROBIN",
-      LSB_PRIORITY => "HIGH"
-    )
-    port map (
-      clk => clk,
-      rst => rst,
+	--Mux together the demod streams
+	demodMux : axis_arb_mux_2
+		generic map (
+			DATA_WIDTH => 32,
+			ARB_TYPE	 => "ROUND_ROBIN",
+			LSB_PRIORITY => "HIGH"
+		)
+		port map (
+			clk => clk,
+			rst => rst,
 
-      input_0_axis_tdata   => vita_demod_pf_data(0),
-      input_0_axis_tvalid  => vita_demod_pf_vld(0),
-      input_0_axis_tready  => vita_demod_pf_rdy(0),
-      input_0_axis_tlast   => vita_demod_pf_last(0),
-      input_0_axis_tuser   => '0',
+			input_0_axis_tdata	 => vita_demod_pf_data(0),
+			input_0_axis_tvalid	=> vita_demod_pf_vld(0),
+			input_0_axis_tready	=> vita_demod_pf_rdy(0),
+			input_0_axis_tlast	 => vita_demod_pf_last(0),
+			input_0_axis_tuser	 => '0',
 
-      input_1_axis_tdata   => vita_demod_pf_data(1),
-      input_1_axis_tvalid  => vita_demod_pf_vld(1),
-      input_1_axis_tready  => vita_demod_pf_rdy(1),
-      input_1_axis_tlast   => vita_demod_pf_last(1),
-      input_1_axis_tuser   => '0',
+			input_1_axis_tdata	 => vita_demod_pf_data(1),
+			input_1_axis_tvalid	=> vita_demod_pf_vld(1),
+			input_1_axis_tready	=> vita_demod_pf_rdy(1),
+			input_1_axis_tlast	 => vita_demod_pf_last(1),
+			input_1_axis_tuser	 => '0',
 
-      output_axis_tdata    => vita_muxed_demod_data,
-      output_axis_tvalid   => vita_muxed_demod_vld,
-      output_axis_tready   => vita_muxed_demod_rdy,
-      output_axis_tlast    => vita_muxed_demod_last,
-      output_axis_tuser    => open
-    );
+			output_axis_tdata		=> vita_muxed_demod_data,
+			output_axis_tvalid	 => vita_muxed_demod_vld,
+			output_axis_tready	 => vita_muxed_demod_rdy,
+			output_axis_tlast		=> vita_muxed_demod_last,
+			output_axis_tuser		=> open
+		);
 
-  --Mux together the demod result streams
-  demodResultMux : axis_arb_mux_2
-    generic map (
-      DATA_WIDTH => 32,
-      ARB_TYPE   => "ROUND_ROBIN",
-      LSB_PRIORITY => "HIGH"
-    )
-    port map (
-      clk => clk,
-      rst => rst,
+	--Mux together the demod result streams
+	demodResultMux : axis_arb_mux_2
+		generic map (
+			DATA_WIDTH => 32,
+			ARB_TYPE	 => "ROUND_ROBIN",
+			LSB_PRIORITY => "HIGH"
+		)
+		port map (
+			clk => clk,
+			rst => rst,
 
-      input_0_axis_tdata   => vita_result_demod_pf_data(0),
-      input_0_axis_tvalid  => vita_result_demod_pf_vld(0),
-      input_0_axis_tready  => vita_result_demod_pf_rdy(0),
-      input_0_axis_tlast   => vita_result_demod_pf_last(0),
-      input_0_axis_tuser   => '0',
+			input_0_axis_tdata	 => vita_result_demod_pf_data(0),
+			input_0_axis_tvalid	=> vita_result_demod_pf_vld(0),
+			input_0_axis_tready	=> vita_result_demod_pf_rdy(0),
+			input_0_axis_tlast	 => vita_result_demod_pf_last(0),
+			input_0_axis_tuser	 => '0',
 
-      input_1_axis_tdata   => vita_result_demod_pf_data(1),
-      input_1_axis_tvalid  => vita_result_demod_pf_vld(1),
-      input_1_axis_tready  => vita_result_demod_pf_rdy(1),
-      input_1_axis_tlast   => vita_result_demod_pf_last(1),
-      input_1_axis_tuser   => '0',
+			input_1_axis_tdata	 => vita_result_demod_pf_data(1),
+			input_1_axis_tvalid	=> vita_result_demod_pf_vld(1),
+			input_1_axis_tready	=> vita_result_demod_pf_rdy(1),
+			input_1_axis_tlast	 => vita_result_demod_pf_last(1),
+			input_1_axis_tuser	 => '0',
 
-      output_axis_tdata    => vita_muxed_result_demod_data,
-      output_axis_tvalid   => vita_muxed_result_demod_vld,
-      output_axis_tready   => vita_muxed_result_demod_rdy,
-      output_axis_tlast    => vita_muxed_result_demod_last,
-      output_axis_tuser    => open
-    );
+			output_axis_tdata		=> vita_muxed_result_demod_data,
+			output_axis_tvalid	 => vita_muxed_result_demod_vld,
+			output_axis_tready	 => vita_muxed_result_demod_rdy,
+			output_axis_tlast		=> vita_muxed_result_demod_last,
+			output_axis_tuser		=> open
+		);
 
-  --Mux together all the streams
-  finalMux : axis_arb_mux_4
-    generic map (
-      DATA_WIDTH => 32,
-      ARB_TYPE   => "ROUND_ROBIN",
-      LSB_PRIORITY => "HIGH"
-    )
-    port map (
-      clk => clk,
-      rst => rst,
+	--Mux together all the streams
+	finalMux : axis_arb_mux_4
+		generic map (
+			DATA_WIDTH => 32,
+			ARB_TYPE	 => "ROUND_ROBIN",
+			LSB_PRIORITY => "HIGH"
+		)
+		port map (
+			clk => clk,
+			rst => rst,
 
-      input_0_axis_tdata   => vita_raw_reg_data,
-      input_0_axis_tvalid  => vita_raw_reg_vld,
-      input_0_axis_tready  => vita_raw_reg_rdy,
-      input_0_axis_tlast   => vita_raw_reg_last,
-      input_0_axis_tuser   => '0',
+			input_0_axis_tdata	 => vita_raw_reg_data,
+			input_0_axis_tvalid	=> vita_raw_reg_vld,
+			input_0_axis_tready	=> vita_raw_reg_rdy,
+			input_0_axis_tlast	 => vita_raw_reg_last,
+			input_0_axis_tuser	 => '0',
 
-      input_1_axis_tdata   => vita_muxed_result_raw_data,
-      input_1_axis_tvalid  => vita_muxed_result_raw_vld,
-      input_1_axis_tready  => vita_muxed_result_raw_rdy,
-      input_1_axis_tlast   => vita_muxed_result_raw_last,
-      input_1_axis_tuser   => '0',
+			input_1_axis_tdata	 => vita_muxed_result_raw_data,
+			input_1_axis_tvalid	=> vita_muxed_result_raw_vld,
+			input_1_axis_tready	=> vita_muxed_result_raw_rdy,
+			input_1_axis_tlast	 => vita_muxed_result_raw_last,
+			input_1_axis_tuser	 => '0',
 
-      input_2_axis_tdata   => vita_muxed_demod_data,
-      input_2_axis_tvalid  => vita_muxed_demod_vld,
-      input_2_axis_tready  => vita_muxed_demod_rdy,
-      input_2_axis_tlast   => vita_muxed_demod_last,
-      input_2_axis_tuser   => '0',
+			input_2_axis_tdata	 => vita_muxed_demod_data,
+			input_2_axis_tvalid	=> vita_muxed_demod_vld,
+			input_2_axis_tready	=> vita_muxed_demod_rdy,
+			input_2_axis_tlast	 => vita_muxed_demod_last,
+			input_2_axis_tuser	 => '0',
 
-      input_3_axis_tdata   => vita_muxed_result_demod_data,
-      input_3_axis_tvalid  => vita_muxed_result_demod_vld,
-      input_3_axis_tready  => vita_muxed_result_demod_rdy,
-      input_3_axis_tlast   => vita_muxed_result_demod_last,
-      input_3_axis_tuser   => '0',
+			input_3_axis_tdata	 => vita_muxed_result_demod_data,
+			input_3_axis_tvalid	=> vita_muxed_result_demod_vld,
+			input_3_axis_tready	=> vita_muxed_result_demod_rdy,
+			input_3_axis_tlast	 => vita_muxed_result_demod_last,
+			input_3_axis_tuser	 => '0',
 
-      output_axis_tdata    => vita_muxed_data,
-      output_axis_tvalid   => vita_muxed_vld,
-      output_axis_tready   => vita_muxed_rdy,
-      output_axis_tlast    => vita_muxed_last,
-      output_axis_tuser    => open
-    );
+			output_axis_tdata		=> vita_muxed_data,
+			output_axis_tvalid	 => vita_muxed_vld,
+			output_axis_tready	 => vita_muxed_rdy,
+			output_axis_tlast		=> vita_muxed_last,
+			output_axis_tuser		=> open
+		);
 
 end architecture;

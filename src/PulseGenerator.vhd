@@ -10,20 +10,20 @@ entity PulseGenerator is
 	rst : in std_logic;
 	trigger : in std_logic;
 
-	dac_data       : out std_logic_vector(63 downto 0);
-	dac_data_en        : out std_logic;
+	dac_data			 : out std_logic_vector(63 downto 0);
+	dac_data_en				: out std_logic;
 
 	--wishbone interface
-	wb_rst_i       : in  std_logic;
-	wb_clk_i       : in  std_logic;
-	wb_adr_i       : in  std_logic_vector(15 downto 0);
-	wb_dat_i       : in  std_logic_vector(31 downto 0);
-	wb_we_i        : in  std_logic;
-	wb_stb_i       : in  std_logic;
-	wb_ack_o       : out std_logic;
-	wb_dat_o       : out std_logic_vector(31 downto 0);
+	wb_rst_i			 : in	std_logic;
+	wb_clk_i			 : in	std_logic;
+	wb_adr_i			 : in	std_logic_vector(15 downto 0);
+	wb_dat_i			 : in	std_logic_vector(31 downto 0);
+	wb_we_i				: in	std_logic;
+	wb_stb_i			 : in	std_logic;
+	wb_ack_o			 : out std_logic;
+	wb_dat_o			 : out std_logic_vector(31 downto 0);
 
-	wf_rd_addr_copy    : out std_logic_vector(15 downto 0)
+	wf_rd_addr_copy		: out std_logic_vector(15 downto 0)
 	) ;
 end entity ; -- PulseGenerator
 
@@ -52,27 +52,27 @@ wf_rd_addr_copy(11 downto 0) <= std_logic_vector(wf_addr_rd);
 
 	inst_pg_regs : entity work.PulseGenerator_regs
 	generic map (
-		offset      => WB_OFFSET
+		offset			=> WB_OFFSET
 	)
 	port map (
 		-- Wishbone interface signals
-		wb_rst_i    => wb_rst_i,
-		wb_clk_i    => wb_clk_i,
-		wb_adr_i    => wb_adr_i,
-		wb_dat_i    => wb_dat_i,
-		wb_we_i     => wb_we_i,
-		wb_stb_i    => wb_stb_i,
-		wb_ack_o    => wb_ack_o,
-		wb_dat_o    => wb_dat_o,
+		wb_rst_i		=> wb_rst_i,
+		wb_clk_i		=> wb_clk_i,
+		wb_adr_i		=> wb_adr_i,
+		wb_dat_i		=> wb_dat_i,
+		wb_we_i		 => wb_we_i,
+		wb_stb_i		=> wb_stb_i,
+		wb_ack_o		=> wb_ack_o,
+		wb_dat_o		=> wb_dat_o,
 
 		-- User registers
-		control     => control,
-		status      => status,
-		wf_length   => wf_length,
-		wf_addr     => wf_addr_wr,
+		control		 => control,
+		status			=> status,
+		wf_length	 => wf_length,
+		wf_addr		 => wf_addr_wr,
 		wf_data_out => wf_data_wr,
-		wf_we       => wf_we,
-		wf_data_in  => wf_data_rd
+		wf_we			 => wf_we,
+		wf_data_in	=> wf_data_rd
 	);
 
 dac_data_en <= control(0);
@@ -81,18 +81,18 @@ dac_data_en <= control(0);
 --Irritatingly XST cannot infer a large asymmetrical block RAM so have to use an IP core
 --INFO:Xst:3229 - The RAM description <Mram_wf_RAM> will not be implemented on the device block RAM because actual implementation does not support asymetric block RAM larger than one block.
 my_wf_bram : entity work.WF_BRAM
-  PORT MAP (
-    clka => wb_clk_i,
-    wea(0) => wf_we,
-    addra => wf_addr_wr(12 downto 0),
-    dina => wf_data_wr,
-    douta => wf_data_rd,
-    clkb => dac_clk,
-    web(0)  => '0',
-    addrb => std_logic_vector(wf_addr_rd),
-    dinb => (others => '0'),
-    doutb => wf_data
-  );
+	PORT MAP (
+		clka => wb_clk_i,
+		wea(0) => wf_we,
+		addra => wf_addr_wr(12 downto 0),
+		dina => wf_data_wr,
+		douta => wf_data_rd,
+		clkb => dac_clk,
+		web(0)	=> '0',
+		addrb => std_logic_vector(wf_addr_rd),
+		dinb => (others => '0'),
+		doutb => wf_data
+	);
 
 --Playback state machine
 playback : process( dac_clk )
