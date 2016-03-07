@@ -9,9 +9,12 @@ use ieee.numeric_std.all;
 package BBN_X6_pkg is
 
 	--Version numbers
-	-- last two nibbles are x.x firmware version and first six are git hash of commit if unstable
-	-- 0x00000d indicates dirty
-	-- use `git describe` to extract
-	constant BBN_X6_VERSION : std_logic_vector(31 downto 0) := x"0000_0d0a";
+	-- last two bytes are x.x firmware version
+	-- next three nibbles indicate how many commit since that tag
+	-- top nibble `d` indicates dirty working tree
+	-- use `git describe` and/or `git diff --exit-code` and/or `git rev-parse --short=8 HEAD` to extract
+	-- TODO: automate
+	constant BBN_X6_VERSION : std_logic_vector(31 downto 0) := x"d006_0009";
+	constant BBN_X6_GIT_SHA1 : std_logic_vector(31 downto 0) := x"55b14231";
 
 end BBN_X6_pkg;
