@@ -167,7 +167,7 @@ proc add_source_files {} {
 	xfile add $II_LIB_COMMON/ii_xdom_pulse.vhd
 
 	xfile add $II_LIB_COMMON/ii_packetizer_top.vhd
-	xfile add $II_LIB_COMMON/ii_packetizer.vhd
+	xfile add $REPO_ROOT/ii_mods/ii_packetizer.vhd
 	xfile add $II_LIB_COMMON/ii_packetizer_regs.vhd
 
 	xfile add $II_LIB_COMMON/ii_vita_mvr_nx1.vhd
