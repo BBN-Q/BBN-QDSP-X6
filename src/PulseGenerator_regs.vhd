@@ -115,7 +115,7 @@ architecture arch of PulseGenerator_regs is
 
   wb_reg_i(1) <= status;
 
-  wb_reg_i(2) <= BBN_X6_VERSION & PG_VERSION;
+  wb_reg_i(2) <= BBN_X6_VERSION;
 
   wf_length <= wb_reg_o(8)(15 downto 0);
   wb_reg_i(8) <= wb_reg_o(8);

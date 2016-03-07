@@ -9,8 +9,9 @@ use ieee.numeric_std.all;
 package BBN_X6_pkg is
 
 	--Version numbers
-	constant BBN_X6_VERSION : std_logic_vector(15 downto 0) := x"0009";
-	constant QDSP_VERSION : std_logic_vector(15 downto 0) := x"0101";
-	constant PG_VERSION : std_logic_vector(15 downto 0) := x"0001";
+	-- last two nibbles are x.x firmware version and first six are git hash of commit if unstable
+	-- 0x00000d indicates dirty
+	-- use `git describe` to extract
+	constant BBN_X6_VERSION : std_logic_vector(31 downto 0) := x"0000_0d0a";
 
 end BBN_X6_pkg;
