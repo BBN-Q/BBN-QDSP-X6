@@ -84,22 +84,25 @@ signal result_demod_re, result_demod_im : width_32_array_t(NUM_DEMOD_CH-1 downto
 signal result_demod_vld, result_demod_last : std_logic_vector(NUM_DEMOD_CH-1 downto 0) := (others => '0');
 
 --WB registers
-signal test_settings			: std_logic_vector(31 downto 0) := (others => '0');
-alias	test_enable				: std_logic is test_settings(16);
+signal test_settings     : std_logic_vector(31 downto 0) := (others => '0');
+alias	test_enable        : std_logic is test_settings(16);
 alias	test_trig_interval : std_logic_vector(15 downto 0) is test_settings(15 downto 0);
-signal record_length			: std_logic_vector(15 downto 0) := (others => '0');
-signal stream_enable			: std_logic_vector(31 downto 0) := (others => '0');
-signal phase_inc					: width_24_array_t(NUM_DEMOD_CH-1 downto 0) := (others => (others => '0'));
+signal record_length     : std_logic_vector(15 downto 0) := (others => '0');
+signal stream_enable     : std_logic_vector(31 downto 0) := (others => '0');
+signal phase_inc         : width_24_array_t(NUM_DEMOD_CH-1 downto 0) := (others => (others => '0'));
 
 --Kernel memory
-signal kernel_len				: kernel_addr_array_t(NUM_KI_CH-1 downto 0) := (others => (others => '0'));
-signal kernel_rdwr_addr	: kernel_addr_array_t(NUM_KI_CH-1 downto 0) := (others => (others => '0'));
-signal kernel_rd_data, kernel_wr_data	: width_32_array_t(NUM_KI_CH-1 downto 0) := (others => (others => '0'));
-signal kernel_we				 : std_logic_vector(NUM_KI_CH-1 downto 0) := (others => '0');
+signal kernel_len       : kernel_addr_array_t(NUM_KI_CH-1 downto 0) := (others => (others => '0'));
+signal kernel_rdwr_addr : kernel_addr_array_t(NUM_KI_CH-1 downto 0) := (others => (others => '0'));
+signal kernel_rd_data   : width_32_array_t(NUM_KI_CH-1 downto 0) := (others => (others => '0'));
+signal kernel_wr_data   : width_32_array_t(NUM_KI_CH-1 downto 0) := (others => (others => '0'));
+signal kernel_we        : std_logic_vector(NUM_KI_CH-1 downto 0) := (others => '0');
+signal kernel_bias_re   : width_32_array_t(NUM_KI_CH-1 downto 0) := (others => (others => '0'));
+signal kernel_bias_im   : width_32_array_t(NUM_KI_CH-1 downto 0) := (others => (others => '0'));
 
 --Decision Engine thresholds
-signal threshold				: width_32_array_t(NUM_RAW_KI_CH-1 downto 0) := (others => (others => '0'));
-
+signal threshold        : width_32_array_t(NUM_RAW_KI_CH-1 downto 0) := (others => (others => '0'));
+signal threshold_invert : std_logic_vector(NUM_RAW_KI_CH-1 downto 0);
 --Vita streams
 signal ts_seconds, ts_frac_seconds : std_logic_vector(31 downto 0);
 
@@ -121,8 +124,8 @@ signal srst, rst_adc_clk, rst_chan, rst_rawKI : std_logic := '1';
 signal channelizer_dds_vld : std_logic_vector(NUM_DEMOD_CH-1 downto 0) := (others => '0');
 signal raw_framer_vld, raw_framer_rdy : std_logic := '0';
 
-signal result_raw_vld_sys	: std_logic_vector(NUM_RAW_KI_CH-1 downto 0) := (others => '0');
-signal result_raw_vld_re	 : std_logic_vector(NUM_RAW_KI_CH-1 downto 0) := (others => '0');
+signal result_raw_vld_sys  : std_logic_vector(NUM_RAW_KI_CH-1 downto 0) := (others => '0');
+signal result_raw_vld_re   : std_logic_vector(NUM_RAW_KI_CH-1 downto 0) := (others => '0');
 signal result_demod_vld_re : std_logic_vector(NUM_DEMOD_CH-1 downto 0) := (others => '0');
 
 signal trigger, trig_test : std_logic := '0';
@@ -140,27 +143,31 @@ begin
 	generic map ( offset	=> WB_OFFSET)
 	port map (
 		-- Wishbone interface signals
-		wb_rst_i						 => wb_rst_i,
-		wb_clk_i						 => wb_clk_i,
-		wb_adr_i						 => wb_adr_i,
-		wb_dat_i						 => wb_dat_i,
-		wb_we_i							=> wb_we_i,
-		wb_stb_i						 => wb_stb_i,
-		wb_ack_o						 => wb_ack_o,
-		wb_dat_o						 => wb_dat_o,
+		wb_rst_i       => wb_rst_i,
+		wb_clk_i       => wb_clk_i,
+		wb_adr_i       => wb_adr_i,
+		wb_dat_i       => wb_dat_i,
+		wb_we_i        => wb_we_i,
+		wb_stb_i       => wb_stb_i,
+		wb_ack_o       => wb_ack_o,
+		wb_dat_o       => wb_dat_o,
 
 		-- User registers
-		test_settings				=> test_settings,
-		record_length				=> record_length,
-		stream_enable				=> stream_enable,
+		test_settings  => test_settings,
+		record_length  => record_length,
+		stream_enable  => stream_enable,
 
-		phase_inc						=> phase_inc,
-		kernel_len					 => kernel_len,
-		threshold						=> threshold,
-		kernel_addr					=> kernel_rdwr_addr,
-		kernel_wr_data			 => kernel_wr_data,
-		kernel_rd_data			 => kernel_rd_data,
-		kernel_we						=> kernel_we
+		phase_inc      => phase_inc,
+		kernel_len     => kernel_len,
+		kernel_addr    => kernel_rdwr_addr,
+		kernel_wr_data => kernel_wr_data,
+		kernel_rd_data => kernel_rd_data,
+		kernel_we      => kernel_we,
+		kernel_bias_re => kernel_bias_re,
+		kernel_bias_im => kernel_bias_im,
+
+		threshold        => threshold,
+		threshold_invert => threshold_invert
 	);
 
 	--Register synchronous reset; doesn't matter if we come of of reset one clock cycle later and helps timing closure getting the reset signal everywhere
@@ -265,21 +272,23 @@ begin
 			rst => rst_rawKI,
 
 			--TODO make KernelIntegrator data width generic
-			data_re	 => std_logic_vector(resize(signed(decimated_data),16)),
-			data_im	 => (others => '0'),
-			data_vld	=> decimated_vld,
+			data_re   => std_logic_vector(resize(signed(decimated_data),16)),
+			data_im   => (others => '0'),
+			data_vld  => decimated_vld,
 			data_last => decimated_last,
 
-			kernel_len			 => kernel_len(ct),
+			kernel_len       => kernel_len(ct),
 			kernel_rdwr_addr => kernel_rdwr_addr(ct),
-			kernel_wr_data	 => kernel_wr_data(ct),
-			kernel_rd_data	 => kernel_rd_data(ct),
-			kernel_we				=> kernel_we(ct),
-			kernel_wr_clk		=> sys_clk,
+			kernel_wr_data   => kernel_wr_data(ct),
+			kernel_rd_data   => kernel_rd_data(ct),
+			kernel_we        => kernel_we(ct),
+			kernel_wr_clk    => sys_clk,
+			kernel_bias_re   => kernel_bias_re(ct),
+			kernel_bias_im   => kernel_bias_im(ct),
 
-			result_re			=>	result_raw_re(ct),
-			result_im			=>	result_raw_im(ct),
-			result_vld		 =>	result_raw_vld(ct)
+			result_re  =>	result_raw_re(ct),
+			result_im  =>	result_raw_im(ct),
+			result_vld =>	result_raw_vld(ct)
 		);
 
 		--Drive state decision lines
@@ -291,9 +300,9 @@ begin
 					state_vld(ct) <= '0';
 				else
 					if signed(result_raw_re(ct)) > signed(threshold(ct)) then
-						state(ct) <= '1';
+						state(ct) <= '1' xor threshold_invert(ct);
 					else
-						state(ct) <= '0';
+						state(ct) <= '0' xor threshold_invert(ct);
 					end if;
 					state_vld(ct) <= result_raw_vld(ct);
 				end if;
@@ -551,21 +560,23 @@ begin
 				clk => sys_clk,
 				rst => rst_chan,
 
-				data_re	 => channelized_data_re(ct),
-				data_im	 => channelized_data_im(ct),
-				data_vld	=> channelized_vld(ct),
+				data_re   => channelized_data_re(ct),
+				data_im   => channelized_data_im(ct),
+				data_vld  => channelized_vld(ct),
 				data_last => channelized_last(ct),
 
-				kernel_len			 => kernel_len(NUM_RAW_KI_CH+ct)(RAW_KERNEL_ADDR_WIDTH-4 downto 0),
-				kernel_rdwr_addr => kernel_rdwr_addr(NUM_RAW_KI_CH+ct)(RAW_KERNEL_ADDR_WIDTH-4 downto 0),
-				kernel_wr_data	 => kernel_wr_data(NUM_RAW_KI_CH+ct),
-				kernel_rd_data	 => kernel_rd_data(NUM_RAW_KI_CH+ct),
-				kernel_we				=> kernel_we(NUM_RAW_KI_CH+ct),
-				kernel_wr_clk		=> sys_clk,
+				kernel_len       => kernel_len(NUM_RAW_KI_CH + ct)(RAW_KERNEL_ADDR_WIDTH-4 downto 0),
+				kernel_rdwr_addr => kernel_rdwr_addr(NUM_RAW_KI_CH + ct)(RAW_KERNEL_ADDR_WIDTH-4 downto 0),
+				kernel_wr_data   => kernel_wr_data(NUM_RAW_KI_CH + ct),
+				kernel_rd_data   => kernel_rd_data(NUM_RAW_KI_CH + ct),
+				kernel_we        => kernel_we(NUM_RAW_KI_CH+ct),
+				kernel_wr_clk    => sys_clk,
+				kernel_bias_re   => kernel_bias_re(NUM_RAW_KI_CH + ct),
+				kernel_bias_im   => kernel_bias_im(NUM_RAW_KI_CH + ct),
 
-				result_re			=>	result_demod_re(ct),
-				result_im			=>	result_demod_im(ct),
-				result_vld		 =>	result_demod_vld(ct)
+				result_re  =>	result_demod_re(ct),
+				result_im  =>	result_demod_im(ct),
+				result_vld =>	result_demod_vld(ct)
 			);
 
 			--Package the result data into a vita frame

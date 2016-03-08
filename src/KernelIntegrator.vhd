@@ -10,27 +10,29 @@ use ieee.numeric_std.all;
 entity KernelIntegrator is
 	generic ( KERNEL_ADDR_WIDTH : natural );
 	port (
-	rst : in std_logic;
-	clk : in std_logic;
+		rst : in std_logic;
+		clk : in std_logic;
 
-	--Complex input data stream
-	data_re : in std_logic_vector(15 downto 0);
-	data_im : in std_logic_vector(15 downto 0);
-	data_vld : in std_logic;
-	data_last : in std_logic;
+		--Complex input data stream
+		data_re   : in std_logic_vector(15 downto 0);
+		data_im   : in std_logic_vector(15 downto 0);
+		data_vld  : in std_logic;
+		data_last : in std_logic;
 
-	--Wishbone kernel memory writes
-	kernel_len : in std_logic_vector(KERNEL_ADDR_WIDTH-1 downto 0);
-	kernel_rdwr_addr : in std_logic_vector(KERNEL_ADDR_WIDTH-1 downto 0);
-	kernel_wr_data : in std_logic_vector(31 downto 0);
-	kernel_rd_data : out std_logic_vector(31 downto 0);
-	kernel_we : in std_logic;
-	kernel_wr_clk : in std_logic;
+		--Wishbone kernel memory writes
+		kernel_len       : in std_logic_vector(KERNEL_ADDR_WIDTH-1 downto 0);
+		kernel_rdwr_addr : in std_logic_vector(KERNEL_ADDR_WIDTH-1 downto 0);
+		kernel_wr_data   : in std_logic_vector(31 downto 0);
+		kernel_rd_data   : out std_logic_vector(31 downto 0);
+		kernel_we        : in std_logic;
+		kernel_wr_clk    : in std_logic;
+		kernel_bias_re   : in std_logic_vector(31 downto 0);
+		kernel_bias_im   : in std_logic_vector(31 downto 0);
 
-	--Output integrated results
-	result_re : out std_logic_vector(31 downto 0);
-	result_im : out std_logic_vector(31 downto 0);
-	result_vld : out std_logic
+		--Output integrated results
+		result_re  : out std_logic_vector(31 downto 0);
+		result_im  : out std_logic_vector(31 downto 0);
+		result_vld : out std_logic
 	);
 
 end entity ; -- KernelIntegrator
@@ -55,6 +57,7 @@ attribute use_dsp48 of accum_im : signal is "yes";
 signal kernel_data : std_logic_vector(31 downto 0);
 alias kernel_re : std_logic_vector(15 downto 0) is kernel_data(15 downto 0);
 alias kernel_im : std_logic_vector(15 downto 0) is kernel_data(31 downto 16);
+constant KERNEL_BIAS_SHIFT : signed(accum_re'high - 32 downto 0) := (others => '0');
 
 signal data_vld_d : std_logic := '0';
 signal kernel_last, kernel_last_d : std_logic := '0';
@@ -185,8 +188,11 @@ begin
 	begin
 		if rising_edge(clk) then
 			if rst = '1' then
-				accum_re <= (others => '0');
-				accum_im <= (others => '0');
+				--VHDL-2008 would be nice...
+				-- accum_re <= (kernel_bias_re, others => '0');
+				-- accum_im <= (kernel_bias_im, others => '0');
+				accum_re <= signed(kernel_bias_re) & KERNEL_BIAS_SHIFT;
+				accum_im <= signed(kernel_bias_im) & KERNEL_BIAS_SHIFT;
 				result_re <= (others => '0');
 				result_im <= (others => '0');
 				accum_last <= '0';
