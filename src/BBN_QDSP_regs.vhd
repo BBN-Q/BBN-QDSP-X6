@@ -174,11 +174,14 @@ architecture arch of BBN_QDSP_regs is
 		kernel_we(ct) <= wr_stb(32+2*ct+1);
 
 		threshold(ct)    <= wb_reg_o(48+ct);
-		threshold_invert <= wb_reg_o(56)(NUM_RAW_KI_CH-1 downto 0);
 		wb_reg_i(48+ct)  <= wb_reg_o(48+ct);
+		threshold_invert <= wb_reg_o(56)(NUM_RAW_KI_CH-1 downto 0);
+		wb_reg_i(56)(NUM_RAW_KI_CH-1 downto 0) <= wb_reg_o(56)(NUM_RAW_KI_CH-1 downto 0);
 
 		kernel_bias_re(ct) <= wb_reg_o(64+2*ct);
 		kernel_bias_im(ct) <= wb_reg_o(64+2*ct+1);
+		wb_reg_i(64+2*ct) <= wb_reg_o(64+2*ct);
+		wb_reg_i(64+2*ct+1) <= wb_reg_o(64+2*ct+1);
 
 	end generate;
 
@@ -200,6 +203,9 @@ architecture arch of BBN_QDSP_regs is
 
 		kernel_bias_re(NUM_RAW_KI_CH + ct) <= wb_reg_o(72+2*ct);
 		kernel_bias_im(NUM_RAW_KI_CH + ct) <= wb_reg_o(72+2*ct+1);
+		wb_reg_i(72+2*ct) <= wb_reg_o(72+2*ct);
+		wb_reg_i(72+2*ct+1) <= wb_reg_o(72+2*ct+1);
+
 
 	end generate;
 

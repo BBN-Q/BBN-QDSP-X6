@@ -159,9 +159,9 @@ begin
 	--Complex multiplier and pipelining
 	multiplier : entity work.ComplexMultiplier
 	generic map(
-	A_WIDTH => 16,
-	B_WIDTH => 16,
-	PROD_WIDTH => 33
+		A_WIDTH => 16,
+		B_WIDTH => 16,
+		PROD_WIDTH => 33
 	)
 	port map(
 		clk => clk,
