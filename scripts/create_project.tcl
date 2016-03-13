@@ -26,7 +26,8 @@ set PKG "ff1156"
 set ARCH $DEV\-$PKG
 #set to "x4" for lx240t and "x8" for sx315t
 set PCIE_LANES "x4"
-set REPO_ROOT [file normalize [pwd]/..]
+set SCRIPT_PATH [file normalize [info script]]
+set REPO_ROOT [file normalize [file join [file dirname $SCRIPT_PATH] ".."]]
 
 proc create_project {} {
 
@@ -121,7 +122,7 @@ proc set_project_props {} {
 
 	#Top-level generics
 	set NUM_LANES [string index $PCIE_LANES 1]
-	project set "Generics, Parameters" "PCIE_LANES=$NUM_LANES,DEVICE=\"$DEV\""
+	project set "Generics, Parameters" "PCIE_LANES=$NUM_LANES,DEVICE=\"$DEV\",BBN_X6_VERSION=32'h00000000,BBN_X6_GIT_SHA1=32'h00000000,BUILD_TIMESTAMP=32'h00000000" -process "Synthesize - XST"
 }
 
 proc add_source_files {} {
@@ -206,8 +207,6 @@ proc add_source_files {} {
 	xfile add $REPO_ROOT/ii_mods/ii_ads5400_intf_top.vhd
 	xfile add $REPO_ROOT/ii_mods/ii_ads5400_intf.vhd
 	xfile add $X6_1000_LOGIC/src/ii_sample_sort.vhd
-
-	xfile add $REPO_ROOT/src/BBN_X6_pkg.vhd
 
 	xfile add $REPO_ROOT/src/PulseGenerator.vhd
 	xfile add $REPO_ROOT/src/PulseGenerator_regs.vhd

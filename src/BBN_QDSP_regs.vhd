@@ -10,12 +10,14 @@ use ieee.std_logic_1164.all;
 use ieee.numeric_std.all;
 
 use work.BBN_QDSP_pkg.all;
-use work.BBN_X6_pkg.all;
 
 entity BBN_QDSP_regs is
 	generic (
 		addr_bits : integer := 7;
-		offset    : std_logic_vector(15 downto 0)
+		offset    : std_logic_vector(15 downto 0);
+		BBN_X6_VERSION : std_logic_vector(31 downto 0)  := x"0000_0000";
+		BBN_X6_GIT_SHA1 : std_logic_vector(31 downto 0) := x"0000_0000";
+		BUILD_TIMESTAMP : std_logic_vector(31 downto 0) := x"0000_0000"
 	);
 	port (
 		-- Wishbone interface signals
@@ -132,6 +134,7 @@ architecture arch of BBN_QDSP_regs is
 	-- 3	: stream_enable
 	-- 4	: firmware version
 	-- 5  : firmware git SHA1
+	-- 6  : build timestamp
 	-- 16 to 19 : kernel_len for raw integrators
 	-- 20 to 23 : kernel_len for demod integrators
 	-- 32 to 39 (even) : kernel_addr for raw integrators
@@ -160,6 +163,7 @@ architecture arch of BBN_QDSP_regs is
 
 	wb_reg_i(4)   <= BBN_X6_VERSION;
 	wb_reg_i(5)   <= BBN_X6_GIT_SHA1;
+	wb_reg_i(6)   <= BUILD_TIMESTAMP;
 
 	gen_raw_regs : for ct in 0 to NUM_RAW_KI_CH-1 generate
 		kernel_len(ct)      <= wb_reg_o(16+ct)(RAW_KERNEL_ADDR_WIDTH-1 downto 0);

@@ -2,8 +2,6 @@ library ieee;
 use ieee.std_logic_1164.all;
 use ieee.numeric_std.all;
 
-use work.BBN_X6_pkg.all;
-
 entity PulseGenerator_regs is
 	generic (
 		addr_bits						: integer := 4;
@@ -114,8 +112,6 @@ architecture arch of PulseGenerator_regs is
 	wb_reg_i(0) <= wb_reg_o(0);
 
 	wb_reg_i(1) <= status;
-
-	wb_reg_i(2) <= BBN_X6_VERSION;
 
 	wf_length <= wb_reg_o(8)(15 downto 0);
 	wb_reg_i(8) <= wb_reg_o(8);

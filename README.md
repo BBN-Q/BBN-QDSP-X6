@@ -25,6 +25,12 @@ Building the bitfile might fail the first time on Map with an error about
 IODELAY placement.  ISE is messing up reading the constraints and ``Rerun All``
 all seems to fix the issue.
 
+## Version Tag Registers
+
+ISE does not support pre synthesis hooks so you must manually source
+`scripts/update_version_generics.tcl` to update the generics that will get
+written to the version registers.
+
 ## Software Driver
 
 The firmware works with a C-API driver [libx6](https://github.com/BBN-Q/libx6).

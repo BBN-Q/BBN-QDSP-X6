@@ -23,9 +23,12 @@ use work.BBN_QDSP_pkg.all;
 
 entity BBN_QDSP_top is
 	generic (
-		WB_OFFSET				: std_logic_vector(15 downto 0) := x"0000";
+		WB_OFFSET        : std_logic_vector(15 downto 0) := x"0000";
 		STREAM_ID_OFFSET : std_logic_vector(3 downto 0) := x"0";
-		SYS_CLK_FREQ		 : natural := 200 -- system clock frequency in MHz
+		SYS_CLK_FREQ     : natural := 200; -- system clock frequency in MHz
+		BBN_X6_VERSION   : std_logic_vector(31 downto 0)  := x"0000_0000";
+		BBN_X6_GIT_SHA1  : std_logic_vector(31 downto 0) := x"0000_0000";
+		BUILD_TIMESTAMP  : std_logic_vector(31 downto 0) := x"0000_0000"
 	);
 	port (
 		-- Reset and Clock
@@ -140,7 +143,12 @@ begin
 	assert NUM_DEMOD_CH > 0 report "Must have at least one demod channel.";
 
 	inst_BBN_QDSP_regs : entity work.BBN_QDSP_regs
-	generic map ( offset	=> WB_OFFSET)
+	generic map (
+		offset          => WB_OFFSET,
+		BBN_X6_VERSION  => BBN_X6_VERSION,
+		BBN_X6_GIT_SHA1 => BBN_X6_GIT_SHA1,
+		BUILD_TIMESTAMP => BUILD_TIMESTAMP
+		)
 	port map (
 		-- Wishbone interface signals
 		wb_rst_i       => wb_rst_i,
