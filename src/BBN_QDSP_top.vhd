@@ -32,33 +32,33 @@ entity BBN_QDSP_top is
 	);
 	port (
 		-- Reset and Clock
-		sys_clk				: in	std_logic;
-		rst						: in	std_logic; --reset synchronous to sys_clk
-		trig_ext			 : in	std_logic; --trigger synchronous to adc_clk
+		sys_clk         : in	std_logic;
+		rst             : in	std_logic; --reset synchronous to sys_clk
+		trig_ext        : in	std_logic; --trigger synchronous to adc_clk
 
 		-- Slave Wishbone Interface
-		wb_rst_i			 : in	std_logic;
-		wb_clk_i			 : in	std_logic;
-		wb_adr_i			 : in	std_logic_vector(15 downto 0);
-		wb_dat_i			 : in	std_logic_vector(31 downto 0);
-		wb_we_i				: in	std_logic;
-		wb_stb_i			 : in	std_logic;
-		wb_ack_o			 : out std_logic;
-		wb_dat_o			 : out std_logic_vector(31 downto 0);
+		wb_rst_i        : in	std_logic;
+		wb_clk_i        : in	std_logic;
+		wb_adr_i        : in	std_logic_vector(15 downto 0);
+		wb_dat_i        : in	std_logic_vector(31 downto 0);
+		wb_we_i         : in	std_logic;
+		wb_stb_i        : in	std_logic;
+		wb_ack_o        : out std_logic;
+		wb_dat_o        : out std_logic_vector(31 downto 0);
 
 		--ADC data interface
-		adc_clk				: in std_logic;
-		adc_data			 : in std_logic_vector(47 downto 0) ;
+		adc_clk         : in std_logic;
+		adc_data        : in std_logic_vector(47 downto 0) ;
 
 		-- VITA-49 Output FIFO Interfaces
-		vita_muxed_data	 : out std_logic_vector(31 downto 0);
-		vita_muxed_vld		: out std_logic;
-		vita_muxed_rdy		: in std_logic;
-		vita_muxed_last	 : out std_logic;
+		vita_muxed_data : out std_logic_vector(31 downto 0);
+		vita_muxed_vld  : out std_logic;
+		vita_muxed_rdy  : in std_logic;
+		vita_muxed_last : out std_logic;
 
 		-- Decision Engine outputs
-		state				: out std_logic_vector(NUM_DEMOD_CH-1 downto 0) := (others => '0');
-		state_vld		: out std_logic_vector(NUM_DEMOD_CH-1 downto 0) := (others => '0')
+		state           : out std_logic_vector(NUM_DEMOD_CH-1 downto 0) := (others => '0');
+		state_vld       : out std_logic_vector(NUM_DEMOD_CH-1 downto 0) := (others => '0')
 	);
 end entity;
 
@@ -248,11 +248,11 @@ begin
 		rst => srst,
 
 		in_data => in_data,
-		in_vld => in_vld,
+		in_vld  => in_vld,
 		in_last => in_last,
 
 		out_data => decimated_data,
-		out_vld => decimated_vld,
+		out_vld  => decimated_vld,
 		out_last => decimated_last);
 
 	--Raw kernel integrators and framers
@@ -343,10 +343,10 @@ begin
 			clk => sys_clk,
 			rst => srst,
 
-			stream_id => x"0" & STREAM_ID_OFFSET & x"0" & std_logic_vector(to_unsigned(ct+1,4)),
-			payload_size => x"0004", --minimum size
-			pad_bytes => x"8", -- two words padding = 8 bytes
-			ts_seconds => ts_seconds,
+			stream_id       => x"0" & STREAM_ID_OFFSET & x"0" & std_logic_vector(to_unsigned(ct+1,4)),
+			payload_size    => x"0004", --minimum size
+			pad_bytes       => x"8", -- two words padding = 8 bytes
+			ts_seconds      => ts_seconds,
 			ts_frac_seconds => ts_frac_seconds,
 
 			in_data => result_raw_im(ct) & result_raw_re(ct),
@@ -355,8 +355,8 @@ begin
 			in_rdy	=> open,
 
 			out_data => vita_result_raw_data(ct),
-			out_vld	=> vita_result_raw_vld(ct),
-			out_rdy	=> vita_result_raw_rdy(ct),
+			out_vld  => vita_result_raw_vld(ct),
+			out_rdy  => vita_result_raw_rdy(ct),
 			out_last => vita_result_raw_last(ct)
 		);
 	end generate;
@@ -368,21 +368,21 @@ begin
 		DATA_WIDTH => 14
 	)
 	port map (
-		input_clk => adc_clk,
-		input_rst => rst_adc_clk,
-		input_axis_tdata => decimated_data,
+		input_clk         => adc_clk,
+		input_rst         => rst_adc_clk,
+		input_axis_tdata  => decimated_data,
 		input_axis_tvalid => decimated_vld,
 		input_axis_tready => open,
-		input_axis_tlast => decimated_last,
-		input_axis_tuser => '0',
+		input_axis_tlast  => decimated_last,
+		input_axis_tuser  => '0',
 
-		output_clk => sys_clk,
-		output_rst => srst,
-		output_axis_tdata => decimated_sysclk_data_int,
+		output_clk         => sys_clk,
+		output_rst         => srst,
+		output_axis_tdata  => decimated_sysclk_data_int,
 		output_axis_tvalid => decimated_sysclk_vld_int,
 		output_axis_tready => decimated_sysclk_rdy_int,
-		output_axis_tlast => decimated_sysclk_last_int,
-		output_axis_tuser => open
+		output_axis_tlast  => decimated_sysclk_last_int,
+		output_axis_tuser  => open
 	);
 
 	--Output register for decimated_sysclk_data fanout
