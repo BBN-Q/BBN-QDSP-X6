@@ -39,6 +39,8 @@ end entity ; -- KernelIntegrator
 
 architecture arch of KernelIntegrator is
 
+signal rst_d : std_logic;
+
 signal kernel_addr : unsigned(KERNEL_ADDR_WIDTH-1 downto 0);
 
 signal data_re_d, data_im_d : std_logic_vector(15 downto 0) := (others => '0');
@@ -75,6 +77,15 @@ begin
 	--Make sure we fit in a DSP48
 	assert KERNEL_ADDR_WIDTH <= 15 report "KERNEL_ADDR_WIDTH too wide. Must be <= 16 to prevent accumulator overflow.";
 
+	--pipeline reset signal for timing closure with high fanout
+	--(should probably be handled by PAR register duplication)
+	rst_register : process(clk)
+	begin
+		if rising_edge(clk) then
+			rst_d <= rst;
+		end if;
+	end process;
+
 	--Kernel memory write/read processes
 	--WB write/reads to port A
 	--"No change" mode is most efficient according to Xilinx templates but
@@ -109,7 +120,7 @@ begin
 	addrCounter : process( clk )
 	begin
 		if rising_edge(clk) then
-			if rst = '1' then
+			if rst_d = '1' then
 				--Start at -1 so we step to addr 0 first
 				kernel_addr <= (others => '1');
 			elsif data_vld = '1' then
@@ -122,7 +133,7 @@ begin
 	variable addrct : unsigned(KERNEL_ADDR_WIDTH-1 downto 0) := (others => '0');
 	begin
 		if rising_edge(clk) then
-			if rst = '1' then
+			if rst_d = '1' then
 				kernel_last <= '0';
 				addrct := unsigned(kernel_len) - 1;
 			elsif data_vld = '1' then
@@ -141,20 +152,20 @@ begin
 	--It takes one cycle to increment addr and two clock cycles for data to come out of the kernel BRAM
 	delayLine_data_vld : entity work.DelayLine
 	generic map(DELAY_TAPS => 3)
-	port map(clk => clk, rst => rst, data_in(0) => data_vld, data_out(0) => data_vld_d);
+	port map(clk => clk, rst => rst_d, data_in(0) => data_vld, data_out(0) => data_vld_d);
 
 	delayLine_data_re : entity work.DelayLine
 	generic map(REG_WIDTH => 16, DELAY_TAPS => 3)
-	port map(clk => clk, rst => rst, data_in => data_re, data_out => data_re_d);
+	port map(clk => clk, rst => rst_d, data_in => data_re, data_out => data_re_d);
 
 	delayLine_data_im : entity work.DelayLine
 	generic map(REG_WIDTH => 16, DELAY_TAPS => 3)
-	port map(clk => clk, rst => rst, data_in => data_im, data_out => data_im_d);
+	port map(clk => clk, rst => rst_d, data_in => data_im, data_out => data_im_d);
 
 	--Kernel last needs one clock less delay because it is clocked above
 	delayLine_kernel_last : entity work.DelayLine
 	generic map(DELAY_TAPS => 2)
-	port map(clk => clk, rst => rst, data_in(0) => kernel_last, data_out(0) => kernel_last_d);
+	port map(clk => clk, rst => rst_d, data_in(0) => kernel_last, data_out(0) => kernel_last_d);
 
 	--Complex multiplier and pipelining
 	multiplier : entity work.ComplexMultiplier
@@ -165,7 +176,7 @@ begin
 	)
 	port map(
 		clk => clk,
-		rst => rst,
+		rst => rst_d,
 
 		a_data_re => data_re_d,
 		a_data_im => data_im_d,
@@ -187,7 +198,7 @@ begin
 	accum : process( clk )
 	begin
 		if rising_edge(clk) then
-			if rst = '1' then
+			if rst_d = '1' then
 				--VHDL-2008 would be nice...
 				-- accum_re <= (kernel_bias_re, others => '0');
 				-- accum_im <= (kernel_bias_im, others => '0');
