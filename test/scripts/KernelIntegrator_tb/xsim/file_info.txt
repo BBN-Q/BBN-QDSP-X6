@@ -1,0 +1,6 @@
+Language File-Name                IP Library         File-Path                                                                         
+VHDL,    DelayLine.vhd,           *, xil_defaultlib, /home/cryan/Programming/Repos/II-X6/deps/VHDL-Components/src/DelayLine.vhd        
+VHDL,    ComplexMultiplier.vhd,   *, xil_defaultlib, /home/cryan/Programming/Repos/II-X6/deps/VHDL-Components/src/ComplexMultiplier.vhd
+VHDL,    BBN_QDSP_pkg.vhd,        *, xil_defaultlib, /home/cryan/Programming/Repos/II-X6/src/BBN_QDSP_pkg.vhd                          
+VHDL,    KernelIntegrator.vhd,    *, xil_defaultlib, /home/cryan/Programming/Repos/II-X6/src/KernelIntegrator.vhd                      
+VHDL,    KernelIntegrator_tb.vhd, *, xil_defaultlib, /home/cryan/Programming/Repos/II-X6/test/KernelIntegrator_tb.vhd                  

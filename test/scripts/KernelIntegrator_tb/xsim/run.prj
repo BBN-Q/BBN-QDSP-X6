@@ -1,0 +1,5 @@
+vhdl xil_defaultlib "/home/cryan/Programming/Repos/II-X6/deps/VHDL-Components/src/DelayLine.vhd"
+vhdl xil_defaultlib "/home/cryan/Programming/Repos/II-X6/deps/VHDL-Components/src/ComplexMultiplier.vhd"
+vhdl xil_defaultlib "/home/cryan/Programming/Repos/II-X6/src/BBN_QDSP_pkg.vhd"
+vhdl xil_defaultlib "/home/cryan/Programming/Repos/II-X6/src/KernelIntegrator.vhd"
+vhdl xil_defaultlib "/home/cryan/Programming/Repos/II-X6/test/KernelIntegrator_tb.vhd"
