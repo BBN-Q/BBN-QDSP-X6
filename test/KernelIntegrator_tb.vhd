@@ -1,6 +1,6 @@
-library IEEE;
-use IEEE.Std_logic_1164.all;
-use IEEE.Numeric_Std.all;
+library ieee;
+use ieee.std_logic_1164.all;
+use ieee.numeric_std.all;
 
 use work.bbn_qdsp_pkg.RAW_KERNEL_ADDR_WIDTH;
 
@@ -21,6 +21,8 @@ architecture bench of KernelIntegrator_tb is
   signal kernel_wr_clk: std_logic := '0';
   signal result_re, result_im : std_logic_vector(31 downto 0) := (others => '0');
   signal result_vld: std_logic;
+  signal kernel_bias_re : std_logic_vector(31 downto 0) := x"12345678";
+  signal kernel_bias_im : std_logic_vector(31 downto 0) := x"f9876543";
 
   constant CLK_PERIOD: time := 10 ns;
   constant WB_CLK_PERIOD : time := 20 ns;
@@ -50,6 +52,8 @@ begin
       kernel_rd_data   => kernel_rd_data,
       kernel_we        => kernel_we,
       kernel_wr_clk    => kernel_wr_clk,
+      kernel_bias_re   => kernel_bias_re,
+      kernel_bias_im   => kernel_bias_im,
       result_re        => result_re,
       result_im        => result_im,
       result_vld       => result_vld );
@@ -119,12 +123,13 @@ begin
     --Value calculated in Julia with
     -- kernel = 256*(1:128)-1 + 1im*(1:128)
     -- data = -256*(1:128) + 1im*(256(1:128)-1)
-    -- floor(sum(kernel .* data) / 2^13) % assuming RAW_KERNEL_ADDR_WIDTH = 12 and extra bit from ComplexMultiplier
-    -- = -5679955 + 5635494im
+    -- bias = reinterpret(Int32, 0x12345678) + 1im*reinterpret(Int32, 0xf9876543)
+    -- Int(floor(imag/real(bias + (sum(kernel .* data) / 2^13)))) % assuming RAW_KERNEL_ADDR_WIDTH = 12 and extra bit from ComplexMultiplier
+    -- = 299739941 + -102931735im
     --
     wait until rising_edge(result_vld);
-    assert to_integer(signed(result_re)) = -5679955 report "KernelIntegrator real output incorrect!";
-    assert to_integer(signed(result_im)) = 5635494 report "KernelIntegrator real output incorrect!";
+    assert to_integer(signed(result_re)) = 299739941 report "KernelIntegrator real output incorrect!";
+    assert to_integer(signed(result_im)) = -102931735 report "KernelIntegrator real output incorrect!";
 
     wait;
 
