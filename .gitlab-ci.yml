@@ -1,0 +1,17 @@
+image: cryan/vivado:2015.3
+
+before_script:
+  - git submodule update --init
+  - source /opt/Xilinx/Vivado/2015.3/settings64.sh
+
+stages:
+  - simulate_testbenches
+
+run_tests:
+  stage: simulate_testbenches
+  script:
+    - mkdir vivado-projects
+    - cd scripts
+    - vivado -mode batch -source create_sim_project.tcl -tclargs "../vivado-projects/" "II-X6-sims"
+    - cd ../test/scripts
+    - python3 run_tests.py
