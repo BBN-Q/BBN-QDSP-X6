@@ -100,6 +100,7 @@ proc set_project_props {} {
 	project set "Resource Sharing" "false" -process "Synthesize - XST"
 	project set "Equivalent Register Removal" "false" -process "Synthesize - XST"
 	project set "Max Fanout" "10000" -process "Synthesize - XST"
+	project set "Global Optimization Goal" "Maximum Delay" -process "Synthesize - XST"
 	project set "Cores Search Directories" $CORE_DIRS
 
 	#Translate properties
@@ -110,6 +111,7 @@ proc set_project_props {} {
 	project set "Enable Multi-Threading" 2 -process "Map"
 	project set "Placer Extra Effort" "Continue on Impossible" -process "Map"
 	project set "Allow Logic Optimization Across Hierarchy" "true" -process "Map"
+	project set "Register Duplication" "On" -process "Map"
 
 	#PAR properties
 	project set "Enable Multi-Threading" 2 -process "Place & Route"
