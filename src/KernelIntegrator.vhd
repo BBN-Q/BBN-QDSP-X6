@@ -61,7 +61,7 @@ alias kernel_re : std_logic_vector(15 downto 0) is kernel_data(15 downto 0);
 alias kernel_im : std_logic_vector(15 downto 0) is kernel_data(31 downto 16);
 constant KERNEL_BIAS_SHIFT : signed(accum_re'high - 32 downto 0) := (others => '0');
 
-signal data_vld_d : std_logic := '0';
+signal data_vld_d, data_last_d : std_logic := '0';
 signal kernel_last, kernel_last_d : std_logic := '0';
 signal prod_vld, prod_last	 : std_logic := '0';
 signal accum_last, accum_last_d	: std_logic := '0';
@@ -154,6 +154,10 @@ begin
 	generic map(DELAY_TAPS => 3)
 	port map(clk => clk, rst => rst_d, data_in(0) => data_vld, data_out(0) => data_vld_d);
 
+	delayLine_data_last : entity work.DelayLine
+	generic map(DELAY_TAPS => 3)
+	port map(clk => clk, rst => rst_d, data_in(0) => data_last, data_out(0) => data_last_d);
+
 	delayLine_data_re : entity work.DelayLine
 	generic map(REG_WIDTH => 16, DELAY_TAPS => 3)
 	port map(clk => clk, rst => rst_d, data_in => data_re, data_out => data_re_d);
@@ -181,11 +185,11 @@ begin
 		a_data_re => data_re_d,
 		a_data_im => data_im_d,
 		a_vld => data_vld_d,
-		a_last => kernel_last_d,
+		a_last => data_last_d,
 
 		b_data_re => kernel_re,
 		b_data_im => kernel_im,
-		b_vld => data_vld_d,
+		b_vld => data_vld_d, --because we align things above this should be the same as kernel_vld
 		b_last => kernel_last_d,
 
 		signed(prod_data_re) => prod_re,
@@ -204,10 +208,11 @@ begin
 				-- accum_im <= (kernel_bias_im, others => '0');
 				accum_re <= signed(kernel_bias_re) & KERNEL_BIAS_SHIFT;
 				accum_im <= signed(kernel_bias_im) & KERNEL_BIAS_SHIFT;
-				result_re <= (others => '0');
-				result_im <= (others => '0');
 				accum_last <= '0';
 				accum_last_d <= '0';
+				result_re <= (others => '0');
+				result_im <= (others => '0');
+				result_vld <= '0';
 			else
 
 				if prod_vld = '1' then
@@ -215,7 +220,7 @@ begin
 					accum_im <= accum_im + prod_im;
 				end if;
 
-				accum_last <= prod_last;
+				accum_last <= prod_vld and prod_last;
 				accum_last_d <= accum_last;
 
 				-- latch out result on rising edge of accum_last
@@ -223,12 +228,11 @@ begin
 				if accum_last = '1' and accum_last_d = '0' then
 					result_re <= std_logic_vector(accum_re(accum_re'high downto accum_re'high-31));
 					result_im <= std_logic_vector(accum_im(accum_re'high downto accum_re'high-31));
+					result_vld <= '1';
 				end if;
 
 			end if ;
 		end if ;
 	end process ; -- accum
-
-	result_vld <= accum_last_d;
 
 end architecture ; -- arch
